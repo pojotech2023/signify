@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\WEB\AuthController;
 
 Route::get('/', function () {
     return view('index');
@@ -34,5 +35,13 @@ Route::get('/aggregator_form', function () {
 Route::get('/login', function () {
     return view('login');
 })->name('login');
+
+Route::get('/otp_verification', function(){
+    return view('otp_verification');
+})->name('otp.page');
+
+Route::post('/login', function () {
+    return redirect()->route('otp.page');
+})->name('login.submit');
 
 Route::post('/form', [AggregatorFormController::class, 'store'])->name('aggregator_form');

@@ -7,38 +7,55 @@
     <title>Signify</title>
     <!-- Include Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            width: 80%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .image-column {
+            background: url('https://via.placeholder.com/600x800') no-repeat center center;
+            background-size: cover;
+            height: 100%;
+            /* background-color: #f4f4f4; */
+        }
+        .login-form {
+            padding: 40px;
+            background-color: white;
+        }
+       
+    </style>
 </head>
 
 <body>
-    <div class="d-flex justify-content-center align-items-center vh-100 bg-light">
-        <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px; border-radius: 10px;">
-            @if(session('error'))
-            <div class="alert alert-danger">
-                {{ session('error') }}
+    <div class="login-container row">
+        <!-- Left Column - Login Form -->
+        <div class="col-md-6 login-form d-flex flex-column justify-content-center align-items-center">
+            <div class="w-100" style="max-width: 400px;">
+                <h1 class="mb-4">Login</h1>
+                <p style="color: rgb(104, 104, 104)">Login to access your travelwise account</p>
+                <form action="{{ route('login.submit') }}" method="post">
+                    <div class="mb-3">
+                        <label for="mobileNumber" class="form-label">Mobile Number</label>
+                        <input type="text" class="form-control" id="mobileNumber" placeholder="Enter your mobile number" required>
+                    </div>
+                    <button type="submit" onclick="window.location.href='{{ route('otp.page') }}'"  class="btn btn-primary w-100">Login</button>
+                </form>
             </div>
-            @endif
-            <h3 class="text-center mb-4">Login</h3>
-            <form action="{{ route('Sign_In') }}" method="POST">
-                @csrf
-                <!-- Email Input -->
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" required>
-                </div>
-
-                <!-- Password Input -->
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="" name="password" id="password" class="form-control" placeholder="Enter your password" required>
-                </div>
-
-                <!-- Submit Button -->
-                <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </div>
-
-                <!-- Optional Links -->
-            </form>
+        </div>
+    
+        <!-- Right Column - Image -->
+        <div class="col-md-6 image-column d-none d-md-block">
+            <img src="images/signify/login.jpg">
         </div>
     </div>
 
