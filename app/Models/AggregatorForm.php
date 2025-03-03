@@ -10,12 +10,10 @@ class AggregatorForm extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category',
-        'sub_category',
-        'material_img',
-        'material_name',
-        'shades_img',
-        'shades_name',
+        'category_id',
+        'sub_category_id',
+        'material_id',
+        'shade_id',
         'width',
         'height',
         'unit',

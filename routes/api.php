@@ -21,4 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
   return $request->user();
 });
 
+Route::get('/get-categories', [AggregatorFormController::class, 'getCategories']);
+Route::get('/get-subcategories/{category_id}', [AggregatorFormController::class, 'getSubcategories']);
+Route::get('/get-materials/{subcategory_id}', [AggregatorFormController::class, 'getMaterials']);
+Route::get('/get-shades/{material_id}', [AggregatorFormController::class, 'getShades']);
 Route::post('/aggregator_form', [AggregatorFormController::class, 'store']);
+
+

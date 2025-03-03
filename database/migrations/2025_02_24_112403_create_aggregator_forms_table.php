@@ -13,12 +13,10 @@ return new class extends Migration
     {
         Schema::create('aggregator_forms', function (Blueprint $table) {
             $table->id();
-            $table->string('category');
-            $table->string('sub_category')->nullable();
-            $table->string('material_img')->nullable();
-            $table->string('material_name')->nullable();
-            $table->string('shades_img')->nullable();
-            $table->string('shades_name')->nullable();
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('material_id')->constrained()->onDelete('cascade');
+            $table->foreignId('shade_id')->constrained()->onDelete('cascade');
             $table->string('width')->nullable();
             $table->string('height')->nullable();
             $table->string('unit')->nullable();

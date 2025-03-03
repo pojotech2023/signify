@@ -20,7 +20,7 @@
                             <a href="{{route('product')}}" class="menu-links">Services</a>
                         </li>
                         <li>
-                            <a href="{{route('aggregator')}}" class="menu-links">Aggregator Form</a>
+                            <a href="{{route('form')}}" class="menu-links">Aggregator Form</a>
                         </li>
                         <li>
                             <a href="{{route('contact')}}" class="menu-links">Contact Us</a>
@@ -54,7 +54,7 @@
                         <a href="{{route('product')}}">Products</a>
                     </li>
                     <li>
-                            <a href="{{route('aggregator')}}">Aggregator Form</a>
+                            <a href="{{route('form')}}">Aggregator Form</a>
                         </li>
                     <li>
                         <a href="{{route('contact')}}">Contact Us</a>

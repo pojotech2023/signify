@@ -38,7 +38,7 @@
                 </p>
     
                 <div class="text-center">
-                    <a href="{{ route('aggregator') }}" class="btn btn-primary w-100 mt-3">Verify</a>
+                    <a href="{{ route('form') }}" class="btn btn-primary w-100 mt-3">Verify</a>
                 </div>
             </div>
     
