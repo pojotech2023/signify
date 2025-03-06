@@ -61,8 +61,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     if (data.length > 0) {
                         data.forEach(material => {
-                            let imagePath = `/storage/${material.material_main_img}`;
-                            let subImages = material.material_sub_img.split(',');
+                            let imagePath = `/storage/${material.main_img}`;
+
+                            // Collect sub-images from separate columns
+                            let subImages = [];
+                            if (material.sub_img1) subImages.push(`/storage/${material.sub_img1}`);
+                            if (material.sub_img2) subImages.push(`/storage/${material.sub_img2}`);
+                            if (material.sub_img3) subImages.push(`/storage/${material.sub_img3}`);
+                            if (material.sub_img4) subImages.push(`/storage/${material.sub_img4}`);
 
                             let colDiv = document.createElement("div");
                             colDiv.className = "col-md-3 mb-3";
@@ -70,16 +76,17 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <div class="card">
                                     <img src="${imagePath}" class="card-img-top material-card" data-material-id="${material.id}"
                                      alt="${material.material_name}" style="cursor: pointer;">
-                                    <div class="card-body d-flex">
+                                    <div class="card-body d-flex justify-content-between align-items-center">
                                         <p class="card-text">${material.material_name}</p>
-                                        <span class="plus-icon" data-sub-imgs='${JSON.stringify(subImages)}' style="cursor: pointer;">➕</span>
-                                    </div>
+                                        ${subImages.length > 0 ? `<span class="plus-icon" data-sub-imgs='${JSON.stringify(subImages)}' style="cursor: pointer;">➕</span>` : ''}
                                     </div>
                                 </div>
                             `;
                             materialImagesContainer.appendChild(colDiv);
                         });
+
                         materialSection.style.display = "block";
+
                         // Attach click event to plus icons
                         document.querySelectorAll(".plus-icon").forEach(icon => {
                             icon.addEventListener("click", function () {
@@ -176,8 +183,13 @@ document.addEventListener("DOMContentLoaded", function () {
     `;
     document.head.appendChild(style);
 
-    // Show popup with sub-images
+    /** ======= Show Popup with Sub-Images and Navigation ======= **/
     function showSubImagesPopup(subImages) {
+        if (subImages.length === 0) {
+            alert("No additional images available.");
+            return;
+        }
+
         let popupContainer = document.createElement("div");
         popupContainer.id = "subImagesPopup";
         popupContainer.classList.add("popup-container");
@@ -191,19 +203,20 @@ document.addEventListener("DOMContentLoaded", function () {
         closeButton.addEventListener("click", () => document.body.removeChild(popupContainer));
 
         let leftArrow = document.createElement("span");
-        leftArrow.innerHTML = "&#9664;"; // Left arrow symbol
+        leftArrow.innerHTML = "&#9664;";
         leftArrow.classList.add("left-arrow");
 
         let rightArrow = document.createElement("span");
-        rightArrow.innerHTML = "&#9654;"; // Right arrow symbol
+        rightArrow.innerHTML = "&#9654;";
         rightArrow.classList.add("right-arrow");
 
         let imgElement = document.createElement("img");
         imgElement.classList.add("popup-image");
 
         let currentIndex = 0;
+
         function updateImage() {
-            imgElement.src = `/storage/${subImages[currentIndex].trim()}`;
+            imgElement.src = subImages[currentIndex];
         }
 
         updateImage();
