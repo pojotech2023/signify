@@ -327,9 +327,9 @@
     <script src="js/dark-mode.js"></script>
 
     <script src="js/main.js"></script>
-    {{-- <script src="js/aggregator_form.js"></script> --}}
+    <script src="js/aggregator_form.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="{{ asset('admin/assets/js/aggregator.js') }}"></script>
+    {{-- <script src="{{ asset('admin/assets/js/aggregator.js') }}"></script> --}}
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

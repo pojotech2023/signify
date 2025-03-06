@@ -16,8 +16,12 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
             $table->string('material_name');
-            $table->string('material_main_img');
-            $table->string('material_sub_img');
+            $table->string('main_img');
+            $table->string('sub_img1')->nullable();
+            $table->string('sub_img2')->nullable();
+            $table->string('sub_img3')->nullable();
+            $table->string('sub_img4')->nullable();
+            $table->string('video')->nullable();
             $table->timestamps();
         });
     }

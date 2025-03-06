@@ -1,29 +1,54 @@
 $(document).ready(function () {
     /** ======= SHADE SECTION ======= **/
 
-    // Function to check shade fields
-    function checkShadeFields() {
-        let shadeName = $("input[name='shade_name[]']").last().val();
-        let shadeImage = $("input[name='shade_img[]']").last().val();
-        let addButton = $(".add-shade");
+    // Function to update the add button visibility
+    function updateShadeButtons() {
+        $(".add-shade").remove(); // Remove all plus buttons
 
-        if (shadeName.trim() !== "" && shadeImage.trim() !== "") {
+        let lastShadeRow = $(".shade-row").last();
+        if (lastShadeRow.length) {
+            lastShadeRow.find(".d-flex").append(`
+                <button type="button" class="btn btn-success ms-2 add-shade" disabled><i class="fas fa-plus"></i></button>
+            `);
+        }
+        checkShadeFields(); // Ensure button is enabled only when fields are filled
+    }
+
+    // Function to check shade fields and enable the add button
+    function checkShadeFields() {
+        let lastRow = $(".shade-row").last();
+        let shadeName = lastRow.find("input[name='shade_name[]']").val();
+        let shadeImage = lastRow.find("input[name='shade_img[]']").val();
+        let addButton = lastRow.find(".add-shade");
+
+        if (shadeName.trim() !== "" || shadeImage.trim() !== "") {
             addButton.prop("disabled", false);
         } else {
             addButton.prop("disabled", true);
         }
     }
 
-    // Initially disable the Add Shade button
-    $(".add-shade").prop("disabled", true);
+    // Initially update shade buttons for prepopulated rows
+    updateShadeButtons();
 
-    // Monitor changes in shade fields
+    // Enable the "+" button in edit mode if there are existing values
+    $(".shade-row").each(function () {
+        let shadeName = $(this).find("input[name='shade_name[]']").val();
+        let shadeImage = $(this).find("input[name='shade_img[]']").val();
+        let addButton = $(this).find(".add-shade");
+
+        if (shadeName.trim() !== "" || shadeImage.trim() !== "") {
+            addButton.prop("disabled", false);
+        }
+    });
+
+    // Monitor changes in the last row fields
     $(document).on("input change", "input[name='shade_name[]'], input[name='shade_img[]']", function () {
         checkShadeFields();
     });
 
-    // Add Shade Field
-    $(".add-shade").click(function () {
+    // Add new shade field when clicking the "+" button
+    $(document).on("click", ".add-shade", function () {
         if ($(this).prop("disabled")) return;
 
         $("#shades-container").append(`
@@ -52,232 +77,12 @@ $(document).ready(function () {
             </div>
         `);
 
-        // Disable add button again for new input
-        $(".add-shade").prop("disabled", true);
+        updateShadeButtons(); // Ensure only one "+" button exists
     });
 
-    // Remove Shade Field
+    // Remove shade row and update last row's "+" button
     $(document).on("click", ".remove-shade", function () {
         $(this).closest(".shade-row").remove();
-        checkShadeFields();
+        updateShadeButtons();
     });
-
-});
-
-/** ======= Website Aggregator Form ======= **/
-
-document.addEventListener("DOMContentLoaded", function () {
-    /** ======= Category wise Subcategory Dropdown list SECTION ======= **/
-    document.getElementById("category_id").addEventListener("change", function () {
-        let categoryId = this.value;
-        let subcategoryDropdown = document.getElementById("subcategory");
-        subcategoryDropdown.innerHTML = '<option value="">Loading...</option>';
-
-        document.getElementById("hidden_category_id").value = categoryId;
-
-        if (categoryId) {
-            fetch(`/api/get-subcategories/${categoryId}`)
-                .then(response => response.json())
-                .then(data => {
-                    subcategoryDropdown.innerHTML = '<option value="">Select Sub Category</option>';
-                    data.forEach(subcategory => {
-                        let option = document.createElement("option");
-                        option.value = subcategory.id;
-                        option.textContent = subcategory.sub_category;
-                        subcategoryDropdown.appendChild(option);
-                    });
-                })
-                .catch(error => console.error("Error fetching subcategories:", error));
-        }
-    });
-
-    /** ======= Subcategory wise Material list SECTION ======= **/
-    document.getElementById("subcategory").addEventListener("change", function () {
-        let subcategoryId = this.value;
-        let materialSection = document.getElementById("material-section");
-        let materialImagesContainer = document.getElementById("material-images");
-
-        materialImagesContainer.innerHTML = '<p>Loading...</p>';
-        materialSection.style.display = "none";
-
-        document.getElementById("hidden_sub_category_id").value = subcategoryId;
-
-        if (subcategoryId) {
-            fetch(`/api/get-materials/${subcategoryId}`)
-                .then(response => response.json())
-                .then(data => {
-                    materialImagesContainer.innerHTML = "";
-
-                    if (data.length > 0) {
-                        data.forEach(material => {
-                            let imagePath = `/storage/${material.material_main_img}`;
-                            let subImages = material.material_sub_img.split(',');
-
-                            let colDiv = document.createElement("div");
-                            colDiv.className = "col-md-3 mb-3";
-                            colDiv.innerHTML = `
-                                <div class="card">
-                                    <img src="${imagePath}" class="card-img-top material-card" data-material-id="${material.id}"
-                                     alt="${material.material_name}" style="cursor: pointer;">
-                                    <div class="card-body d-flex">
-                                        <p class="card-text">${material.material_name}</p>
-                                        <span class="plus-icon" data-sub-imgs='${JSON.stringify(subImages)}' style="cursor: pointer;">➕</span>
-                                    </div>
-                                    </div>
-                                </div>
-                            `;
-                            materialImagesContainer.appendChild(colDiv);
-                        });
-                        materialSection.style.display = "block";
-                        // Attach click event to plus icons
-                        document.querySelectorAll(".plus-icon").forEach(icon => {
-                            icon.addEventListener("click", function () {
-                                let subImages = JSON.parse(this.getAttribute("data-sub-imgs"));
-                                showSubImagesPopup(subImages);
-                            });
-                        });
-                    } else {
-                        materialImagesContainer.innerHTML = '<p>No materials found.</p>';
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching materials:", error);
-                    materialImagesContainer.innerHTML = '<p>Error loading materials.</p>';
-                });
-        }
-    });
-
-    /** ======= Material wise Shades list SECTION ======= **/
-    document.getElementById("material-images").addEventListener("click", function (event) {
-        let card = event.target.closest(".material-card");
-        if (card) {
-            let materialId = card.getAttribute("data-material-id");
-            document.getElementById("hidden_material_id").value = materialId;
-            loadShades(materialId);
-        }
-    });
-
-    function loadShades(materialId) {
-        let shadesSection = document.getElementById("shades-section");
-        let shadeImagesContainer = document.getElementById("shade-images");
-
-        shadeImagesContainer.innerHTML = '<p>Loading...</p>';
-        shadesSection.style.display = "none";
-
-        fetch(`/api/get-shades/${materialId}`)
-            .then(response => response.json())
-            .then(data => {
-                shadeImagesContainer.innerHTML = "";
-
-                if (data.length > 0) {
-                    data.forEach(shade => {
-                        let shadeImagePath = `/storage/${shade.shade_img}`;
-                        let shadeDiv = document.createElement("div");
-                        shadeDiv.className = "col-md-3 mb-3 shade-card";
-                        shadeDiv.dataset.shadeId = shade.id;
-                        shadeDiv.innerHTML = `
-                            <div class="card" style="cursor: pointer;">
-                                <img src="${shadeImagePath}" class="card-img-top" alt="${shade.shade_name}">
-                                <div class="card-body">
-                                    <p class="card-text text-center">${shade.shade_name}</p>
-                                </div>
-                            </div>
-                        `;
-                        shadeImagesContainer.appendChild(shadeDiv);
-                    });
-                    shadesSection.style.display = "block";
-                } else {
-                    shadeImagesContainer.innerHTML = '<p>No shades found.</p>';
-                }
-            })
-            .catch(error => {
-                console.error("Error fetching shades:", error);
-                shadeImagesContainer.innerHTML = '<p>Error loading shades.</p>';
-            });
-    }
-
-    // Capture selected shade
-    document.getElementById("shade-images").addEventListener("click", function (event) {
-        let shadeCard = event.target.closest(".shade-card");
-        if (shadeCard) {
-            let shadeId = shadeCard.getAttribute("data-shade-id");
-
-            // Update hidden input
-            document.getElementById("hidden_shade_id").value = shadeId;
-
-            // Remove active class from all shade cards
-            document.querySelectorAll(".shade-card").forEach(card => {
-                card.classList.remove("selected-shade");
-            });
-
-            // Add active class to the selected shade
-            shadeCard.classList.add("selected-shade");
-        }
-    });
-
-    // Add CSS to highlight selected shade
-    let style = document.createElement("style");
-    style.innerHTML = `
-        .selected-shade {
-            border: 2px solid #007bff;
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-        }
-    `;
-    document.head.appendChild(style);
-  
-    // Show popup with sub-images
-function showSubImagesPopup(subImages) {
-    let popupContainer = document.createElement("div");
-    popupContainer.id = "subImagesPopup";
-    popupContainer.classList.add("popup-container");
-
-    let popupContent = document.createElement("div");
-    popupContent.classList.add("popup-content");
-
-    let closeButton = document.createElement("span");
-    closeButton.innerHTML = "&times;";
-    closeButton.classList.add("close-button");
-    closeButton.addEventListener("click", () => document.body.removeChild(popupContainer));
-
-    let leftArrow = document.createElement("span");
-    leftArrow.innerHTML = "&#9664;"; // Left arrow symbol
-    leftArrow.classList.add("left-arrow");
-
-    let rightArrow = document.createElement("span");
-    rightArrow.innerHTML = "&#9654;"; // Right arrow symbol
-    rightArrow.classList.add("right-arrow");
-
-    let imgElement = document.createElement("img");
-    imgElement.classList.add("popup-image");
-
-    let currentIndex = 0;
-    function updateImage() {
-        imgElement.src = `/storage/${subImages[currentIndex].trim()}`;
-    }
-    
-    updateImage();
-
-    leftArrow.addEventListener("click", () => {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateImage();
-        }
-    });
-
-    rightArrow.addEventListener("click", () => {
-        if (currentIndex < subImages.length - 1) {
-            currentIndex++;
-            updateImage();
-        }
-    });
-
-    popupContent.appendChild(closeButton);
-    popupContent.appendChild(leftArrow);
-    popupContent.appendChild(imgElement);
-    popupContent.appendChild(rightArrow);
-    popupContainer.appendChild(popupContent);
-    document.body.appendChild(popupContainer);
-}
-
-
 });

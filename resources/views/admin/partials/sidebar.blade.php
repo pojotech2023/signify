@@ -80,7 +80,7 @@
             </a>
           </li> --}}
           <li class="nav-item">
-            <a href="widgets.html">
+            <a href="{{ route('usercreation-form') }}">
                 <i class="bi bi-person-plus-fill"></i>
               <p>User Creation</p>
             </a>
@@ -100,7 +100,7 @@
                 </li>
                 <li>
                     <a href="{{ route('material-list') }}">
-                      <span class="sub-item">Material List</span>
+                      <span class="sub-item">Aggregator List</span>
                     </a>
                   </li>
               </ul>

@@ -9,7 +9,17 @@ class Material extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id', 'sub_category_id','material_name','material_main_img','material_sub_img'];
+    protected $fillable = [
+        'category_id', 
+        'sub_category_id',
+        'material_name',
+        'main_img',
+        'sub_img1',
+        'sub_img2',
+        'sub_img3',
+        'sub_img4',
+        'video'
+    ];
 
     public function category(){
         return $this->belongsTo(Category::class);

@@ -1,115 +1,234 @@
-document.getElementById("category").addEventListener("change", function () {
-    const category = this.value;
-    const subCategory = document.getElementById("sub_category");
-    const materialContainer = document.getElementById("material-images");
-    const materialSection = document.getElementById("material-section");
-    const shadesSection = document.getElementById("shades-section");
-    const shadeImagesContainer = document.getElementById("shade-images");
+/** ======= Website Aggregator Form ======= **/
 
-    // Clear previous subcategories and material images
-    subCategory.innerHTML = '<option selected>Select Sub Category</option>';
-    materialContainer.innerHTML = "";
-    shadeImagesContainer.innerHTML = "";
+document.addEventListener("DOMContentLoaded", function () {
+    /** ======= Category wise Subcategory Dropdown list SECTION ======= **/
+    document.getElementById("category_id").addEventListener("change", function () {
+        let categoryId = this.value;
+        let subcategoryDropdown = document.getElementById("subcategory");
 
-    const subCategories = {
-        "Metal": ["Stainless Steel", "Aluminium", "Galvanised Iron / SS2B", "Brass"],
-        "Acrylic": ["Lit", "Non Lit"]
-    };
+        // Show a loading option while fetching subcategories
+        subcategoryDropdown.innerHTML = '<option value="">Loading...</option>';
 
-    const materialImages = {
-        "Stainless Steel": [
-            { src: "img/metal/m1.jpeg", alt: "SS with Acrylic", title: "SS with Acrylic" },
-            { src: "img/metal/m2.jfif", alt: "3D Cuff Non Lit", title: "3D Cuff Non Lit" },
-            { src: "img/metal/etching.jpg", alt: "SS Lip Letter", title: "SS Lip Letter" },
-            { src: "img/metal/m1.jpeg", alt: "3D Cuff Reverse Lit", title: "3D Cuff Reverse Lit" },
-            { src: "img/metal/m1.jpeg", alt: "SS Back lit with acrylic diffuser", title: "SS Back lit with acrylic diffuser" },
-            { src: "img/metal/m1.jpeg", alt: "SS 2D Lit", title: "SS 2D Lit" },
-            { src: "img/metal/m1.jpeg", alt: "SS with Acrylic Hide lit", title: "SS with Acrylic Hide lit" },
-            { src: "img/metal/m1.jpeg", alt: "Etching Plates", title: "Etching Plates" }
-        ],
-        "Aluminium": [
-            { src: "img/metal/etching.jpg", alt: "Die Cast", title: "Die Cast" }
-        ],
-        "Galvanised Iron / SS2B": [
-            { src: "img/metal/m2.jfif", alt: "Cuff Letters", title: "Cuff Letters" },
-            { src: "img/metal/m1.jpeg", alt: "Lit Cuff letters", title: "Lit Cuff letters" },
-            { src: "img/metal/etching.jpg", alt: "Big Signages", title: "Big Signages" }
-        ],
-        "Brass": [
-            { src: "img/metal/m1.jpeg", alt: "Die Cast Solid letters", title: "Die Cast Solid letters" },
-            { src: "img/metal/etching.jpg", alt: "Etching Plates", title: "Etching Plates" }
-        ]
-    };
+        // Update the hidden field with the selected category ID
+        document.getElementById("hidden_category_id").value = categoryId;
 
-    const shades = [
-        { src: "img/metal/m1.jpeg", alt: "Silver Mirror", title: "Silver Mirror" },
-        { src: "img/metal/m2.jfif", alt: "Silver Brush / Matt", title: "Silver Brush / Matt" },
-        { src: "img/metal/etching.jpg", alt: "Titanium Gold Mirror", title: "Titanium Gold Mirror" },
-        { src: "img/metal/m1.jpeg", alt: "Matt / Brush Gold", title: "Matt / Brush Gold" },
-        { src: "img/metal/m2.jfif", alt: "Rose Gold Mirror", title: "Rose Gold Mirror" },
-        { src: "img/metal/etching.jpg", alt: "Rose Gold Brush", title: "Rose Gold Brush" },
-        { src: "img/metal/m2.jfif", alt: "Metallic Black", title: "Metallic Black" },
-        { src: "img/metal/etching.jpg", alt: "Metallic Green", title: "Metallic Green" },
-        { src: "img/metal/etching.jpg", alt: "Metallic Blue", title: "Metallic Blue" }
-    ];
+        if (categoryId) {
+            fetch(`/api/get-subcategories/${categoryId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Reset subcategory dropdown
+                    subcategoryDropdown.innerHTML = '<option value="">Select Sub Category</option>';
 
-    // Populate subcategories
-    if (subCategories[category]) {
-        subCategories[category].forEach(subCat => {
-            const option = document.createElement("option");
-            option.value = subCat;
-            option.textContent = subCat;
-            subCategory.appendChild(option);
-        });
-        subCategory.disabled = false;
-    } else {
-        subCategory.disabled = true;
-    }
-
-    // Show material images based on subcategory
-    subCategory.addEventListener("change", function () {
-        const subCategoryValue = this.value;
-        materialContainer.innerHTML = "";
-        materialSection.style.display = materialImages[subCategoryValue] ? "block" : "none";
-
-        if (materialImages[subCategoryValue]) {
-            materialImages[subCategoryValue].forEach(item => {
-                const colDiv = document.createElement("div");
-                colDiv.className = "col-4";
-                colDiv.innerHTML = `
-                    <div class="image-container d-flex flex-column align-items-center">
-                        <img src="${item.src}" alt="${item.alt}" class="img-fluid selectable-image">
-                        <div class="mt-2 text-center title">${item.title}</div>
-                    </div>
-                `;
-                materialContainer.appendChild(colDiv);
-            });
-
-            document.querySelectorAll('.selectable-image').forEach(img => {
-                img.addEventListener('click', function () {
-                    this.classList.toggle('selected');
+                    if (data.length > 0) {
+                        data.forEach(subcategory => {
+                            let option = document.createElement("option");
+                            option.value = subcategory.id;
+                            option.textContent = subcategory.sub_category;
+                            subcategoryDropdown.appendChild(option);
+                        });
+                    } else {
+                        subcategoryDropdown.innerHTML = '<option value="">No Subcategories Available</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching subcategories:", error);
+                    subcategoryDropdown.innerHTML = '<option value="">Error Loading Subcategories</option>';
                 });
-            });
         }
     });
 
-    // Show shades for Metal category
-    shadesSection.style.display = category === "Metal" ? "block" : "none";
-    if (category === "Metal") {
-        shadeImagesContainer.innerHTML = shades.map(shade => `
-            <div class="col-2 p-1">
-                <div class="image-container d-flex flex-column align-items-center">
-                    <img src="${shade.src}" alt="${shade.alt}" class="img-fluid selectable-image" data-title="${shade.title}">
-                    <p class="mt-2 title">${shade.title}</p>
-                </div>
-            </div>
-        `).join("");
+    /** ======= Subcategory wise Material list SECTION ======= **/
+    document.getElementById("subcategory").addEventListener("change", function () {
+        let subcategoryId = this.value;
+        let materialSection = document.getElementById("material-section");
+        let materialImagesContainer = document.getElementById("material-images");
 
-        document.querySelectorAll('.selectable-image').forEach(img => {
-            img.addEventListener('click', function () {
-                this.classList.toggle('selected');
+        materialImagesContainer.innerHTML = '<p>Loading...</p>';
+        materialSection.style.display = "none";
+
+        document.getElementById("hidden_sub_category_id").value = subcategoryId;
+
+        if (subcategoryId) {
+            fetch(`/api/get-materials/${subcategoryId}`)
+                .then(response => response.json())
+                .then(data => {
+                    materialImagesContainer.innerHTML = "";
+
+                    if (data.length > 0) {
+                        data.forEach(material => {
+                            let imagePath = `/storage/${material.material_main_img}`;
+                            let subImages = material.material_sub_img.split(',');
+
+                            let colDiv = document.createElement("div");
+                            colDiv.className = "col-md-3 mb-3";
+                            colDiv.innerHTML = `
+                                <div class="card">
+                                    <img src="${imagePath}" class="card-img-top material-card" data-material-id="${material.id}"
+                                     alt="${material.material_name}" style="cursor: pointer;">
+                                    <div class="card-body d-flex">
+                                        <p class="card-text">${material.material_name}</p>
+                                        <span class="plus-icon" data-sub-imgs='${JSON.stringify(subImages)}' style="cursor: pointer;">➕</span>
+                                    </div>
+                                    </div>
+                                </div>
+                            `;
+                            materialImagesContainer.appendChild(colDiv);
+                        });
+                        materialSection.style.display = "block";
+                        // Attach click event to plus icons
+                        document.querySelectorAll(".plus-icon").forEach(icon => {
+                            icon.addEventListener("click", function () {
+                                let subImages = JSON.parse(this.getAttribute("data-sub-imgs"));
+                                showSubImagesPopup(subImages);
+                            });
+                        });
+                    } else {
+                        materialImagesContainer.innerHTML = '<p>No materials found.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching materials:", error);
+                    materialImagesContainer.innerHTML = '<p>Error loading materials.</p>';
+                });
+        }
+    });
+
+    /** ======= Material wise Shades list SECTION ======= **/
+    document.getElementById("material-images").addEventListener("click", function (event) {
+        let card = event.target.closest(".material-card");
+        if (card) {
+            let materialId = card.getAttribute("data-material-id");
+            document.getElementById("hidden_material_id").value = materialId;
+            loadShades(materialId);
+        }
+    });
+
+    function loadShades(materialId) {
+        let shadesSection = document.getElementById("shades-section");
+        let shadeImagesContainer = document.getElementById("shade-images");
+
+        shadeImagesContainer.innerHTML = '<p>Loading...</p>';
+        shadesSection.style.display = "none";
+
+        fetch(`/api/get-shades/${materialId}`)
+            .then(response => response.json())
+            .then(data => {
+                shadeImagesContainer.innerHTML = "";
+
+                if (data.length > 0) {
+                    data.forEach(shade => {
+                        let shadeImagePath = `/storage/${shade.shade_img}`;
+                        let shadeDiv = document.createElement("div");
+                        shadeDiv.className = "col-md-3 mb-3 shade-card";
+                        shadeDiv.dataset.shadeId = shade.id;
+                        shadeDiv.innerHTML = `
+                            <div class="card" style="cursor: pointer;">
+                                <img src="${shadeImagePath}" class="card-img-top" alt="${shade.shade_name}">
+                                <div class="card-body">
+                                    <p class="card-text text-center">${shade.shade_name}</p>
+                                </div>
+                            </div>
+                        `;
+                        shadeImagesContainer.appendChild(shadeDiv);
+                    });
+                    shadesSection.style.display = "block";
+                } else {
+                    shadeImagesContainer.innerHTML = '<p>No shades found.</p>';
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching shades:", error);
+                shadeImagesContainer.innerHTML = '<p>Error loading shades.</p>';
             });
-        });
     }
+
+    // Capture selected shade
+    document.getElementById("shade-images").addEventListener("click", function (event) {
+        let shadeCard = event.target.closest(".shade-card");
+        if (shadeCard) {
+            let shadeId = shadeCard.getAttribute("data-shade-id");
+
+            // Update hidden input
+            document.getElementById("hidden_shade_id").value = shadeId;
+
+            // Remove active class from all shade cards
+            document.querySelectorAll(".shade-card").forEach(card => {
+                card.classList.remove("selected-shade");
+            });
+
+            // Add active class to the selected shade
+            shadeCard.classList.add("selected-shade");
+        }
+    });
+
+    // Add CSS to highlight selected shade
+    let style = document.createElement("style");
+    style.innerHTML = `
+        .selected-shade {
+            border: 2px solid #007bff;
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Show popup with sub-images
+    function showSubImagesPopup(subImages) {
+        let popupContainer = document.createElement("div");
+        popupContainer.id = "subImagesPopup";
+        popupContainer.classList.add("popup-container");
+
+        let popupContent = document.createElement("div");
+        popupContent.classList.add("popup-content");
+
+        let closeButton = document.createElement("span");
+        closeButton.innerHTML = "&times;";
+        closeButton.classList.add("close-button");
+        closeButton.addEventListener("click", () => document.body.removeChild(popupContainer));
+
+        let leftArrow = document.createElement("span");
+        leftArrow.innerHTML = "&#9664;"; // Left arrow symbol
+        leftArrow.classList.add("left-arrow");
+
+        let rightArrow = document.createElement("span");
+        rightArrow.innerHTML = "&#9654;"; // Right arrow symbol
+        rightArrow.classList.add("right-arrow");
+
+        let imgElement = document.createElement("img");
+        imgElement.classList.add("popup-image");
+
+        let currentIndex = 0;
+        function updateImage() {
+            imgElement.src = `/storage/${subImages[currentIndex].trim()}`;
+        }
+
+        updateImage();
+
+        leftArrow.addEventListener("click", () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateImage();
+            }
+        });
+
+        rightArrow.addEventListener("click", () => {
+            if (currentIndex < subImages.length - 1) {
+                currentIndex++;
+                updateImage();
+            }
+        });
+
+        popupContent.appendChild(closeButton);
+        popupContent.appendChild(leftArrow);
+        popupContent.appendChild(imgElement);
+        popupContent.appendChild(rightArrow);
+        popupContainer.appendChild(popupContent);
+        document.body.appendChild(popupContainer);
+    }
+
 
 });

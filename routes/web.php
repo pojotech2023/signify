@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminAggregatorFormController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\Admin\UserCreationController;
 use App\Http\Controllers\WEB\AggregatorFormController;
 use App\Models\AggregatorForm;
 use App\Models\Login;
@@ -52,9 +53,11 @@ Route::prefix('admin')->group(function () {
    
     Route::get('/dashboard', function () { return view('admin.dashboard');})->name('admin.dashboard');
 
-    Route::get('/aggregator-form', [AdminAggregatorFormController::class, 'index'])->name('aggregator-form');
+    Route::get('/aggregator-form/{id?}', [AdminAggregatorFormController::class, 'index'])->name('aggregator-form');
     Route::get('/aggregator-list', function(){ return view('admin.aggregator_list');})->name('aggregator-list');
     Route::post('/aggregator-form', [AdminAggregatorFormController::class, 'store'])->name('aggregator-store');
+    Route::post('/material/delete-image', [MaterialController::class, 'deleteImage'])->name('material.deleteImage');
+
    
     Route::get('/category', [CategoryController::class, 'index'])->name('category-list');
     Route::post('/category', [CategoryController::class, 'store'])->name('category-store');
@@ -67,5 +70,10 @@ Route::prefix('admin')->group(function () {
     Route::delete('/subcategory-delete/{id}', [SubCategoryController::class, 'delete'])->name('subcategory-delete');
 
     Route::get('/material', [MaterialController::class, 'index'])->name('material-list');
+    Route::patch('/material-update/{id}', [MaterialController::class, 'update'])->name('material-update');
     Route::delete('/material-delete/{id}', [MaterialController::class, 'delete'])->name('material-delete');
+
+    Route::get('/user-creation/form', [UserCreationController::class, 'index'])->name('usercreation-form');
+    Route::post('/user-creation', [UserCreationController::class, 'store'])->name('user-creation');
+    
 });
