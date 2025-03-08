@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
             $table->foreignId('material_id')->constrained()->onDelete('cascade');
-            $table->foreignId('shade_id')->constrained()->onDelete('cascade');
             $table->string('width')->nullable();
             $table->string('height')->nullable();
             $table->string('unit')->nullable();
@@ -24,9 +23,10 @@ return new class extends Migration
             $table->integer('quantity')->default(1);
             $table->enum('design_service_need',['Yes','No']);
             $table->string('email_id')->unique(); // Unique constraint added
-            $table->string('site_image')->nullable();
-            $table->string('design_attachment')->nullable();
-            $table->string('reference_image')->nullable();
+            $table->text('site_image')->nullable();
+            $table->text('design_attachment')->nullable();
+            $table->text('reference_image')->nullable();
+            $table->string('status')->default('New');
             $table->timestamps();
         });
     }

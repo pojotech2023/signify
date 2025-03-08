@@ -105,14 +105,9 @@
                     </div>
                 </div>
             </div>
-            <!-- Hover Popup for Sub Images -->
-            {{-- <div id="image-popup" class="popup-container"
-                style="display:none; position: absolute; background: rgba(255, 255, 255, 0.9); padding: 10px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2); z-index: 1000;">
-                <div id="popup-images" class="d-flex flex-wrap"></div>
-            </div> --}}
 
             <div id="shades-section" style="display: none;">
-                <input type="hidden" name="shade_id" id="hidden_shade_id">
+                {{-- <input type="hidden" name="shade_id" id="hidden_shade_id"> --}}
                 <div class="row align-items-center">
                     <div class="col-lg-2">
                         <div class="form-group">

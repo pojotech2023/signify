@@ -33,6 +33,7 @@ class AggregatorFormController extends Controller
 
     public function getShades($material_id)
     {
+
         $shades = Shade::where('material_id', $material_id)->get();
         return response()->json($shades);
     }

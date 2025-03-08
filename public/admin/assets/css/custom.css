@@ -1,0 +1,4 @@
+.leads-page-header{
+    border-bottom: 1px solid #ebecec !important;
+border-bottom: var(--bs-card-border-width) solid var(--bs-card-border-color);
+}

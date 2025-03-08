@@ -33,4 +33,8 @@ class Material extends Model
     {
         return $this->hasMany(Shade::class);
     }
+
+    public function aggregatorForm(){
+        return $this->hasMany(AggregatorForm::class);
+    }
 }

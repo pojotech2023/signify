@@ -128,21 +128,68 @@ document.addEventListener("DOMContentLoaded", function () {
                 shadeImagesContainer.innerHTML = "";
 
                 if (data.length > 0) {
-                    data.forEach(shade => {
-                        let shadeImagePath = `/storage/${shade.shade_img}`;
-                        let shadeDiv = document.createElement("div");
-                        shadeDiv.className = "col-md-3 mb-3 shade-card";
-                        shadeDiv.dataset.shadeId = shade.id;
-                        shadeDiv.innerHTML = `
-                            <div class="card" style="cursor: pointer;">
-                                <img src="${shadeImagePath}" class="card-img-top" alt="${shade.shade_name}">
-                                <div class="card-body">
-                                    <p class="card-text text-center">${shade.shade_name}</p>
+                    let cardDiv = document.createElement("div");
+
+                    data.forEach((shade) => {
+                        let shadeImages = [
+                            shade.shade_img1,
+                            shade.shade_img2,
+                            shade.shade_img3,
+                            shade.shade_img4
+                        ].filter(img => img !== null);
+
+                        let rowDiv = document.createElement("div");
+                        rowDiv.className = "d-flex align-items-center mb-3";
+                        rowDiv.setAttribute("data-shade-row-id", shade.id); // ✅ Unique row identifier
+                        rowDiv.style.borderBottom = "1px solid #eee";
+                        rowDiv.style.paddingBottom = "10px";
+
+                        let nameDiv = document.createElement("div");
+                        nameDiv.className = "col-md-4";
+                        nameDiv.innerHTML = `${shade.shade_name}`;
+                        nameDiv.style.textAlign = "left";
+
+                        let imagesDiv = document.createElement("div");
+                        imagesDiv.className = "col-md-8 d-flex flex-wrap";
+
+                        shadeImages.forEach((imgPath, index) => {
+                            let shadeImagePath = `${window.location.origin}/storage/${imgPath}`;
+                            imagesDiv.innerHTML += `
+                                <div style="position: relative; display: inline-block; margin: 5px; cursor: pointer;">
+                                    <img src="${shadeImagePath}" 
+                                        alt="Shade Image" 
+                                        width="100" height="70"
+                                        style="object-fit: cover; border-radius: 4px; border: 1px solid #ccc;"
+                                        data-shade-id="${shade.id}"
+                                        data-img-id="${index + 1}">
                                 </div>
-                            </div>
-                        `;
-                        shadeImagesContainer.appendChild(shadeDiv);
+                            `;
+                        });
+
+                        rowDiv.appendChild(nameDiv);
+                        rowDiv.appendChild(imagesDiv);
+
+                        cardDiv.appendChild(rowDiv);
+
+                        // ✅ Hidden inputs to store selected shade and image
+                        let hiddenShadeIdInput = document.createElement("input");
+                        hiddenShadeIdInput.type = "hidden";
+                        hiddenShadeIdInput.name = `shades[${shade.id}][shade_id]`;
+                        hiddenShadeIdInput.value = shade.id;
+
+                        let hiddenSelectedImgInput = document.createElement("input");
+                        hiddenSelectedImgInput.type = "hidden";
+                        hiddenSelectedImgInput.id = `hidden_shade_selected_img_${shade.id}`;
+                        hiddenSelectedImgInput.name = `shades[${shade.id}][selected_img]`;
+                        hiddenSelectedImgInput.value = "";
+
+                        //  cardDiv.appendChild(hiddenShadeIdInput);
+                        //  cardDiv.appendChild(hiddenSelectedImgInput);
+                        rowDiv.appendChild(hiddenShadeIdInput);
+                        rowDiv.appendChild(hiddenSelectedImgInput);
                     });
+
+                    shadeImagesContainer.appendChild(cardDiv);
                     shadesSection.style.display = "block";
                 } else {
                     shadeImagesContainer.innerHTML = '<p>No shades found.</p>';
@@ -154,34 +201,47 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // Capture selected shade
+    // ✅ Capture selected shade image
     document.getElementById("shade-images").addEventListener("click", function (event) {
-        let shadeCard = event.target.closest(".shade-card");
-        if (shadeCard) {
-            let shadeId = shadeCard.getAttribute("data-shade-id");
+        let clickedImg = event.target.closest("img");
 
-            // Update hidden input
-            document.getElementById("hidden_shade_id").value = shadeId;
+        if (clickedImg) {
+            let shadeId = clickedImg.getAttribute("data-shade-id");
 
-            // Remove active class from all shade cards
-            document.querySelectorAll(".shade-card").forEach(card => {
-                card.classList.remove("selected-shade");
-            });
+            if (shadeId) {
+                // ✅ Get the parent row for the clicked image
+                let parentRow = clickedImg.closest(`[data-shade-row-id="${shadeId}"]`);
 
-            // Add active class to the selected shade
-            shadeCard.classList.add("selected-shade");
+                if (parentRow) {
+                    // ✅ Deselect previously selected image in this row
+                    parentRow.querySelectorAll("img").forEach(img => {
+                        img.classList.remove("selected-shade");
+                    });
+
+                    // ✅ Highlight the clicked image
+                    clickedImg.classList.add("selected-shade");
+
+                    // ✅ Update the hidden input value
+                    // document.getElementById(`hidden_shade_id_${shadeId}`).value = clickedImg.getAttribute("data-img-id");
+                    let hiddenInput = parentRow.querySelector(`#hidden_shade_selected_img_${shadeId}`);
+                    if (hiddenInput) {
+                        hiddenInput.value = clickedImg.getAttribute("src");
+                    }
+                }
+            }
         }
     });
 
-    // Add CSS to highlight selected shade
+    // ✅ Add CSS for selected image highlight
     let style = document.createElement("style");
     style.innerHTML = `
         .selected-shade {
-            border: 2px solid #007bff;
+            border: 2px solid #007bff !important;
             box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
         }
     `;
     document.head.appendChild(style);
+
 
     /** ======= Show Popup with Sub-Images and Navigation ======= **/
     function showSubImagesPopup(subImages) {

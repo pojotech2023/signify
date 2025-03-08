@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminAggregatorFormController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\LeadsController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\UserCreationController;
@@ -56,8 +57,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/aggregator-form/{id?}', [AdminAggregatorFormController::class, 'index'])->name('aggregator-form');
     Route::get('/aggregator-list', function(){ return view('admin.aggregator_list');})->name('aggregator-list');
     Route::post('/aggregator-form', [AdminAggregatorFormController::class, 'store'])->name('aggregator-store');
-    Route::post('/material/delete-image', [MaterialController::class, 'deleteImage'])->name('material.deleteImage');
-
+    Route::post('/material/delete-image', [MaterialController::class, 'deleteMaterialsubImage'])->name('material.deleteImage');
+    Route::post('/shade/delete-image', [MaterialController::class, 'deleteShadeImage'])->name('shade.deleteImage');
    
     Route::get('/category', [CategoryController::class, 'index'])->name('category-list');
     Route::post('/category', [CategoryController::class, 'store'])->name('category-store');
@@ -75,5 +76,9 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/user-creation/form', [UserCreationController::class, 'index'])->name('usercreation-form');
     Route::post('/user-creation', [UserCreationController::class, 'store'])->name('user-creation');
+
+    Route::get('/leads', [LeadsController::class, 'index'])->name('leads-list');
+    Route::get('/leads-details/{id}', [LeadsController::class, 'show'])->name('lead-details');
+    Route::post('/assign/admin-superuser', [LeadsController::class, 'assignAdminSuperuser'])->name('assign-admin-superuser');
     
 });

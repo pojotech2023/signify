@@ -14,11 +14,12 @@ class MaterialController extends Controller
     public function index()
     {
         $materials = Material::all();
-        return view('admin.material_list', compact('materials'));
+        return view('admin.aggregator_list', compact('materials'));
     }
 
     public function update(Request $request, $id)
     {
+        //dd($request->all()); 
         $validate = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required|exists:sub_categories,id',
@@ -27,12 +28,12 @@ class MaterialController extends Controller
             'material_sub_img.*' => 'nullable|image|mimes:jpg,jpeg,png,webp',
             'shade_name' => 'required|array',
             'shade_name.*' => 'required|string',
-            'shade_img.*' => 'nullable|image|mimes:jpg,jpeg,png,webp',
+            'shade_img.*.*' => 'nullable|image|mimes:jpg,jpeg,png,webp',
             'video' => 'nullable|mimes:mp4,mov,avi,wmv|max:5120'
         ]);
 
         if ($validate->fails()) {
-            return redirect()->withErrors($validate)->withInput();
+            return redirect()->back()->withErrors($validate)->withInput();
         }
 
         $material = Material::findOrFail($id);
@@ -72,7 +73,7 @@ class MaterialController extends Controller
         }
 
         // **Update Data Array**
-        $updateData = [
+        $material->update([
             'category_id'     => $request->category_id,
             'sub_category_id' => $request->sub_category_id,
             'material_name'   => $request->material_name,
@@ -82,44 +83,85 @@ class MaterialController extends Controller
             'sub_img2'        => $subImages[1] ?? null,
             'sub_img3'        => $subImages[2] ?? null,
             'sub_img4'        => $subImages[3] ?? null,
-        ];
+        ]);
 
         // **SHADE IMAGES HANDLING**
-        foreach ($request->shade_name as $key => $shadeName) {
-            $shadeId = $request->shade_id[$key] ?? null;
+        foreach ($request->shade_name as $shadeKey => $shadeName) {
+            $shadeId = $request->shade_id[$shadeKey] ?? null;
+
             if ($shadeId) {
+                // **UPDATE Existing Shade**
                 $shade = Shade::find($shadeId);
                 if ($shade) {
                     $shade->shade_name = $shadeName;
                     $shade->category_id = $request->category_id;
                     $shade->sub_category_id = $request->sub_category_id;
 
-                    if ($request->hasFile("shade_img.$key")) {
-                        Storage::disk('public')->delete($shade->shade_img);
-                        $shade->shade_img = $request->file("shade_img.$key")->store('shades', 'public');
+                    // Handle existing shade images in an array
+                    $shadeImages = [
+                        $shade->shade_img1,
+                        $shade->shade_img2,
+                        $shade->shade_img3,
+                        $shade->shade_img4
+                    ];
+
+                    // Handle **nested array** for shade images
+                    if (isset($request->shade_img[$shadeKey])) {
+                        foreach ($request->shade_img[$shadeKey] as $file) {
+                            foreach ($shadeImages as $key => $value) {
+                                if (empty($value)) {
+                                    $shadeImages[$key] = $file->store('shades', 'public');
+                                    break;
+                                }
+                            }
+                        }
                     }
-                    $shade->save();
+
+                    // Update shade images
+                    $shade->update([
+                        'shade_img1' => $shadeImages[0] ?? null,
+                        'shade_img2' => $shadeImages[1] ?? null,
+                        'shade_img3' => $shadeImages[2] ?? null,
+                        'shade_img4' => $shadeImages[3] ?? null
+                    ]);
                 }
             } else {
+                // **CREATE New Shade**
                 $shade = new Shade();
                 $shade->material_id = $id;
                 $shade->shade_name = $shadeName;
                 $shade->category_id = $request->category_id;
                 $shade->sub_category_id = $request->sub_category_id;
 
-                if ($request->hasFile("shade_img.$key")) {
-                    $shade->shade_img = $request->file("shade_img.$key")->store('shades', 'public');
+                // Create new shade image array
+                $shadeImages = [null, null, null, null];
+
+                if (isset($request->shade_img[$shadeKey])) {
+                    foreach ($request->shade_img[$shadeKey] as $file) {
+                        foreach ($shadeImages as $key => $value) {
+                            if (empty($value)) {
+                                $shadeImages[$key] = $file->store('shades', 'public');
+                                break;
+                            }
+                        }
+                    }
                 }
+
+                // Save new shade with images
+                $shade->shade_img1 = $shadeImages[0] ?? null;
+                $shade->shade_img2 = $shadeImages[1] ?? null;
+                $shade->shade_img3 = $shadeImages[2] ?? null;
+                $shade->shade_img4 = $shadeImages[3] ?? null;
                 $shade->save();
             }
         }
-        // **Update the Material Record**
-        $material->update($updateData);
+
+
         return redirect()->back()->with('success', 'Material updated successfully');
     }
 
     //Material single sub image delete
-    public function deleteImage(Request $request)
+    public function deleteMaterialsubImage(Request $request)
     {
         $request->validate([
             'id' => 'required|exists:materials,id',
@@ -135,6 +177,24 @@ class MaterialController extends Controller
 
         return redirect()->back()->with('success', 'Image deleted successfully!');
     }
+
+    public function deleteShadeImage(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:shades,id',
+            'field' => 'required|in:shade_img1,shade_img2,shade_img3,shade_img4',
+        ]);
+
+        $shade = Shade::findOrFail($request->id);
+        $imagePath = $shade->{$request->field};
+        if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+            Storage::disk('public')->delete($imagePath);
+        }
+        $shade->update([$request->field => null]);
+
+        return redirect()->back()->with('success', 'Shade image deleted successfully!');
+    }
+
 
 
     public function delete($id)

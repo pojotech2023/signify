@@ -37,7 +37,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a data-bs-toggle="collapse" href="#base">
+            <a href="{{ route('leads-list') }}">
               <i class="far fa-chart-bar"></i>
               <p>Leads</p>
             </a>

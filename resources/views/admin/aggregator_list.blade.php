@@ -1,237 +1,124 @@
 @extends('layouts.app')
 @section('content')
-    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="../assets/css/plugins.min.css" />
-    <link rel="stylesheet" href="../assets/css/kaiadmin.min.css" />
     <div class="container">
         <div class="page-inner">
             <div class="page-header">
                 <h3 class="fw-bold mb-3">Aggregator</h3>
                 <ul class="breadcrumbs mb-3">
                     <li class="nav-home">
-                        <a href="#">
-                            <i class="icon-home"></i>
-                        </a>
+                        <a href="#"><i class="icon-home"></i></a>
                     </li>
-                    <li class="separator">
-                        <i class="icon-arrow-right"></i>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#">Aggregator</a>
-                    </li>
-                    <li class="separator">
-                        <i class="icon-arrow-right"></i>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#">Aggregator List</a>
-                    </li>
+                    <li class="separator"><i class="icon-arrow-right"></i></li>
+                    <li class="nav-item"><a href="#">Aggregator</a></li>
+                    <li class="separator"><i class="icon-arrow-right"></i></li>
+                    <li class="nav-item"><a href="#">Material & Shade List</a></li>
                 </ul>
             </div>
-            <div class="row">
 
+            <div class="row">
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex align-items-center">
-                                <h4 class="card-title">Aggregator List</h4>
-                                <button class="btn btn-primary btn-round ms-auto" data-bs-toggle="modal"
-                                    data-bs-target="#addRowModal">
-                                    <i class="fa fa-plus"></i>
-                                    Add Row
-                                </button>
+                                <h4 class="card-title">Material & Shade List</h4>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <!-- Modal -->
-                            <div class="modal fade" id="addRowModal" tabindex="-1" role="dialog" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header border-0">
-                                            <h5 class="modal-title">
-                                                <span class="fw-mediumbold"> New</span>
-                                                <span class="fw-light"> Row </span>
-                                            </h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p class="small">
-                                                Create a new row using this form, make sure you
-                                                fill them all
-                                            </p>
-                                            <form>
-                                                <div class="row">
-                                                    <div class="col-sm-12">
-                                                        <div class="form-group form-group-default">
-                                                            <label>Name</label>
-                                                            <input id="addName" type="text" class="form-control"
-                                                                placeholder="fill name" />
+                        @if ($materials->isEmpty())
+                            <p class="text-center mt-3"> No Materials and Shades found. Please add a Aggregator Form.</p>
+                        @else
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="add-row" class="display table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>S.No</th>
+                                                <th>Material Name</th>
+                                                <th>Material Main Image</th>
+                                                <th>Material Sub Image</th>
+                                                <th style="width: 10%">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($materials as $index => $material)
+                                                <tr>
+                                                    <td>{{ $loop->iteration }}</td>
+                                                    <td>{{ $material->material_name }}</td>
+                                                    <td> <img
+                                                            src="{{ asset('storage/' . $material->main_img) }}"alt="Main Image"
+                                                            width="100"></td>
+                                                    <td>
+                                                        @for ($i = 1; $i <= 4; $i++)
+                                                            @php
+                                                                $fieldName = "sub_img$i";
+                                                            @endphp
+                                                            @if (!empty($material->$fieldName))
+                                                                <img src="{{ asset('storage/' . $material->$fieldName) }}"
+                                                                    alt="Sub Image {{ $i }}" width="70">
+                                                            @endif
+                                                        @endfor
+                                                    <td>
+                                                        <div class="form-button-action">
+                                                            <a href="{{ isset($material) ? route('aggregator-form', ['id' => $material->id]) : route('aggregator-form') }}"
+                                                                class="btn btn-link btn-primary btn-lg">
+                                                                <i class="fa fa-edit"></i>
+                                                            </a>
+                                                            <button type="button"
+                                                                class="btn btn-link btn-danger deleteButton"
+                                                                data-bs-toggle="modal" data-id="{{ $material->id }}"
+                                                                data-bs-target="#deleteModal">
+                                                                <i class="fa fa-times"></i>
+                                                            </button>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-md-6 pe-0">
-                                                        <div class="form-group form-group-default">
-                                                            <label>Position</label>
-                                                            <input id="addPosition" type="text" class="form-control"
-                                                                placeholder="fill position" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group form-group-default">
-                                                            <label>Office</label>
-                                                            <input id="addOffice" type="text" class="form-control"
-                                                                placeholder="fill office" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="modal-footer border-0">
-                                            <button type="button" id="addRowButton" class="btn btn-primary">
-                                                Add
-                                            </button>
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal">
-                                                Close
-                                            </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
+                                    aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                                <button type="button" class="close" data-bs-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete this record?
+                                            </div>
+                                            <div class="modal-footer">
+                                                <form id="deleteForm" action="{{ route('material-delete', $material->id) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-bs-dismiss="modal">Cancel</button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+                                <!-- End of Delete Confirmation Modal -->
                             </div>
-
-                            <div class="table-responsive">
-                                <table id="add-row" class="display table table-striped table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th style="width: 10%">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tfoot>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Position</th>
-                                            <th>Office</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </tfoot>
-                                    <tbody>
-                                        <tr>
-                                            <td>Tiger Nixon</td>
-                                            <td>System Architect</td>
-                                            <td>Edinburgh</td>
-                                            <td>
-                                                <div class="form-button-action">
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-primary btn-lg"
-                                                        data-original-title="Edit Task">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-danger" data-original-title="Remove">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Garrett Winters</td>
-                                            <td>Accountant</td>
-                                            <td>Tokyo</td>
-                                            <td>
-                                                <div class="form-button-action">
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-primary btn-lg"
-                                                        data-original-title="Edit Task">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-danger" data-original-title="Remove">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Ashton Cox</td>
-                                            <td>Junior Technical Author</td>
-                                            <td>San Francisco</td>
-                                            <td>
-                                                <div class="form-button-action">
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-primary btn-lg"
-                                                        data-original-title="Edit Task">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-danger" data-original-title="Remove">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Cedric Kelly</td>
-                                            <td>Senior Javascript Developer</td>
-                                            <td>Edinburgh</td>
-                                            <td>
-                                                <div class="form-button-action">
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-primary btn-lg"
-                                                        data-original-title="Edit Task">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-danger" data-original-title="Remove">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Airi Satou</td>
-                                            <td>Accountant</td>
-                                            <td>Tokyo</td>
-                                            <td>
-                                                <div class="form-button-action">
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-primary btn-lg"
-                                                        data-original-title="Edit Task">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-danger" data-original-title="Remove">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Brielle Williamson</td>
-                                            <td>Integration Specialist</td>
-                                            <td>New York</td>
-                                            <td>
-                                                <div class="form-button-action">
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-primary btn-lg"
-                                                        data-original-title="Edit Task">
-                                                        <i class="fa fa-edit"></i>
-                                                    </button>
-                                                    <button type="button" data-bs-toggle="tooltip" title=""
-                                                        class="btn btn-link btn-danger" data-original-title="Remove">
-                                                        <i class="fa fa-times"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.deleteButton').click(function() {
+                var id = $(this).data('id');
+                var action = "{{ route('material-delete', ':id') }}".replace(':id', id);
+                $('#deleteForm').attr('action', action);
+            });
+        });
+    </script>
 @endsection

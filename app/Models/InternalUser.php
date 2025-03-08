@@ -15,8 +15,14 @@ class InternalUser extends Model
         'email_id',
         'password',
     ];
+    
     public function role()
     {
         return $this->belongsTo(Roles::class, 'role_id');
+    }
+
+    public function assignAdminSuperusers()
+    {
+        return $this->hasMany(AssignAdminSuperuser::class, 'internal_user_id');
     }
 }

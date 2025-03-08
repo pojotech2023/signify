@@ -24,16 +24,19 @@ class UserCreationController extends Controller
             'name' => 'required|string|max:255',
             'mobile_no' => 'required|string|max:15',
             'email_id' => 'required|email|unique:internal_users,email_id',
-            'password' => 'required|confirmed',
+            // 'password' => 'required|confirmed',
         ]);
          
         if($validate->fails()){
             return redirect()->back()->withErrors($validate)->withInput();
         }
+
+        $defaultPassword = Hash::make('Password@123');
+        
         $user = InternalUser::create([
             'name' => $request->name,
             'email_id' => $request->email_id,
-            'password' => Hash::make($request->password),
+            'password' => $defaultPassword,
             'mobile_no' => $request->mobile_no,
             'role_id' => $request->role_id,
         ]);

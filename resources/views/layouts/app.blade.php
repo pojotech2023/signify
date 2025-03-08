@@ -45,6 +45,8 @@
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/custom.css')}}" />
+
   </head>
   <body>
     <div class="wrapper">

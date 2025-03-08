@@ -17,7 +17,10 @@ return new class extends Migration
             $table->foreignId('sub_category_id')->constrained()->onDelete('cascade');
             $table->foreignId('material_id')->constrained()->onDelete('cascade');
             $table->string('shade_name');
-            $table->string('shade_img');
+            $table->string('shade_img1')->nullable();
+            $table->string('shade_img2')->nullable();
+            $table->string('shade_img3')->nullable();
+            $table->string('shade_img4')->nullable();
             $table->timestamps();
         });
     }

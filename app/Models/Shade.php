@@ -9,14 +9,24 @@ class Shade extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id','sub_category_id','material_id','shade_name','shade_img'];
+    protected $fillable = [
+        'category_id',
+        'sub_category_id',
+        'material_id',
+        'shade_name',
+        'shade_img1',
+        'shade_img2',
+        'shade_img3',
+        'shade_img4'
+    ];
 
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
-    
-    public function subCategory() {
+
+    public function subCategory()
+    {
         return $this->belongsTo(SubCategory::class);
     }
 
@@ -25,4 +35,8 @@ class Shade extends Model
         return $this->belongsTo(Material::class);
     }
 
+    public function aggregatorFormShades()
+    {
+        return $this->hasMany(AggregatorFormShade::class);
+    }
 }

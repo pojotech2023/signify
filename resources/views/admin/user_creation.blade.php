@@ -68,7 +68,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    <div class="row align-items-center mt-5">
+                                    {{-- <div class="row align-items-center mt-5">
                                         <div class="col-lg-2">
                                             <div class="form-group">
                                                 <label for="password">Password</label>
@@ -98,7 +98,7 @@
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="row align-items-center mt-5">
                                         <div class="col-lg-2">
                                             <div class="form-group">

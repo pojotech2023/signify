@@ -158,7 +158,7 @@
                                                                         alt="Sub Image" width="70">
 
                                                                     <!-- Delete Icon -->
-                                                                    <button type="button" class="delete-image"
+                                                                    <button type="button" class="delete-subimage"
                                                                         data-id="{{ $material->id }}"
                                                                         data-field="{{ $key }}"
                                                                         style="position: absolute; top: 0; right: 0; background: transparent; color: red; border: none; padding: 5px; cursor: pointer;">
@@ -225,25 +225,54 @@
                                                     <!-- Shade Image -->
                                                     <div class="col-lg-2">
                                                         <div class="form-group">
-                                                            <label for="shade_img">Shade Image</label>
+                                                            <label for="shade_img">Shade Images</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="d-flex">
-
-                                                            <input type="file" name="shade_img[]"
-                                                                accept=".webp,.jpg,.jpeg,.png" class="form-control">
+                                                            <input type="file"
+                                                                name="shade_img[{{ isset($loop) ? $loop->index : 0 }}][]"
+                                                                multiple accept="image/*" class="form-control">
+                                                            <button type="button"
+                                                                class="btn btn-success ms-2 add-shade"><i
+                                                                    class="fas fa-plus"></i></button>
                                                             @if ($shade->shade_img)
                                                                 <img src="{{ asset('storage/' . $shade->shade_img) }}"
                                                                     width="50" class="ms-2">
                                                             @endif
-                                                            <button type="button"
-                                                                class="btn btn-success ms-2 add-shade"><i
-                                                                    class="fas fa-plus"></i></button>
                                                         </div>
                                                         @error('shade_img')
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        @if (isset($shade))
+                                                            <div class="mt-2 d-flex flex-wrap">
+                                                                @foreach (range(1, 4) as $imgIndex)
+                                                                    @php
+                                                                        $shadeImgKey = 'shade_img' . $imgIndex;
+                                                                    @endphp
+
+                                                                    @if (!empty($shade->$shadeImgKey))
+                                                                        <div
+                                                                            style="position: relative; display: inline-block; margin: 5px;">
+                                                                            <img src="{{ asset('storage/' . $shade->$shadeImgKey) }}"
+                                                                                alt="Shade Image" width="70">
+
+                                                                            <!-- Delete Icon -->
+                                                                            <button type="button"
+                                                                                class="delete-shadeimage"
+                                                                                data-id="{{ $shade->id }}"
+                                                                                data-field="{{ $shadeImgKey }}"
+                                                                                style="position: absolute; top: 0; right: 0; background: transparent; color: red; border: none; padding: 5px; cursor: pointer;">
+                                                                                <i class="bi bi-trash3-fill"
+                                                                                    style="font-size: 16px;"></i>
+                                                                            </button>
+                                                                        </div>
+                                                                    @endif
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -269,8 +298,9 @@
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="d-flex">
-                                                        <input type="file" name="shade_img[]"
-                                                            accept=".webp,.jpg,.jpeg,.png" class="form-control">
+                                                        <input type="file"
+                                                            name="shade_img[{{ isset($loop) ? $loop->index : 0 }}][]"
+                                                            multiple accept="image/*" class="form-control">
                                                         <button type="button" class="btn btn-success ms-2 add-shade"><i
                                                                 class="fas fa-plus"></i></button>
                                                     </div>
@@ -285,12 +315,19 @@
                                         <button class="btn btn-danger">Cancel</button>
                                     </div>
                                 </form>
-                                <!-- Hidden Form for Deleting Images -->
-                                <form id="deleteImageForm" method="POST" action="{{ route('material.deleteImage') }}"
+                                <!-- Hidden Form for Deleting Sub Images -->
+                                <form id="deleteSubImageForm" method="POST"
+                                    action="{{ route('material.deleteImage') }}" style="display: none;">
+                                    @csrf
+                                    <input type="hidden" name="id" id="deleteSubImageId">
+                                    <input type="hidden" name="field" id="deleteSubImageField">
+                                </form>
+                                <!-- Hidden Form for Deleting Shade Images -->
+                                <form id="deleteShadeImageForm" method="POST" action="{{ route('shade.deleteImage') }}"
                                     style="display: none;">
                                     @csrf
-                                    <input type="hidden" name="id" id="deleteImageId">
-                                    <input type="hidden" name="field" id="deleteImageField">
+                                    <input type="hidden" name="id" id="deleteShadeImageId">
+                                    <input type="hidden" name="field" id="deleteShadeImageField">
                                 </form>
                             </div>
                         </div>
@@ -363,14 +400,27 @@
             });
         });
         document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".delete-image").forEach(button => {
+            document.querySelectorAll(".delete-subimage").forEach(button => {
                 button.addEventListener("click", function() {
                     let materialId = this.getAttribute("data-id");
                     let field = this.getAttribute("data-field");
-                    document.getElementById("deleteImageId").value = materialId;
-                    document.getElementById("deleteImageField").value = field;
+                    document.getElementById("deleteSubImageId").value = materialId;
+                    document.getElementById("deleteSubImageField").value = field;
 
-                    document.getElementById("deleteImageForm").submit();
+                    document.getElementById("deleteSubImageForm").submit();
+                });
+            });
+        });
+        //Shade image delete
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".delete-shadeimage").forEach(button => {
+                button.addEventListener("click", function() {
+                    let materialId = this.getAttribute("data-id");
+                    let field = this.getAttribute("data-field");
+                    document.getElementById("deleteShadeImageId").value = materialId;
+                    document.getElementById("deleteShadeImageField").value = field;
+
+                    document.getElementById("deleteShadeImageForm").submit();
                 });
             });
         });

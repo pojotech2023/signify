@@ -22,4 +22,8 @@ class Category extends Model
     public function shades(){
         return $this->hasMany(Shade::class);
     }
+
+    public function aggregatorForm(){
+        return $this->hasMany(AggregatorForm::class);
+    }
 }
