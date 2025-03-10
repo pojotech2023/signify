@@ -70,6 +70,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             if (material.sub_img3) subImages.push(`/storage/${material.sub_img3}`);
                             if (material.sub_img4) subImages.push(`/storage/${material.sub_img4}`);
 
+                            if (material.video) {
+                                subImages.push(`/storage/${material.video}`);
+                            }
+
                             let colDiv = document.createElement("div");
                             colDiv.className = "col-md-3 mb-3";
                             colDiv.innerHTML = `
@@ -78,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                      alt="${material.material_name}" style="cursor: pointer;">
                                     <div class="card-body d-flex justify-content-between align-items-center">
                                         <p class="card-text">${material.material_name}</p>
-                                        ${subImages.length > 0 ? `<span class="plus-icon" data-sub-imgs='${JSON.stringify(subImages)}' style="cursor: pointer;">➕</span>` : ''}
+                                        ${subImages.length > 0 ? `<span class="plus-icon" data-sub-imgs='${JSON.stringify(subImages)}' style="cursor: pointer; text-decoration: underline; color: blue; font-size:10px">View More</span>` : ''}
                                     </div>
                                 </div>
                             `;
@@ -273,35 +277,47 @@ document.addEventListener("DOMContentLoaded", function () {
         let imgElement = document.createElement("img");
         imgElement.classList.add("popup-image");
 
+        let videoElement = document.createElement("video");
+        videoElement.classList.add("popup-video");
+        videoElement.controls = true;
+
         let currentIndex = 0;
 
-        function updateImage() {
+        function updateContent() {
+        // ✅ Check if it's a video
+        if (subImages[currentIndex].endsWith('.mp4')) {
+            imgElement.style.display = "none";
+            videoElement.src = subImages[currentIndex];
+            videoElement.style.display = "block";
+        } else {
+            videoElement.style.display = "none";
             imgElement.src = subImages[currentIndex];
+            imgElement.style.display = "block";
         }
-
-        updateImage();
+    }
+    updateContent();
 
         leftArrow.addEventListener("click", () => {
             if (currentIndex > 0) {
                 currentIndex--;
-                updateImage();
+                updateContent();
             }
         });
 
         rightArrow.addEventListener("click", () => {
             if (currentIndex < subImages.length - 1) {
                 currentIndex++;
-                updateImage();
+                updateContent();
             }
         });
 
         popupContent.appendChild(closeButton);
         popupContent.appendChild(leftArrow);
         popupContent.appendChild(imgElement);
+        popupContent.appendChild(videoElement);
         popupContent.appendChild(rightArrow);
         popupContainer.appendChild(popupContent);
         document.body.appendChild(popupContainer);
     }
-
 
 });

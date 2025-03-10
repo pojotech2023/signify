@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class InternalUser extends Model
+class InternalUser extends Authenticatable
 {
     use HasFactory;
+
     protected $fillable = [
         'role_id',
         'name',
@@ -15,7 +16,7 @@ class InternalUser extends Model
         'email_id',
         'password',
     ];
-    
+
     public function role()
     {
         return $this->belongsTo(Roles::class, 'role_id');
@@ -24,5 +25,15 @@ class InternalUser extends Model
     public function assignAdminSuperusers()
     {
         return $this->hasMany(AssignAdminSuperuser::class, 'internal_user_id');
+    }
+
+    public function isAdmin()
+    {
+        return $this->role->role_name === 'Admin';
+    }
+
+    public function isSuperuser()
+    {
+        return $this->role->role_name === 'Superuser';
     }
 }

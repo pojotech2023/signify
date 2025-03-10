@@ -195,8 +195,6 @@ class MaterialController extends Controller
         return redirect()->back()->with('success', 'Shade image deleted successfully!');
     }
 
-
-
     public function delete($id)
     {
         $material = Material::find($id);

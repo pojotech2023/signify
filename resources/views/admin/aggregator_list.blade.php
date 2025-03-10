@@ -1,4 +1,5 @@
 @extends('layouts.app')
+
 @section('content')
     <div class="container">
         <div class="page-inner">
@@ -23,8 +24,9 @@
                                 <h4 class="card-title">Material & Shade List</h4>
                             </div>
                         </div>
+
                         @if ($materials->isEmpty())
-                            <p class="text-center mt-3"> No Materials and Shades found. Please add a Aggregator Form.</p>
+                            <p class="text-center mt-3"> No Materials and Shades found. Please add an Aggregator Form.</p>
                         @else
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -43,9 +45,10 @@
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $material->material_name }}</td>
-                                                    <td> <img
-                                                            src="{{ asset('storage/' . $material->main_img) }}"alt="Main Image"
-                                                            width="100"></td>
+                                                    <td>
+                                                        <img src="{{ asset('storage/' . $material->main_img) }}"
+                                                            alt="Main Image" width="100">
+                                                    </td>
                                                     <td>
                                                         @for ($i = 1; $i <= 4; $i++)
                                                             @php
@@ -53,18 +56,20 @@
                                                             @endphp
                                                             @if (!empty($material->$fieldName))
                                                                 <img src="{{ asset('storage/' . $material->$fieldName) }}"
-                                                                    alt="Sub Image {{ $i }}" width="70">
+                                                                    alt="Sub Image {{ $i }}" width="70"
+                                                                    height="70">
                                                             @endif
                                                         @endfor
+                                                    </td>
                                                     <td>
                                                         <div class="form-button-action">
-                                                            <a href="{{ isset($material) ? route('aggregator-form', ['id' => $material->id]) : route('aggregator-form') }}"
+                                                            <a href="{{ route('aggregator-form', ['id' => $material->id]) }}"
                                                                 class="btn btn-link btn-primary btn-lg">
                                                                 <i class="fa fa-edit"></i>
                                                             </a>
                                                             <button type="button"
                                                                 class="btn btn-link btn-danger deleteButton"
-                                                                data-bs-toggle="modal" data-id="{{ $material->id }}"
+                                                                data-id="{{ $material->id }}" data-bs-toggle="modal"
                                                                 data-bs-target="#deleteModal">
                                                                 <i class="fa fa-times"></i>
                                                             </button>
@@ -75,35 +80,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <!-- Delete Confirmation Modal -->
-                                <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
-                                    aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                                                <button type="button" class="close" data-bs-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                Are you sure you want to delete this record?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <form id="deleteForm" action="{{ route('material-delete', $material->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- End of Delete Confirmation Modal -->
                             </div>
                         @endif
                     </div>
@@ -111,13 +87,41 @@
             </div>
         </div>
     </div>
+    <!-- Delete Confirmation Modal (Outside Loop) -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete this record?
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteForm" action="" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- End of Delete Confirmation Modal -->
+
+    <!-- JavaScript -->
     <script>
-        $(document).ready(function() {
-            $('.deleteButton').click(function() {
-                var id = $(this).data('id');
-                var action = "{{ route('material-delete', ':id') }}".replace(':id', id);
-                $('#deleteForm').attr('action', action);
+        document.querySelectorAll(".deleteButton").forEach(button => {
+            button.addEventListener("click", function() {
+                const categoryId = this.getAttribute("data-id");
+                const action = "{{ route('material-delete', ':id') }}".replace(':id', categoryId);
+                document.getElementById("deleteForm").setAttribute("action", action);
             });
         });
     </script>

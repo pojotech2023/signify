@@ -8,14 +8,37 @@ use App\Models\AssignAdminSuperuser;
 use App\Models\InternalUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class LeadsController extends Controller
 {
     public function index()
     {
-        $leads = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment'])->get();
-        return view('admin.leads_list', compact('leads'));
+        $role = session('role_name');
+        $user = Auth::guard('admin')->user();
+    
+        if ($user) {
+            $userID = $user->id;
+    
+            if ($role === 'Admin') {
+                $leads = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment'])->get();
+            } elseif ($role === 'Superuser') {
+                $leads = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment'])
+                    ->whereHas('latestAssignment', function ($query) use ($userID) {
+                        $query->where('internal_user_id', $userID);
+                    })
+                    ->get();
+            } else {
+                $leads = collect(); // If no valid role, return an empty collection
+            }
+    
+            return view('admin.leads_list', compact('leads'));
+        } else {
+            return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
+        }
     }
+    
+
 
     public function show($id)
     {

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminAggregatorFormController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LeadsController;
+use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\UserCreationController;
@@ -49,36 +50,53 @@ Route::post('/login', function () {
     return redirect()->route('otp.page');
 })->name('login.submit');
 
+
 //------------------------------------------ Admin-----------------------------------------------------
 Route::prefix('admin')->group(function () {
-   
-    Route::get('/dashboard', function () { return view('admin.dashboard');})->name('admin.dashboard');
 
-    Route::get('/aggregator-form/{id?}', [AdminAggregatorFormController::class, 'index'])->name('aggregator-form');
-    Route::get('/aggregator-list', function(){ return view('admin.aggregator_list');})->name('aggregator-list');
-    Route::post('/aggregator-form', [AdminAggregatorFormController::class, 'store'])->name('aggregator-store');
-    Route::post('/material/delete-image', [MaterialController::class, 'deleteMaterialsubImage'])->name('material.deleteImage');
-    Route::post('/shade/delete-image', [MaterialController::class, 'deleteShadeImage'])->name('shade.deleteImage');
-   
-    Route::get('/category', [CategoryController::class, 'index'])->name('category-list');
-    Route::post('/category', [CategoryController::class, 'store'])->name('category-store');
-    Route::post('/category-update', [CategoryController::class, 'update'])->name('category-update');
-    Route::delete('/category-delete/{id}', [CategoryController::class, 'delete'])->name('category-delete');
+    // Login and Logout
+    Route::get('/login', [LoginController::class, 'showLoginForm']);
+    Route::post('/login', [LoginController::class, 'adminLogin'])->name('admin.login');
+    Route::post('/logout', [LoginController::class, 'adminLogout'])->name('admin.logout');
 
-    Route::get('/subcategory-list', [SubCategoryController::class, 'index'])->name('subcategory-list');
-    Route::post('/subcategory', [SubCategoryController::class, 'store'])->name('subcategory-store');
-    Route::post('/subcategory-update', [SubCategoryController::class, 'update'])->name('subcategory-update');
-    Route::delete('/subcategory-delete/{id}', [SubCategoryController::class, 'delete'])->name('subcategory-delete');
+    // Common Routes for Admin & Superuser
+    Route::middleware(['checkUserRole:Admin,Superuser'])->group(function () {
+        Route::get('/dashboard', function () {
+            return view('admin.dashboard');
+        })->name('admin.dashboard');
 
-    Route::get('/material', [MaterialController::class, 'index'])->name('material-list');
-    Route::patch('/material-update/{id}', [MaterialController::class, 'update'])->name('material-update');
-    Route::delete('/material-delete/{id}', [MaterialController::class, 'delete'])->name('material-delete');
+        Route::get('/aggregator-form/{id?}', [AdminAggregatorFormController::class, 'index'])->name('aggregator-form');
+        Route::post('/aggregator-form', [AdminAggregatorFormController::class, 'store'])->name('aggregator-store');
 
-    Route::get('/user-creation/form', [UserCreationController::class, 'index'])->name('usercreation-form');
-    Route::post('/user-creation', [UserCreationController::class, 'store'])->name('user-creation');
+        Route::get('/aggregator-list', function () {
+            return view('admin.aggregator_list');
+        })->name('aggregator-list');
 
-    Route::get('/leads', [LeadsController::class, 'index'])->name('leads-list');
-    Route::get('/leads-details/{id}', [LeadsController::class, 'show'])->name('lead-details');
-    Route::post('/assign/admin-superuser', [LeadsController::class, 'assignAdminSuperuser'])->name('assign-admin-superuser');
-    
+        Route::post('/material/delete-image', [MaterialController::class, 'deleteMaterialsubImage'])->name('material.deleteImage');
+        Route::post('/shade/delete-image', [MaterialController::class, 'deleteShadeImage'])->name('shade.deleteImage');
+
+        Route::get('/category', [CategoryController::class, 'index'])->name('category-list');
+        Route::post('/category', [CategoryController::class, 'store'])->name('category-store');
+        Route::post('/category-update', [CategoryController::class, 'update'])->name('category-update');
+        Route::delete('/category-delete/{id}', [CategoryController::class, 'delete'])->name('category-delete');
+
+        Route::get('/subcategory-list', [SubCategoryController::class, 'index'])->name('subcategory-list');
+        Route::post('/subcategory', [SubCategoryController::class, 'store'])->name('subcategory-store');
+        Route::post('/subcategory-update', [SubCategoryController::class, 'update'])->name('subcategory-update');
+        Route::delete('/subcategory-delete/{id}', [SubCategoryController::class, 'delete'])->name('subcategory-delete');
+
+        Route::get('/material', [MaterialController::class, 'index'])->name('material-list');
+        Route::patch('/material-update/{id}', [MaterialController::class, 'update'])->name('material-update');
+        Route::delete('/material-delete/{id}', [MaterialController::class, 'delete'])->name('material-delete');
+
+        Route::get('/leads', [LeadsController::class, 'index'])->name('leads-list');
+        Route::get('/leads-details/{id}', [LeadsController::class, 'show'])->name('lead-details');
+        Route::post('/assign/admin-superuser', [LeadsController::class, 'assignAdminSuperuser'])->name('assign-admin-superuser');
+    });
+
+    // Admin-Only Routes
+    Route::middleware(['checkUserRole:Admin'])->group(function () {
+        Route::get('/user-creation/form', [UserCreationController::class, 'index'])->name('usercreation-form');
+        Route::post('/user-creation', [UserCreationController::class, 'store'])->name('user-creation');
+    });
 });

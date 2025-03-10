@@ -55,18 +55,23 @@
                                     @endif
                                 </div>
                             </div>
+                        </div>
+                        <div class="row align-items-center mt-4">
                             <div class="col-lg-2">
                                 <div class="form-group">
                                     <label for="shades" class="fw-bold">Shades</label>
                                 </div>
                             </div>
-                            <div class="col-lg-4 text-center">
-                                <div class="form-group">
+                            <div class="col-lg-10 text-center">
+                                <div class="form-group d-flex flex-wrap gap-3">
                                     @if ($lead->shade->isNotEmpty())
                                         @foreach ($lead->shade as $shade)
-                                            <img src="{{ asset('storage/' . $shade->shade->selected_img) }}" alt="Shade Image"
-                                                class="img-fluid mt-2" style="max-width: 200px; border-radius: 5px;">
-                                            <p class="mt-2 fw-bold">{{ $shade->shade->shade_name ?? 'N/A' }}</p>
+                                            <div class="text-center">
+                                                <img src="{{ asset('storage/' . $shade->selected_img ?? 'N/A') }}"
+                                                    alt="Shade Image" class="img-fluid mt-2"
+                                                    style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px;">
+                                                <p class="mt-2 fw-bold">{{ $shade->shade->shade_name ?? 'N/A' }}</p>
+                                            </div>
                                         @endforeach
                                     @else
                                         <p class="text-muted mt-2">No image available</p>
