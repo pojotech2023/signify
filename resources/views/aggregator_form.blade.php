@@ -282,7 +282,7 @@
                 <div class="col-lg-6">
                     <div class="form-group d-flex align-items-center gap-2">
                         <input type="file" id="design_attachment" name="design_attachment[]"
-                            accept=".pdf,.jpg,.jpeg,.png" multiple>
+                            accept=".webp,.jpg,.jpeg,.png" multiple>
                     </div>
                     @error('design_attachment')
                         <div class="text-danger">{{ $message }}</div>

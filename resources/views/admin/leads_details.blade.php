@@ -155,6 +155,20 @@
                         <div class="row align-items-center">
                             <div class="col-lg-2">
                                 <div class="form-group">
+                                    <label for="email_id" class="fw-bold">Email</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-group d-flex align-items-center gap-2">
+                                    <input type="text" class="form-control fw-bold text-dark"
+                                        value="{{ $lead->email_id }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-center">
+                            <div class="col-lg-2">
+                                <div class="form-group">
                                     <label for="design_service_need" class="fw-bold">Design Service Need</label>
                                 </div>
                             </div>
@@ -166,85 +180,90 @@
                             </div>
                         </div>
 
-                        <div class="row align-items-center">
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <label for="email_id" class="fw-bold">Email</label>
+                        @if (session('role_name') === 'Admin')
+                            <div class="row align-items-center mt-3">
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label class="fw-bold">Assigned To:</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="form-group">
+                                        <p class="fw-bold text-dark">{{ $assignedUserName }}</p>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-5">
-                                <div class="form-group d-flex align-items-center gap-2">
-                                    <input type="text" class="form-control fw-bold text-dark"
-                                        value="{{ $lead->email_id }}" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row align-items-center mt-3">
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <label class="fw-bold">Assigned To:</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-5">
-                                <div class="form-group">
-                                    <p class="fw-bold text-dark">{{ $assignedUserName }}</p>
-                                </div>
-                            </div>
-                        </div>
+                        @endif
                     </form>
                 </div>
             </div>
         </div>
         {{-- Assign & Re-Assign To Super User --}}
-        <div class="row">
-            <div class="col-lg-10 ms-4">
-                <form id="assignForm" action="{{ route('assign-admin-superuser') }}" method="POST" class="p-4">
-                    @csrf
-                    <div class="row align-items-center mb-4">
+        @if (session('role_name') === 'Admin')
+            <div class="row">
+                <div class="col-lg-10 ms-4">
+                    <form id="assignForm" action="{{ route('assign-admin-superuser') }}" method="POST" class="p-4">
+                        @csrf
+                        <div class="row align-items-center mb-4">
 
-                        {{-- Hidden field to store the aggregator_form ID --}}
-                        <input type="hidden" name="user_form_id" value="{{ $lead->id }}">
+                            {{-- Hidden field to store the aggregator_form ID --}}
+                            <input type="hidden" name="user_form_id" value="{{ $lead->id }}">
 
-                        {{-- Assign To SuperUser --}}
-                        <div class="col-lg-2">
-                            <label class="fw-bold">Assign To</label>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="input-group w-100">
-                                <select class="form-control form-select" name="assign_user_id" id="assignSelect"
-                                    {{ $assignEnabled ? '' : 'disabled' }}>
-                                    <option value="">Select Assignee</option>
-                                    @foreach ($admin_super_user as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
-                                </select>
+                            {{-- Assign To SuperUser --}}
+                            <div class="col-lg-2">
+                                <label class="fw-bold">Assign To</label>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="input-group w-100">
+                                    <select class="form-control form-select" name="assign_user_id" id="assignSelect"
+                                        {{ $assignEnabled ? '' : 'disabled' }}>
+                                        <option value="">Select Assignee</option>
+                                        @foreach ($admin_super_user as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
+                            {{-- Re-Assign --}}
+                            <div class="col-lg-2">
+                                <label class="fw-bold">Re-Assign To</label>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="input-group w-100">
+                                    <select class="form-control form-select" name="reassign_user_id" id="reassignSelect"
+                                        {{ $reassignEnabled ? '' : 'disabled' }}>
+                                        <option value="">Select Assignee</option>
+                                        @foreach ($admin_super_user as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        {{-- Re-Assign --}}
-                        <div class="col-lg-2">
-                            <label class="fw-bold">Re-Assign To</label>
-                        </div>
-                        <div class="col-lg-4">
-                            <div class="input-group w-100">
-                                <select class="form-control form-select" name="reassign_user_id" id="reassignSelect"
-                                    {{ $reassignEnabled ? '' : 'disabled' }}>
-                                    <option value="">Select Assignee</option>
-                                    @foreach ($admin_super_user as $user)
-                                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                    @endforeach
-                                </select>
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <button type="submit" class="btn btn-success">Submit</button>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-lg-12 text-center">
-                            <button type="submit" class="btn btn-success">Submit</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+        @endif
+        @if (session('role_name') === 'Superuser')
+            <div class="row mt-5">
+                <div class="col-lg-12 d-flex justify-content-center">
+                    <div class="d-flex gap-4 position-relative" style="margin-bottom: 30px;">
+                        <a href="{{ route('task-form', $lead->id) }}" class="btn btn-primary px-5 py-2"  style="font-size: 1.2rem; min-width: 200px;">
+                            Create Task
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary px-5 py-2" style="font-size: 1.2rem; min-width: 200px;" disabled>
+                            Confirm Order
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 @endsection

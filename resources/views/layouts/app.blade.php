@@ -1,36 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Signify Development</title>
-    <meta
-      content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-      name="viewport"
-    />
-    <link
-      rel="icon"
-      href="{{asset('images/logo/logo.png')}}"
-      type="image/x-icon"
-    />
+    <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
+    <link rel="icon" href="{{ asset('images/logo/logo.png') }}" type="image/x-icon" />
 
     <!-- Fonts and icons -->
     <script src="{{ asset('admin/assets/js/plugin/webfont/webfont.min.js') }}"></script>
     <script>
-      WebFont.load({
-        google: { families: ["Public Sans:300,400,500,600,700"] },
-        custom: {
-          families: [
-            "Font Awesome 5 Solid",
-            "Font Awesome 5 Regular",
-            "Font Awesome 5 Brands",
-            "simple-line-icons",
-          ],
-          urls: ["assets/css/fonts.min.css"],
-        },
-        active: function () {
-          sessionStorage.fonts = true;
-        },
-      });
+        WebFont.load({
+            google: {
+                families: ["Public Sans:300,400,500,600,700"]
+            },
+            custom: {
+                families: [
+                    "Font Awesome 5 Solid",
+                    "Font Awesome 5 Regular",
+                    "Font Awesome 5 Brands",
+                    "simple-line-icons",
+                ],
+                urls: ["assets/css/fonts.min.css"],
+            },
+            active: function() {
+                sessionStorage.fonts = true;
+            },
+        });
     </script>
 
     <!-- CSS Files -->
@@ -45,29 +41,30 @@
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/demo.css') }}" />
-    <link rel="stylesheet" href="{{ asset('admin/assets/css/custom.css')}}" />
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/custom.css') }}" />
 
-  </head>
-  <body>
+</head>
+
+<body>
     <div class="wrapper">
-      <!--Helpers-->
+        <!--Helpers-->
         @include('admin.partials.helpers')
         <!--End Helpers-->
-        
-       <!-- Sidebar -->
+
+        <!-- Sidebar -->
         @include('admin.partials.sidebar')
         <!-- End Sidebar -->
 
-      <div class="main-panel">
-       
-        {{-- Header --}}
-          @include('admin.partials.header')
-        {{-- Dashboard --}}
-          @yield('content')
-        {{-- Footer --}}
-          {{-- @include('admin.partials.footer') --}}
+        <div class="main-panel">
 
-      </div>
+            {{-- Header --}}
+            @include('admin.partials.header')
+            {{-- Dashboard --}}
+            @yield('content')
+            {{-- Footer --}}
+            {{-- @include('admin.partials.footer') --}}
+
+        </div>
     </div>
     <!--   Core JS Files   -->
     <script src="{{ asset('admin/assets/js/core/jquery-3.7.1.min.js') }}"></script>
@@ -106,45 +103,46 @@
     <script src="{{ asset('admin/assets/js/setting-demo.js') }}"></script>
     <script src="{{ asset('admin/assets/js/demo.js') }}"></script>
     <script>
-      $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-        type: "line",
-        height: "70",
-        width: "100%",
-        lineWidth: "2",
-        lineColor: "#177dff",
-        fillColor: "rgba(23, 125, 255, 0.14)",
-      });
+        $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
+            type: "line",
+            height: "70",
+            width: "100%",
+            lineWidth: "2",
+            lineColor: "#177dff",
+            fillColor: "rgba(23, 125, 255, 0.14)",
+        });
 
-      $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-        type: "line",
-        height: "70",
-        width: "100%",
-        lineWidth: "2",
-        lineColor: "#f3545d",
-        fillColor: "rgba(243, 84, 93, .14)",
-      });
+        $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
+            type: "line",
+            height: "70",
+            width: "100%",
+            lineWidth: "2",
+            lineColor: "#f3545d",
+            fillColor: "rgba(243, 84, 93, .14)",
+        });
 
-      $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-        type: "line",
-        height: "70",
-        width: "100%",
-        lineWidth: "2",
-        lineColor: "#ffa534",
-        fillColor: "rgba(255, 165, 52, .14)",
-      });
+        $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
+            type: "line",
+            height: "70",
+            width: "100%",
+            lineWidth: "2",
+            lineColor: "#ffa534",
+            fillColor: "rgba(255, 165, 52, .14)",
+        });
     </script>
     {{-- Alert --}}
     @if (session('success'))
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            Swal.fire({
-                title: "Success!",
-                text: "{{ session('success') }}",
-                icon: "success",
-                confirmButtonText: "OK"
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                Swal.fire({
+                    title: "Success!",
+                    text: "{{ session('success') }}",
+                    icon: "success",
+                    confirmButtonText: "OK"
+                });
             });
-        });
-    </script>
-@endif
-  </body>
+        </script>
+    @endif
+</body>
+
 </html>

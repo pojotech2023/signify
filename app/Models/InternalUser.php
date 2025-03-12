@@ -36,4 +36,9 @@ class InternalUser extends Authenticatable
     {
         return $this->role->role_name === 'Superuser';
     }
+
+    public function task()
+    {
+        return $this->hasMany(Task::class, 'created_by');
+    }
 }

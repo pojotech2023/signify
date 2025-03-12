@@ -55,4 +55,9 @@ class AggregatorForm extends Model
     {
         return $this->hasOne(AssignAdminSuperuser::class, 'user_form_id')->latestOfMany();
     }
+
+    public function task()
+    {
+        return $this->hasMany(Task::class, 'lead_id');
+    }
 }

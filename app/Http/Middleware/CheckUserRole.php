@@ -16,13 +16,15 @@ class CheckUserRole
      */
     public function handle($request, Closure $next, ...$roles)
     {
-        $user = Auth::guard('admin')->user();
-
-        if (!in_array(session('role_name'), $roles)) {
+        $role = session('role_name');
+    
+        if (!$role || !in_array($role, $roles)) {
             abort(403, 'Unauthorized action.');
         }
+    
         return $next($request);
     }
+    
     
 
 }

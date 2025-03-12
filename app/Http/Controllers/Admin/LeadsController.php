@@ -12,33 +12,30 @@ use Illuminate\Support\Facades\Auth;
 
 class LeadsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $role = session('role_name');
         $user = Auth::guard('admin')->user();
-    
+
         if ($user) {
             $userID = $user->id;
-    
-            if ($role === 'Admin') {
-                $leads = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment'])->get();
-            } elseif ($role === 'Superuser') {
-                $leads = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment'])
-                    ->whereHas('latestAssignment', function ($query) use ($userID) {
-                        $query->where('internal_user_id', $userID);
-                    })
-                    ->get();
-            } else {
-                $leads = collect(); // If no valid role, return an empty collection
+            $status = $request->input('status');
+            $date = $request->input('date');
+
+            $query = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment']);
+
+            if ($role === 'Superuser') {
+                $query->whereHas('latestAssignment', function ($q) use ($userID) {
+                    $q->where('internal_user_id', $userID);
+                });
             }
-    
+            $leads = $query->get();
+
             return view('admin.leads_list', compact('leads'));
         } else {
             return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
         }
     }
-    
-
 
     public function show($id)
     {
@@ -102,5 +99,26 @@ class LeadsController extends Controller
 
         return redirect()->back()->with('Success', 'Admin or SuperUser' .
             ($status == 'Assigned' ? 'Assigned' : 'Re-Assigned') . ' successfully!');
+    }
+
+    public function getFilteredLeads(Request $request)
+    {
+        $query = AggregatorForm::with(['category',  'subcategory', 'material', 'shade.shade', 'latestAssignment']);
+
+        // Filter by Status
+        if ($request->filled('status')) {
+            $query->whereHas('latestAssignment', function ($q) use ($request) {
+                $q->where('status', $request->status);
+            });
+        }
+
+        // Filter by Date
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        $leads = $query->get();
+
+        return response()->json($leads);
     }
 }
