@@ -51,7 +51,7 @@ class AggregatorForm extends Model
         return $this->hasMany(AssignAdminSuperuser::class, 'user_form_id');
     }
 
-    public function latestAssignment()
+    public function latestAssignment() //assign_admin_superuser
     {
         return $this->hasOne(AssignAdminSuperuser::class, 'user_form_id')->latestOfMany();
     }
@@ -59,5 +59,10 @@ class AggregatorForm extends Model
     public function task()
     {
         return $this->hasMany(Task::class, 'lead_id');
+    }
+
+    public function order()
+    {
+        return $this->hasMany(Order::class, 'lead_id');
     }
 }

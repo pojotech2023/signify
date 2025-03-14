@@ -245,22 +245,6 @@
                                 </div>
                             </div>
 
-                            {{-- <div class="col-lg-2">
-                                <div class="form-group">
-                                    <label for="reassign_to" class="fw-bold">Re-Assign To</label>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <select class="form-select form-control" id="reassign_to" disabled>
-                                        <option value="" disabled selected>Select Re-Assignee</option>
-                                        @foreach ($executive_list as $executive)
-                                            <option value="{{ $executive->id }}">{{ $executive->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div> --}}
-
                             <div class="col-lg-2 ms-auto">
                                 <div class="form-group">
                                     <button type="submit" class="btn btn-primary w-100">Submit</button>
@@ -284,14 +268,6 @@
             dateInput.addEventListener("change", function() {
                 console.log("Selected Date:", dateInput.value);
             });
-        });
-        document.getElementById('executive_id').addEventListener('change', function() {
-            const reassignDropdown = document.getElementById('reassign_to');
-            if (this.value) {
-                reassignDropdown.disabled = false;
-            } else {
-                reassignDropdown.disabled = true;
-            }
         });
     </script>
 @endsection

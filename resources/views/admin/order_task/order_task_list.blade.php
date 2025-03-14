@@ -3,7 +3,7 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header leads-page-header">
-                <h3 class="fw-bold mb-3">Tasks</h3>
+                <h3 class="fw-bold mb-3">Orders - Tasks</h3>
             </div>
             <div class="row">
                 <div class="col-12 col-md-8">
@@ -41,20 +41,20 @@
             </div>
             <div class="row">
                 <div class="col-12 col-md-8">
-                    @foreach ($tasks as $task)
-                        <div class="card mt-3 task-card" data-route="{{ route('task-details', $task->id) }}"
+                    @foreach ($order_tasks as $order_task)
+                        <div class="card mt-3 task-card" data-route="{{ route('order-task-details', $order_task->id) }}"
                             onclick="redirectToLeadDetails(event, this)">
                             <div class="card-header">
                                 <div class="row">
                                     <div class="col-6 d-flex align-items-center">
-                                        <h6 class="card-title mb-0">Task ID: {{ $task->id }}</h6>
+                                        <h6 class="card-title mb-0">Task ID: {{ $order_task->id }}</h6>
                                         <span class="op-7 ms-3 fw-normal">
-                                            {{ \Carbon\Carbon::parse($task->created_at)->format('M, d Y h:i A') }}
+                                            {{ \Carbon\Carbon::parse($order_task->created_at)->format('M, d Y h:i A') }}
                                         </span>
                                     </div>
                                     <div class="col-6 text-end">
                                         @php
-                                            $status = $task->assignExecutive->status ?? 'Pending';
+                                            $status = $order_task->orderTaskAssign->status ?? 'Pending';
 
                                             $badgeClass = match ($status) {
                                                 'Pending' => 'badge-warning',
@@ -80,31 +80,31 @@
                                     <!-- First row: Task Priority and Entry Time -->
                                     <div class="col-md-6">
                                         <p><strong>Task Priority:</strong>
-                                            <span class="text-muted">{{ $task->task_priority }}</span>
+                                            <span class="text-muted">{{ $order_task->task_priority }}</span>
                                         </p>
                                     </div>
                                     <div class="col-md-6">
                                         <p><strong>Entry Time:</strong>
-                                            <span class="text-muted">{{ $task->entry_time }}</span>
+                                            <span class="text-muted">{{ $order_task->entry_time }}</span>
                                         </p>
                                     </div>
                                 
                                     <!-- Second row: Full Description -->
                                     <div class="col-md-12">
                                         <p><strong>Description:</strong>
-                                            <span class="text-muted">{{ $task->description }}</span>
+                                            <span class="text-muted">{{ $order_task->description }}</span>
                                         </p>
                                     </div>
                                 
                                     <!-- Third row: Vendor Details -->
                                     <div class="col-md-6">
                                         <p><strong>Vendor Name:</strong>
-                                            <span class="text-muted">{{ $task->vendor_name }}</span>
+                                            <span class="text-muted">{{ $order_task->vendor_name }}</span>
                                         </p>
                                     </div>
                                     <div class="col-md-6">
                                         <p><strong>Vendor Mobile:</strong>
-                                            <span class="text-muted">{{ $task->vendor_mobile }}</span>
+                                            <span class="text-muted">{{ $order_task->vendor_mobile }}</span>
                                         </p>
                                     </div>
                                 </div>                                

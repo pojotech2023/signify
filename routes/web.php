@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LeadsController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\MaterialController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\OrderTaskController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserCreationController;
@@ -55,10 +57,14 @@ Route::post('/login', function () {
 //------------------------------------------ Admin-----------------------------------------------------
 Route::prefix('admin')->group(function () {
 
+    //Common Routes for All Roles
+
     // Login and Logout
     Route::get('/login', [LoginController::class, 'showLoginForm']);
     Route::post('/login', [LoginController::class, 'adminLogin'])->name('admin.login');
     Route::post('/logout', [LoginController::class, 'adminLogout'])->name('admin.logout');
+
+    //Dashboard
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
@@ -103,6 +109,13 @@ Route::prefix('admin')->group(function () {
         Route::post('/assign/admin-superuser', [LeadsController::class, 'assignAdminSuperuser'])->name('assign-admin-superuser');
         Route::get('/leads-list/filter', [LeadsController::class, 'getFilteredLeads'])->name('filter-leads-list');
 
+        //Orders
+
+        Route::post('/order', [OrderController::class, 'store'])->name('order-store');
+        Route::get('/orders', [OrderController::class, 'index'])->name('orders-list');
+        Route::get('/orders-details/{id}', [OrderController::class, 'show'])->name('order-details');
+        Route::post('/order/assign', [OrderController::class, 'orderAssign'])->name('order-assign');
+        Route::post('/order-complete', [OrderController::class, 'orderComplete'])->name('order-complete');
     });
 
     // Admin-Only Routes
@@ -114,15 +127,23 @@ Route::prefix('admin')->group(function () {
         Route::post('/user-creation', [UserCreationController::class, 'store'])->name('user-creation');
     });
 
-    // Executive Routes
-    // Route::middleware(['checkUserRole:Accounts,HR,PR,R&D'])->group(function () {
+    //Common Routes for All Roles
 
-        Route::get('task-form/{id}', [TaskController::class, 'getTaskForm'])->name('task-form');
-        Route::post('task-create', [TaskController::class, 'store'])->name('task-create');
-        Route::get('/tasks', [TaskController::class, 'index'])->name('task-list');
-        Route::get('/task-details/{task_id}', [TaskController::class, 'show'])->name('task-details');
-        Route::post('task-executive/create', [TaskController::class, 'executiveStoreTask'])->name('task-executive');
-        Route::post('/reassgin/task', [TaskController::class, 'reassignExecutive'])->name('reassign-executive');
-        Route::get('/leads/{lead_id}/tasks', [TaskController::class, 'showLeadTasks'])->name('leads-tasks');
-    // });
+    // Lead Task
+    Route::get('task-form/{id}', [TaskController::class, 'getTaskForm'])->name('task-form');
+    Route::post('task-create', [TaskController::class, 'store'])->name('task-create');
+    Route::get('/tasks', [TaskController::class, 'index'])->name('task-list');
+    Route::get('/task-details/{task_id}', [TaskController::class, 'show'])->name('task-details');
+    Route::post('task-executive/create', [TaskController::class, 'executiveStoreTask'])->name('task-executive');
+    Route::post('/reassgin/task', [TaskController::class, 'reassignExecutive'])->name('reassign-executive');
+    Route::get('/leads/{lead_id}/tasks', [TaskController::class, 'showLeadTasks'])->name('leads-tasks');
+
+    //Order Task
+    Route::get('order/task-form/{id}', [OrderTaskController::class, 'getOrderTaskForm'])->name('order-task-form');
+    Route::post('order/task-create', [OrderTaskController::class, 'store'])->name('order-task-create');
+    Route::get('/order/tasks', [OrderTaskController::class, 'index'])->name('order-task-list');
+    Route::get('/order/task-details/{task_id}', [OrderTaskController::class, 'show'])->name('order-task-details');
+    Route::post('order/task-executive/create', [OrderTaskController::class, 'executiveStoreTask'])->name('order-task-executive');
+    Route::post('/order/reassgin/task', [OrderTaskController::class, 'reassignExecutive'])->name('order-reassign-executive');
+    Route::get('/orders/{order_id}/tasks', [OrderTaskController::class, 'showOrderTasks'])->name('orders-tasks');
 });

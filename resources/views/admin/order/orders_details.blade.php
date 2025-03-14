@@ -4,16 +4,16 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-10">
-                <h3 class="text-center pb-4 mt-3">Lead Detail View</h3>
+                <h3 class="text-center pb-4 mt-3">Order Detail View</h3>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-10">
                 <div class="card shadow-lg p-4 ms-4">
                     <div class="card-header d-flex align-items-center">
-                        <h6 class="card-title mb-0 fw-bold">Lead ID: {{ $lead->id }}</h6>
+                        <h6 class="card-title mb-0 fw-bold">Order ID: {{ $order->id }}</h6>
                         <span class="op-7 ms-3 fw-normal">
-                            {{ \Carbon\Carbon::parse($lead->created_at)->format('M, d Y h:i A') }}
+                            {{ \Carbon\Carbon::parse($order->created_at)->format('M, d Y h:i A') }}
                         </span>
                     </div>
 
@@ -28,13 +28,13 @@
                             <div class="col-lg-5">
                                 <div class="form-group">
                                     <input type="text" class="form-control fw-bold text-dark"
-                                        value="{{ $lead->category->category }}" readonly>
+                                        value="{{ $order->lead->category->category }}" readonly>
                                 </div>
                             </div>
                             <div class="col-lg-5">
                                 <div class="form-group">
                                     <input type="text" class="form-control fw-bold text-dark"
-                                        value="{{ $lead->subcategory->sub_category }}" readonly>
+                                        value="{{ $order->lead->subcategory->sub_category }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -46,10 +46,11 @@
                             </div>
                             <div class="col-lg-4 text-center">
                                 <div class="form-group">
-                                    @if (!empty($lead->material->main_img))
-                                        <img src="{{ asset('storage/' . $lead->material->main_img) }}" alt="Material Image"
-                                            class="img-fluid mt-2" style="max-width: 200px; border-radius: 5px;">
-                                        <p class="mt-2 fw-bold">{{ $lead->material->material_name }}</p>
+                                    @if (!empty($order->lead->material->main_img))
+                                        <img src="{{ asset('storage/' . $order->lead->material->main_img) }}"
+                                            alt="Material Image" class="img-fluid mt-2"
+                                            style="max-width: 200px; border-radius: 5px;">
+                                        <p class="mt-2 fw-bold">{{ $order->lead->material->material_name }}</p>
                                     @else
                                         <p class="text-muted mt-2">No image available</p>
                                     @endif
@@ -64,8 +65,8 @@
                             </div>
                             <div class="col-lg-10 text-center">
                                 <div class="form-group d-flex flex-wrap gap-3">
-                                    @if ($lead->shade->isNotEmpty())
-                                        @foreach ($lead->shade as $shade)
+                                    @if ($order->lead->shade->isNotEmpty())
+                                        @foreach ($order->lead->shade as $shade)
                                             <div class="text-center">
                                                 <img src="{{ asset('storage/' . $shade->selected_img ?? 'N/A') }}"
                                                     alt="Shade Image" class="img-fluid mt-2"
@@ -94,8 +95,8 @@
                             </div>
                             <div class="col-lg-2">
                                 <div class="form-group">
-                                    <input type="text" class="form-control fw-bold text-dark" value="{{ $lead->width }}"
-                                        readonly>
+                                    <input type="text" class="form-control fw-bold text-dark"
+                                        value="{{ $order->lead->width }}" readonly>
                                 </div>
                             </div>
 
@@ -106,8 +107,8 @@
                             </div>
                             <div class="col-lg-2">
                                 <div class="form-group">
-                                    <input type="text" class="form-control fw-bold text-dark" value="{{ $lead->height }}"
-                                        readonly>
+                                    <input type="text" class="form-control fw-bold text-dark"
+                                        value="{{ $order->lead->height }}" readonly>
                                 </div>
                             </div>
 
@@ -119,7 +120,7 @@
                             <div class="col-lg-3">
                                 <div class="form-group">
                                     <input type="text" class="form-control fw-bold text-dark"
-                                        value="{{ $lead->unit }}" readonly>
+                                        value="{{ $order->lead->unit }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +134,7 @@
                             <div class="col-lg-5">
                                 <div class="form-group">
                                     <input type="text" class="form-control fw-bold text-dark"
-                                        value="{{ $lead->location }}" readonly>
+                                        value="{{ $order->lead->location }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -147,7 +148,7 @@
                             <div class="col-lg-5">
                                 <div class="form-group">
                                     <input type="text" class="form-control fw-bold text-dark"
-                                        value="{{ $lead->quantity }}" readonly>
+                                        value="{{ $order->lead->quantity }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +162,7 @@
                             <div class="col-lg-5">
                                 <div class="form-group d-flex align-items-center gap-2">
                                     <input type="text" class="form-control fw-bold text-dark"
-                                        value="{{ $lead->email_id }}" readonly>
+                                        value="{{ $order->lead->email_id }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +176,7 @@
                             <div class="col-lg-5">
                                 <div class="form-group d-flex align-items-center gap-2">
                                     <input type="text" class="form-control fw-bold text-dark"
-                                        value="{{ ucfirst($lead->design_service_need) }}" readonly>
+                                        value="{{ ucfirst($order->lead->design_service_need) }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -202,12 +203,12 @@
         @if (session('role_name') === 'Admin')
             <div class="row">
                 <div class="col-lg-10 ms-4">
-                    <form id="assignForm" action="{{ route('assign-admin-superuser') }}" method="POST" class="p-4">
+                    <form id="assignForm" action="{{ route('order-assign') }}" method="POST" class="p-4">
                         @csrf
                         <div class="row align-items-center mb-4">
 
                             {{-- Hidden field to store the aggregator_form ID --}}
-                            <input type="hidden" name="user_form_id" value="{{ $lead->id }}">
+                            <input type="hidden" name="order_id" value="{{ $order->id }}">
 
                             {{-- Assign To SuperUser --}}
                             <div class="col-lg-2">
@@ -252,24 +253,26 @@
             </div>
         @endif
 
-         {{-- Create Task and Confirm Order --}}
+        {{-- Create Task and Complete Order --}}
         @if (session('role_name') === 'Superuser')
             <div class="row mt-5">
                 <div class="col-lg-12 d-flex justify-content-center">
                     <div class="d-flex gap-4 position-relative" style="margin-bottom: 30px;">
-                        <a href="{{ route('task-form', $lead->id) }}" class="btn btn-primary px-5 py-2"  style="font-size: 1.2rem; min-width: 200px;">
+                        <a href="{{ route('order-task-form', $order->id) }}" class="btn btn-primary px-5 py-2"
+                            style="font-size: 1.2rem; min-width: 200px;">
                             Create Task
                         </a>
-                        <form id="orderForm" action="{{ route('order-store') }}" method="POST">
+                        <form id="orderForm" action="{{ route('order-complete') }}" method="POST">
                             @csrf
-                            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                            <input type="hidden" name="order_id" value="{{ $order->id }}">
                             <button type="submit" class="btn btn-primary px-5 py-2" style="font-size: 1.2rem; min-width: 200px;">
-                                Confirm Order
+                                Complete Order
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
         @endif
+
     </div>
 @endsection

@@ -41,7 +41,7 @@
 
                     {{-- Orders --}}
                     <li class="nav-item">
-                        <a data-bs-toggle="collapse" href="#sidebarLayouts">
+                        <a href="{{ route('orders-list') }}">
                             <i class="bi bi-cart-fill"></i>
                             <p>Orders</p>
                         </a>
@@ -76,7 +76,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </li>                    
+                    </li>
                 @endif
 
                 {{-- User Creation (Admin only) --}}
@@ -108,12 +108,13 @@
                     </li>
                 @endif
 
-                {{-- Task (Executives: Accounts, PR, HR, R&D) --}}
+                {{-- Task and Order (Executives: Accounts, PR, HR, R&D) --}}
                 @if (in_array(session('role_name'), ['Accounts', 'PR', 'HR', 'R&D']))
+                    {{-- Task --}}
                     <li class="nav-item">
                         <a href="{{ route('task-list') }}">
                             <i class="bi bi-list-check"></i>
-                            <p>Task</p>
+                            <p>Tasks</p>
                         </a>
                     </li>
                 @endif

@@ -3,36 +3,34 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\AggregatorForm;
-use App\Models\InternalUser;
-use App\Models\Task;
-use App\Models\OrderTask;
-use App\Models\AssignExecutive;
-use App\Models\ExecutiveTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use App\Models\InternalUser;
+use App\Models\Order;
+use App\Models\OrderTask;
+use App\Models\OrderTaskAssign;
+use App\Models\OrderExecutiveTask;
 
-
-class TaskController extends Controller
+class OrderTaskController extends Controller
 {
-    public function getTaskForm($id)
+    public function getOrderTaskForm($id)
     {
-        $lead = AggregatorForm::findOrFail($id);
+        $order = Order::findOrFail($id);
 
-        //Assign - Executive list
+        //Assign - Get Executive list
         $executive_list = InternalUser::with('role')->whereHas('role', function ($query) {
             $query->whereIn('role_name', ['Accounts', 'PR', 'HR', 'R&D']);
         })->get();
 
-        return view('admin.lead_task.task_create', compact('lead', 'executive_list'));
+        return view('admin.order_task.task_create', compact('order', 'executive_list'));
     }
 
     public function store(Request $request)
     {
         //dd($request->all());
         $validate = Validator::make($request->all(), [
-            'lead_id'            => 'required|exists:aggregator_forms,id',
+            'order_id'            => 'required|exists:orders,id',
             'task_priority'      => 'required|string|max:255',
             'entry_time'         => 'required|date',
             'delivery_needed_by' => 'required',
@@ -58,12 +56,12 @@ class TaskController extends Controller
 
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $path = $file->store('task/attachments', 'public');
+                $path = $file->store('order/task/attachments', 'public');
                 $attachments[] = $path;
             }
         }
-        $task = Task::create([
-            'lead_id'            => $request->lead_id,
+        $task = OrderTask::create([
+            'order_id'            => $request->order_id,
             'task_priority'      => $request->task_priority,
             'entry_time'         => $request->entry_time,
             'delivery_needed_by' => $request->delivery_needed_by,
@@ -79,79 +77,54 @@ class TaskController extends Controller
             'created_by'         => auth('admin')->id(),
         ]);
 
-        AssignExecutive::create([
-            'task_id'     => $task->id,
+        OrderTaskAssign::create([
+            'order_task_id'     => $task->id,
             'executive_id' => $request->executive_id,
             'status'       => 'Assigned',
         ]);
 
         return redirect()->back()->with('success', 'Task created successfully!');
     }
-    //task list
+
     public function index()
-{
-    $role = session('role_name');
-    $user = Auth::guard('admin')->user();
+    {
+        $role = session('role_name');
+        $user = Auth::guard('admin')->user();
 
-    if ($user) {
-        $userID = $user->id;
+        if ($user) {
+            $userID = $user->id;
 
-        if ($role === 'Admin' || $role === 'Superuser') {
-            $orderTasks = OrderTask::with([
-                'order',
-                'CreatedBy',
-                'orderTaskAssign'
-            ])->get()->map(function ($task) {
-                $task->setAttribute('type', 'order');
-                return $task;
-            });
+            if ($role === 'Admin' || $role === 'Superuser') {
+                // Admin and Superuser see all tasks
+                $tasks = OrderTask::with([
+                    'order',
+                    'CreatedBy',
+                    'orderTaskAssign'
+                ])->get();
+            } elseif (in_array($role, ['Accounts', 'PR', 'HR', 'R&D'])) {
+                // Executives only see assigned tasks
+                $tasks = OrderTask::with([
+                    'order',
+                    'CreatedBy',
+                    'orderTaskAssign',
+                ])->whereHas('orderTaskAssign', function ($query) use ($userID) {
+                    $query->where('executive_id', $userID);
+                })->get();
+            } else {
+                $tasks = collect(); // If no valid role, return an empty collection
+            }
 
-            $leadTasks = Task::with([
-                'aggregatorForm',
-                'CreatedBy',
-                'assignExecutive'
-            ])->get()->map(function ($task) {
-                $task->setAttribute('type', 'lead');
-                return $task;
-            });
-        } elseif (in_array($role, ['Accounts', 'PR', 'HR', 'R&D'])) {
-            $orderTasks = OrderTask::with([
-                'order',
-                'CreatedBy',
-                'orderTaskAssign'
-            ])->whereHas('orderTaskAssign', function ($query) use ($userID) {
-                $query->where('executive_id', $userID);
-            })->get()->map(function ($task) {
-                $task->setAttribute('type', 'order');
-                return $task;
-            });
-
-            $leadTasks = Task::with([
-                'aggregatorForm',
-                'CreatedBy',
-                'assignExecutive'
-            ])->whereHas('assignExecutive', function ($query) use ($userID) {
-                $query->where('executive_id', $userID);
-            })->get()->map(function ($task) {
-                $task->setAttribute('type', 'lead');
-                return $task;
-            });
+            return view('admin.order_task.task_list', compact('tasks'));
         } else {
-            $orderTasks = collect();
-            $leadTasks = collect();
+            return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
         }
-        return view('admin.lead_task.task_list', compact('orderTasks', 'leadTasks'));
-    } else {
-        return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
     }
-}
-
 
     //Task Details
     public function show($task_id)
     {
 
-        $task = Task::with('aggregatorForm', 'CreatedBy', 'assignExecutive.executiveTask')->findOrFail($task_id);
+        $task = OrderTask::with('order', 'CreatedBy', 'orderTaskAssign.orderExecutiveTask')->findOrFail($task_id);
 
         //Re-assign - Executive list
         $executive_list = InternalUser::with('role')->whereHas('role', function ($query) {
@@ -159,17 +132,17 @@ class TaskController extends Controller
         })->get();
 
         // Fetch the latest assignment for this task_id
-        $assign_executive = AssignExecutive::where('task_id', $task_id)
+        $assign_executive = orderTaskAssign::where('order_task_id', $task_id)
             ->latest('created_at')
             ->first();
 
-        // Fetch the executive name of the latest assigned task_id
-        $assignedExecutive = InternalUser::find($assign_executive->executive_id);
-        if ($assignedExecutive) {
-            $assignedExecutiveName = $assignedExecutive->name;
-        }
+         // Fetch the executive name of the latest assigned task_id
+         $assignedExecutive = InternalUser::find($assign_executive->executive_id);
+         if ($assignedExecutive) {
+             $assignedExecutiveName = $assignedExecutive->name;
+         }
 
-        return view('admin.lead_task.task_details', compact('task', 'executive_list', 'assignedExecutiveName'));
+        return view('admin.order_task.task_details', compact('task', 'executive_list', 'assignedExecutiveName'));
     }
 
     //Executive Form filled
@@ -188,7 +161,7 @@ class TaskController extends Controller
             return back()->withErrors($validate)->withInput();
         }
 
-        ExecutiveTask::create([
+        OrderExecutiveTask::create([
             'assigned_executive_id' => $request->assigned_executive_id,
             'remarks'               => $request->remarks,
             'geo_latitude'          => $request->geo_latitude,
@@ -201,7 +174,7 @@ class TaskController extends Controller
     //Superuser/Admin Re-assign to Executive
     public function reassignExecutive(Request $request)
     {
-        //dd($request->all());
+       //dd($request->all());
         $validate = Validator::make($request->all(), [
             'task_id'        => 'required|exists:tasks,id',
             'executive_id'    => 'required|exists:internal_users,id',
@@ -211,25 +184,26 @@ class TaskController extends Controller
             return back()->withErrors($validate)->withInput();
         }
 
-        AssignExecutive::create([
+        OrderTaskAssign::create([
             'executive_id' => $request->executive_id,
-            'task_id' => $request->task_id,
+            'order_task_id' => $request->task_id,
             'status' => 'Re-Assigned'
         ]);
 
         return back()->with('success', 'Task has been successfully re-assigned.');
     }
 
-    //Lead wise tasks
-    public function showLeadTasks($lead_id)
-    {
-
-        $lead_tasks = Task::with([
-            'aggregatorForm',
-            'CreatedBy',
-            'assignExecutive',
-        ])->where('lead_id', $lead_id)->get();
-
-        return view('admin.lead_task.lead_task_list', compact('lead_tasks'));
-    }
+      //Order wise Tasks
+      public function showOrderTasks($order_id)
+      {
+  
+          $order_tasks = OrderTask::with([
+              'order',
+              'CreatedBy',
+              'orderTaskAssign',
+          ])->where('order_id', $order_id)->get();
+  
+          return view('admin.order_task.order_task_list', compact('order_tasks'));
+      }
+  
 }
