@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assign_executives', function (Blueprint $table) {
+        Schema::create('lead_assigns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('executive_id')->constrained('internal_users')->onDelete('cascade');
-            $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
+            $table->foreignId('internal_user_id')->constrained('internal_users')->onDelete('cascade');
+            $table->foreignId('lead_id')->constrained('aggregator_forms')->onDelete('cascade');
             $table->string('status')->default('New');
             $table->timestamps();
         });
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assign_executives');
+        Schema::dropIfExists('lead_assigns');
     }
 };

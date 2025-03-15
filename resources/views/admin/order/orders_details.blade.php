@@ -262,17 +262,39 @@
                             style="font-size: 1.2rem; min-width: 200px;">
                             Create Task
                         </a>
-                        <form id="orderForm" action="{{ route('order-complete') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="order_id" value="{{ $order->id }}">
-                            <button type="submit" class="btn btn-primary px-5 py-2" style="font-size: 1.2rem; min-width: 200px;">
-                                Complete Order
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-primary px-5 py-2"
+                            style="font-size: 1.2rem; min-width: 200px;" data-bs-toggle="modal"
+                            data-bs-target="#completeOrderModal" {{ $order->status === 'Completed' ? 'disabled' : '' }}>
+                            Complete Order
+                        </button>
                     </div>
                 </div>
             </div>
         @endif
-
     </div>
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="completeOrderModal" tabindex="-1" aria-labelledby="completeOrderModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmOrderModalLabel">Complete Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to confirm this order? <br>
+                    <strong>Order ID:</strong> {{ $order->id }}
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ route('order-complete') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="order_id" value="{{ $order->id }}">
+                        <button type="submit" class="btn btn-success">Yes, Confirm</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection

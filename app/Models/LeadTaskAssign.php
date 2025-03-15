@@ -5,28 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AssignExecutive extends Model
+class LeadTaskAssign extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'executive_id',
+        'internal_user_id',
         'task_id',
         'status'
     ];
 
     public function task()
     {
-        return $this->belongsTo(Task::class, 'task_id');
+        return $this->belongsTo(LeadTask::class, 'task_id');
     }
 
     public function executive()
     {
-        return $this->belongsTo(InternalUser::class, 'executive_id');
+        return $this->belongsTo(InternalUser::class, 'internal_user_id');
     }
 
-    public function executiveTask()
+    public function leadExecutiveTask()
     {
-        return $this->hasOne(ExecutiveTask::class, 'assigned_executive_id');
+        return $this->hasOne(LeadExecutiveTask::class, 'task_assigned_user_id');
     }
+
 }

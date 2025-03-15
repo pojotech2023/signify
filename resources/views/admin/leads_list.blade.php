@@ -57,7 +57,7 @@
                                     </div>
                                     <div class="col-6 text-end">
                                         @php
-                                            $status = $lead->latestAssignment->status ?? 'New'; // Default status is 'New'
+                                            $status = $lead->status ?? 'New'; // Default status is 'New'
 
                                             $badgeClass = match ($status) {
                                                 'New' => 'badge-info',

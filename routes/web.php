@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminAggregatorFormController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\LeadsController;
+use App\Http\Controllers\Admin\LeadTaskController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\MaterialController;
 use App\Http\Controllers\Admin\OrderController;
@@ -106,7 +107,7 @@ Route::prefix('admin')->group(function () {
 
         Route::get('/leads', [LeadsController::class, 'index'])->name('leads-list');
         Route::get('/leads-details/{id}', [LeadsController::class, 'show'])->name('lead-details');
-        Route::post('/assign/admin-superuser', [LeadsController::class, 'assignAdminSuperuser'])->name('assign-admin-superuser');
+        Route::post('/assign/admin-superuser', [LeadsController::class, 'leadAssign'])->name('lead-assign');
         Route::get('/leads-list/filter', [LeadsController::class, 'getFilteredLeads'])->name('filter-leads-list');
 
         //Orders
@@ -130,20 +131,28 @@ Route::prefix('admin')->group(function () {
     //Common Routes for All Roles
 
     // Lead Task
-    Route::get('task-form/{id}', [TaskController::class, 'getTaskForm'])->name('task-form');
-    Route::post('task-create', [TaskController::class, 'store'])->name('task-create');
-    Route::get('/tasks', [TaskController::class, 'index'])->name('task-list');
-    Route::get('/task-details/{task_id}', [TaskController::class, 'show'])->name('task-details');
-    Route::post('task-executive/create', [TaskController::class, 'executiveStoreTask'])->name('task-executive');
-    Route::post('/reassgin/task', [TaskController::class, 'reassignExecutive'])->name('reassign-executive');
-    Route::get('/leads/{lead_id}/tasks', [TaskController::class, 'showLeadTasks'])->name('leads-tasks');
+    Route::get('task-form/{id}', [LeadTaskController::class, 'getTaskForm'])->name('task-form');
+    Route::post('task-create', [LeadTaskController::class, 'store'])->name('task-create');
+    Route::get('/task-details/{task_id}', [LeadTaskController::class, 'show'])->name('task-details');
+    Route::post('task-executive/create', [LeadTaskController::class, 'executiveStoreTask'])->name('task-executive');
+    Route::post('/reassgin/task', [LeadTaskController::class, 'reassignExecutive'])->name('reassign-executive');
+    Route::get('/leads/{lead_id}/tasks', [LeadTaskController::class, 'showLeadTasks'])->name('leads-tasks');
+    Route::post('/executive/change-status', [LeadTaskController::class, 'changeStatus'])->name('change-status');
+    Route::patch('/task-update/{id}', [LeadTaskController::class, 'update'])->name('task-update');
+    Route::patch('/task-executive/update/{id}', [LeadTaskController::class, 'executiveUpdateTask'])->name('task-executive.update');
 
     //Order Task
     Route::get('order/task-form/{id}', [OrderTaskController::class, 'getOrderTaskForm'])->name('order-task-form');
     Route::post('order/task-create', [OrderTaskController::class, 'store'])->name('order-task-create');
-    Route::get('/order/tasks', [OrderTaskController::class, 'index'])->name('order-task-list');
     Route::get('/order/task-details/{task_id}', [OrderTaskController::class, 'show'])->name('order-task-details');
     Route::post('order/task-executive/create', [OrderTaskController::class, 'executiveStoreTask'])->name('order-task-executive');
     Route::post('/order/reassgin/task', [OrderTaskController::class, 'reassignExecutive'])->name('order-reassign-executive');
     Route::get('/orders/{order_id}/tasks', [OrderTaskController::class, 'showOrderTasks'])->name('orders-tasks');
+    Route::post('/order/executive/update-status', [OrderTaskController::class, 'changeStatus'])->name('update-status');
+    Route::patch('/order/task-update/{id}', [OrderTaskController::class, 'update'])->name('order-task-update');
+    Route::patch('/order/task-executive/update/{id}', [OrderTaskController::class, 'executiveUpdateTask'])->name('order-task-executive.update');
+
+    //Executive or Assigned User Lead and Order Task List
+    Route::get('/tasks', [LeadTaskController::class, 'index'])->name('task-list');
+
 });

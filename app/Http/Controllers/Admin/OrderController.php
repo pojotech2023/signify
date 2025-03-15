@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\Order;
 use App\Models\InternalUser;
 use App\Models\OrderAssign;
+use App\Models\AggregatorForm;
+use App\Models\LeadAssign;
+use App\Models\LeadTask;
+use App\Models\LeadTaskAssign;
+use App\Models\OrderTask;
+use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -28,6 +34,33 @@ class OrderController extends Controller
         $order = Order::create([
             'lead_id' => $request->lead_id,
         ]);
+
+        // Update status in aggregator_forms table
+        AggregatorForm::where('id', $request->lead_id)->update([
+            'status' => 'Completed'
+        ]);
+
+        // Update status in lead assign table
+        LeadAssign::where('lead_id', $request->lead_id)->update([
+            'status' => 'Completed'
+        ]);
+
+        // Update status in lead task table
+        $lead_task = LeadTask::where('lead_id', $request->lead_id)->first();
+
+        if ($lead_task) {
+            // Update status in lead task table
+            $lead_task->update([
+                'status' => 'Completed'
+            ]);
+        
+            $leadTaskId = $lead_task->id;
+        
+            // Update status in lead task assign table
+            LeadTaskAssign::where('task_id', $leadTaskId)->update([
+                'status' => 'Completed'
+            ]);
+        }
 
         return redirect()->back()->with('Success', 'Order Created Successfully');
     }
@@ -50,13 +83,12 @@ class OrderController extends Controller
                     $q->where('internal_user_id', $userID);
                 });
             }
-            $orders = $query->get();
+            $orders = $query->orderBy('id', 'desc')->get();
 
             return view('admin.order.orders_list', compact('orders'));
         } else {
             return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
         }
-       
     }
 
     //Order Details
@@ -123,12 +155,17 @@ class OrderController extends Controller
             'status' => $status
         ]);
 
+        Order::where('id', $request->order_id)->update([
+            'status' => $status
+        ]);
+
         return redirect()->back()->with('Success', 'Admin or SuperUser' .
             ($status == 'Assigned' ? 'Assigned' : 'Re-Assigned') . ' successfully!');
     }
 
     //Order Complete
-    public function orderComplete(Request $request){
+    public function orderComplete(Request $request)
+    {
 
         $validate = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id'
@@ -141,10 +178,21 @@ class OrderController extends Controller
 
         $order = Order::find($orderId);
 
-        if($order){
+        if ($order) {
             $order->status = 'Completed';
             $order->save();
         }
+
+        // Update status in order table
+        Order::where('id', $request->order_id)->update([
+            'status' => 'Completed'
+        ]);
+
+        // Update status in ordertasks table
+        OrderTask::where('order_id', $request->order_id)->update([
+            'status' => 'Completed'
+        ]);
+
 
         return redirect()->back()->with('Success', 'Order Completed Successfully');
     }

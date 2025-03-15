@@ -4,14 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AggregatorForm;
-use App\Models\AssignAdminSuperuser;
 use App\Models\InternalUser;
+use App\Models\LeadAssign;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
 class LeadsController extends Controller
 {
+    //leads list - minimal view
     public function index(Request $request)
     {
         $role = session('role_name');
@@ -29,7 +30,7 @@ class LeadsController extends Controller
                     $q->where('internal_user_id', $userID);
                 });
             }
-            $leads = $query->get();
+            $leads = $query->orderBy('id', 'desc')->get();
 
             return view('admin.leads_list', compact('leads'));
         } else {
@@ -37,6 +38,7 @@ class LeadsController extends Controller
         }
     }
 
+    //lead detailed view
     public function show($id)
     {
         $lead = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade'])->findOrFail($id);
@@ -46,8 +48,8 @@ class LeadsController extends Controller
             $query->whereIn('role_name', ['Admin', 'SuperUser']);
         })->get();
 
-        // Fetch the latest assignment for this user_form_id
-        $assign_admin_superuser = AssignAdminSuperuser::where('user_form_id', $id)
+        // Fetch the latest assignment for this lead_id
+        $assign_admin_superuser = LeadAssign::where('lead_id', $id)
             ->latest('created_at')
             ->first();
 
@@ -71,13 +73,14 @@ class LeadsController extends Controller
         return view('admin.leads_details', compact('lead', 'admin_super_user', 'assignEnabled', 'reassignEnabled', 'assignedUserName'));
     }
 
-    public function assignAdminSuperuser(Request $request)
+    // Admin lead assign to admin or superuser
+    public function leadAssign(Request $request)
     {
-        // dd($request->all());
+        //dd($request->all());
         $validate = Validator::make($request->all(), [
-            'assign_user_id' => 'nullable|exists:internal_users,id',
-            'reassign_user_id' => 'nullable|exists:internal_users,id',
-            'user_form_id' => 'required|exists:aggregator_forms,id',
+            'assign_user_id'     => 'nullable|exists:internal_users,id',
+            'reassign_user_id'   => 'nullable|exists:internal_users,id',
+            'lead_id'            => 'required|exists:aggregator_forms,id',
         ]);
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
@@ -91,9 +94,13 @@ class LeadsController extends Controller
             $internalUserId = $request->reassign_user_id;
         }
 
-        AssignAdminSuperuser::create([
+        LeadAssign::create([
             'internal_user_id' => $internalUserId,
-            'user_form_id' => $request->user_form_id,
+            'lead_id' => $request->lead_id,
+            'status' => $status
+        ]);
+
+        AggregatorForm::where('id', $request->lead_id)->update([
             'status' => $status
         ]);
 

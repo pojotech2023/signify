@@ -41,24 +41,31 @@
             </div>
             <div class="row">
                 <div class="col-12 col-md-8">
-                    @foreach ($orderTasks->concat($leadTasks) as $task)
+                    @foreach ($orderTasks->concat($leadTasks)->sortByDesc('id')->values() as $task)
                         <div class="card mt-3 task-card"
                             data-route="{{ $task->type === 'order' ? route('order-task-details', $task->id) : route('task-details', $task->id) }}"
                             onclick="redirectToLeadDetails(event, this)">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-6 d-flex align-items-center">
-                                        <h6 class="card-title mb-0">Task ID: {{ $task->id }}</h6>
-                                        <span class="op-7 ms-3 fw-normal">
+                                    <div class="col-8 d-flex align-items-center">
+                                        <h6 class="card-title mb-0">
+                                            @if ($task->lead_id)
+                                                Lead ID: {{ $task->lead_id }}
+                                            @endif
+                                            @if ($task->order_id)
+                                                 Order ID: {{ $task->order_id }}
+                                            @endif
+                                            | Task ID: {{ $task->id }}
+                                        </h6> <span class="op-7 ms-3 fw-normal">
                                             {{ \Carbon\Carbon::parse($task->created_at)->format('M, d Y h:i A') }}
                                         </span>
                                     </div>
-                                    <div class="col-6 text-end">
+                                    <div class="col-4 text-end">
                                         @php
-                                            $status = $task->assignExecutive->status ?? $task->orderTaskAssign->status ?? 'Pending';
+                                            $status = $task->status ?? ($task->orderTaskAssign->status ?? 'New');
 
                                             $badgeClass = match ($status) {
-                                                'Pending' => 'badge-warning',
+                                                'New' => 'badge-info',
                                                 'Assigned' => 'badge-success',
                                                 'Inprogress' => 'badge-warning',
                                                 'On Hold' => 'badge-danger',

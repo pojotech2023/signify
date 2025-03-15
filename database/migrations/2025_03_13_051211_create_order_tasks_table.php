@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('order_tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
+            $table->string('task_name');
             $table->string('task_priority');
-            $table->date('entry_time');
-            $table->string('delivery_needed_by');
+            $table->dateTime('entry_time');
+            $table->dateTime('completion_expected_by');
             $table->text('description');
             $table->string('whatsapp_audio')->nullable();
             $table->text('attachments');
@@ -24,10 +25,8 @@ return new class extends Migration
             $table->string('vendor_mobile');
             $table->string('customer_name');
             $table->string('customer_mobile');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->text('whatsapp_message')->nullable();
             $table->foreignId('created_by')->constrained('internal_users')->onDelete('cascade');
+            $table->string('status')->default('New');
             $table->timestamps();
         });
     }

@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('order_executive_tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('assigned_executive_id')->constrained('order_task_assigns')->onDelete('cascade');
+            $table->foreignId('task_assigned_user_id')->constrained('order_task_assigns')->onDelete('cascade');
             $table->text('remarks');
             $table->string('whatsapp_audio')->nullable();
-            $table->string('geo_latitude');
-            $table->string('geo_longitude');
-            $table->string('status');
+            $table->text('address');
+            $table->dateTime('end_date_time');
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }

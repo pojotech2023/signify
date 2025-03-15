@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('lead_tasks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('lead_id')->constrained('aggregator_forms')->onDelete('cascade');
+            $table->string('task_name');
             $table->string('task_priority');
-            $table->date('entry_time');
-            $table->string('delivery_needed_by');
+            $table->dateTime('entry_time');
+            $table->dateTime('completion_expected_by');
             $table->text('description');
             $table->string('whatsapp_audio')->nullable();
             $table->text('attachments');
@@ -24,10 +25,8 @@ return new class extends Migration
             $table->string('vendor_mobile');
             $table->string('customer_name');
             $table->string('customer_mobile');
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->text('whatsapp_message')->nullable();
             $table->foreignId('created_by')->constrained('internal_users')->onDelete('cascade');
+            $table->string('status')->default('New');
             $table->timestamps();
         });
     }
@@ -37,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('lead_tasks');
     }
 };

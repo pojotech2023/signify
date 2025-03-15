@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class OrderTaskAssign extends Model
 {
     use HasFactory;
-
+   
     protected $fillable = [
-        'executive_id',
+        'internal_user_id',
         'order_task_id',
         'status'
     ];
@@ -22,11 +22,11 @@ class OrderTaskAssign extends Model
 
     public function executive()
     {
-        return $this->belongsTo(InternalUser::class, 'executive_id');
+        return $this->belongsTo(InternalUser::class, 'internal_user_id');
     }
 
     public function orderExecutiveTask()
     {
-        return $this->hasOne(OrderExecutiveTask::class, 'assigned_executive_id');
+        return $this->hasOne(OrderExecutiveTask::class, 'task_assigned_user_id');
     }
 }

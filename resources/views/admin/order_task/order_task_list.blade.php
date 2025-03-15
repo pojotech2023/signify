@@ -54,10 +54,10 @@
                                     </div>
                                     <div class="col-6 text-end">
                                         @php
-                                            $status = $order_task->orderTaskAssign->status ?? 'Pending';
+                                            $status = $order_task->status ?? 'New';
 
                                             $badgeClass = match ($status) {
-                                                'Pending' => 'badge-warning',
+                                               'New' => 'badge-info',
                                                 'Assigned' => 'badge-success',
                                                 'Inprogress' => 'badge-warning',
                                                 'On Hold' => 'badge-danger',

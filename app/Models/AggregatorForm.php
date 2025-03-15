@@ -48,17 +48,17 @@ class AggregatorForm extends Model
 
     public function assignAdminSuperusers()
     {
-        return $this->hasMany(AssignAdminSuperuser::class, 'user_form_id');
+        return $this->hasMany(LeadAssign::class, 'lead_id');
     }
 
     public function latestAssignment() //assign_admin_superuser
     {
-        return $this->hasOne(AssignAdminSuperuser::class, 'user_form_id')->latestOfMany();
+        return $this->hasOne(LeadAssign::class, 'lead_id')->latestOfMany();
     }
 
     public function task()
     {
-        return $this->hasMany(Task::class, 'lead_id');
+        return $this->hasMany(LeadTask::class, 'lead_id');
     }
 
     public function order()

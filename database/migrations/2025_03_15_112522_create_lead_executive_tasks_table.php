@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('executive_tasks', function (Blueprint $table) {
+        Schema::create('lead_executive_tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('assigned_executive_id')->constrained('assign_executives')->onDelete('cascade');
+            $table->foreignId('task_assigned_user_id')->constrained('lead_task_assigns')->onDelete('cascade');
             $table->text('remarks');
             $table->string('whatsapp_audio')->nullable();
-            $table->string('geo_latitude');
-            $table->string('geo_longitude');
-            $table->string('status');
+            $table->text('address');
+            $table->dateTime('end_date_time');
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('executive_tasks');
+        Schema::dropIfExists('lead_executive_tasks');
     }
 };

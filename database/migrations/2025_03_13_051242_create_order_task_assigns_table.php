@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('order_task_assigns', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('executive_id')->constrained('internal_users')->onDelete('cascade');
+            $table->foreignId('internal_user_id')->constrained('internal_users')->onDelete('cascade');
             $table->foreignId('order_task_id')->constrained('order_tasks')->onDelete('cascade');
             $table->string('status')->default('New');
             $table->timestamps();

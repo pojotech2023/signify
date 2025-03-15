@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assign_admin_superusers', function (Blueprint $table) {
+        Schema::create('lead_task_assigns', function (Blueprint $table) {
             $table->id();
             $table->foreignId('internal_user_id')->constrained('internal_users')->onDelete('cascade');
-            $table->foreignId('user_form_id')->constrained('aggregator_forms')->onDelete('cascade');
+            $table->foreignId('task_id')->constrained('lead_tasks')->onDelete('cascade');
             $table->string('status')->default('New');
             $table->timestamps();
         });
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assign_admin_superusers');
+        Schema::dropIfExists('lead_task_assigns');
     }
 };

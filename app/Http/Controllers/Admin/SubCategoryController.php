@@ -12,7 +12,7 @@ class SubCategoryController extends Controller
 {
     public function index()
     {
-        $subcategories = SubCategory::with('category')->get();
+        $subcategories = SubCategory::with('category')->orderBy('id', 'desc')->get();
         $categories = Category::all();
         return view('admin.subcategory_list', compact('subcategories', 'categories'));
     }

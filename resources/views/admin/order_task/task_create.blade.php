@@ -25,6 +25,22 @@
 
                         <input type="hidden" name="order_id" value="{{ $order->id ?? '' }}">
 
+                        <div class="row align-items-center mt-4">
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="task_name" class="fw-bold">Task Name</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 text-center">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="task_name" required>
+                                </div>
+                                @error('task_name')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="row align-items-center mt-5">
                             <div class="col-lg-2">
                                 <div class="form-group">
@@ -36,13 +52,9 @@
                                     <select class="form-select form-control" name="task_priority" id="filterStatus"
                                         required>
                                         <option value="">Select Priority</option>
-                                        <option value="New">High</option>
-                                        <option value="Assigned">Small</option>
-                                        <option value="Inprogress">Medium</option>
-                                        {{-- <option value="Re-Assigned">Re-Assigned</option>
-                                        <option value="Completed">Completed</option>
-                                        <option value="Canceled">Canceled</option>
-                                        <option value="Re-Opened">Re-Opened</option> --}}
+                                        <option value="High">High</option>
+                                        <option value="Medium">Medium</option>
+                                        <option value="Low">Low</option>
                                     </select>
                                 </div>
                                 @error('task_priority')
@@ -50,43 +62,18 @@
                                 @enderror
                             </div>
                         </div>
+                        
                         <div class="row align-items-center mt-4">
                             <div class="col-lg-2">
                                 <div class="form-group">
-                                    <label for="entry_time" class="fw-bold">Entry Time</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 text-center">
-                                <div class="form-group">
-                                    <input type="date" class="form-control" name="entry_time" required>
-                                </div>
-                                @error('entry_time')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="row align-items-center mt-4">
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <label for="delivery_needed_by" class="fw-bold">Delivery Needed By</label>
+                                    <label for="completion_expected_by" class="fw-bold">Completion Expected By</label>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <select class="form-select form-control" id="delivery_needed_by"
-                                        name="delivery_needed_by" required>
-                                        <option value="">Select Vendor</option>
-                                        <option value="Vendor">Vendor</option>
-                                        <option value="New">Sample</option>
-                                        <option value="Assigned">Sample1</option>
-                                        {{-- <option value="Inprogress">In Low</option>
-                                        <option value="Re-Assigned">Re-Assigned</option>
-                                        <option value="Completed">Completed</option>
-                                        <option value="Canceled">Canceled</option>
-                                        <option value="Re-Opened">Re-Opened</option> --}}
-                                    </select>
+                                    <input type="datetime-local" name="completion_expected_by" id="completion_expected_by" required>
                                 </div>
-                                @error('delivery_needed_by')
+                                @error('completion_expected_by')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -179,69 +166,20 @@
                             </div>
                         </div>
 
-                        <div class="row align-items-center">
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <label for="start_date" class="fw-bold">Start Date</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                    <input type="date" class="form-control" name="start_date" id="todayDate"
-                                        required>
-                                </div>
-                                @error('start_date')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <label for="end_date" class="fw-bold">End Date</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                    <input type="date" class="form-control" name="end_date" id="todayDate" required>
-                                </div>
-                                @error('end_date')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
-                        <div class="row align-items-center mt-4 border-bottom pb-3"
-                            style="border-bottom: 1px solid #ebecec !important;">
-                            <div class="col-lg-2">
-                                <div class="form-group">
-                                    <label for="whatsapp_message" class="fw-bold">Whatsapp Forward</label>
-                                </div>
-                            </div>
-                            <div class="col-lg-5">
-                                <div class="form-group d-flex align-items-center gap-2">
-                                    <i class="fab fa-whatsapp text-success fs-4"></i>
-                                    <span class="fw-bold text-dark">WhatsApp Message</span>
-                                </div>
-                                <input type="text" name="whatsapp_message" class="form-control mt-2">
-                                @error('whatsapp_message')
-                                    <div class="text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-
                         {{-- Assign To Executive --}}
                         <div class="row align-items-center mt-4">
                             <div class="col-lg-2">
                                 <div class="form-group">
-                                    <label for="executive_id" class="fw-bold">Assign To</label>
+                                    <label for="internal_user_id" class="fw-bold">Assign To</label>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <select class="form-select form-control" name="executive_id" id="executive_id"
+                                    <select class="form-select form-control" name="internal_user_id" id="internal_user_id"
                                         required>
                                         <option value="">Select Assignee</option>
-                                        @foreach ($executive_list as $executive)
-                                            <option value="{{ $executive->id }}">{{ $executive->name }}</option>
+                                        @foreach ($internal_user_list as $user)
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

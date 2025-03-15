@@ -202,12 +202,12 @@
         @if (session('role_name') === 'Admin')
             <div class="row">
                 <div class="col-lg-10 ms-4">
-                    <form id="assignForm" action="{{ route('assign-admin-superuser') }}" method="POST" class="p-4">
+                    <form id="assignForm" action="{{ route('lead-assign') }}" method="POST" class="p-4">
                         @csrf
                         <div class="row align-items-center mb-4">
 
                             {{-- Hidden field to store the aggregator_form ID --}}
-                            <input type="hidden" name="user_form_id" value="{{ $lead->id }}">
+                            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
 
                             {{-- Assign To SuperUser --}}
                             <div class="col-lg-2">
@@ -252,24 +252,48 @@
             </div>
         @endif
 
-         {{-- Create Task and Confirm Order --}}
+        {{-- Create Task and Confirm Order --}}
         @if (session('role_name') === 'Superuser')
             <div class="row mt-5">
                 <div class="col-lg-12 d-flex justify-content-center">
                     <div class="d-flex gap-4 position-relative" style="margin-bottom: 30px;">
-                        <a href="{{ route('task-form', $lead->id) }}" class="btn btn-primary px-5 py-2"  style="font-size: 1.2rem; min-width: 200px;">
+                        <a href="{{ route('task-form', $lead->id) }}" class="btn btn-primary px-5 py-2"
+                            style="font-size: 1.2rem; min-width: 200px;">
                             Create Task
                         </a>
-                        <form id="orderForm" action="{{ route('order-store') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                            <button type="submit" class="btn btn-primary px-5 py-2" style="font-size: 1.2rem; min-width: 200px;">
-                                Confirm Order
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-primary px-5 py-2"
+                            style="font-size: 1.2rem; min-width: 200px;" data-bs-toggle="modal"
+                            data-bs-target="#confirmOrderModal" {{ $lead->status === 'Completed' ? 'disabled' : '' }}>
+                            Confirm Order
+                        </button>
                     </div>
                 </div>
             </div>
         @endif
     </div>
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmOrderModal" tabindex="-1" aria-labelledby="confirmOrderModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmOrderModalLabel">Confirm Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to confirm this order? <br>
+                    <strong>Lead ID:</strong> {{ $lead->id }}
+                </div>
+                <div class="modal-footer">
+                    <form action="{{ route('order-store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <button type="submit" class="btn btn-success">Yes, Confirm</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection

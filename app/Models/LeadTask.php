@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Task extends Model
+class LeadTask extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'lead_id',
-        'created_by',
+        'task_name',
         'task_priority',
         'entry_time',
-        'delivery_needed_by',
+        'completion_expected_by',
         'description',
         'whatsapp_audio',
         'attachments',
@@ -22,9 +22,8 @@ class Task extends Model
         'vendor_mobile',
         'customer_name',
         'customer_mobile',
-        'start_date',
-        'end_date',
-        'whatsapp_message',
+        'created_by',
+        'status'
     ];
 
     public function aggregatorForm()
@@ -37,8 +36,9 @@ class Task extends Model
         return $this->belongsTo(InternalUser::class, 'created_by');
     }
 
-    public function assignExecutive()
+    public function leadTaskAssign()
     {
-        return $this->hasOne(AssignExecutive::class, 'task_id')->latestOfMany();
+        return $this->hasOne(LeadTaskAssign::class, 'task_id')->latestOfMany();
     }
+
 }

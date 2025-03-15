@@ -24,7 +24,7 @@ class InternalUser extends Authenticatable
 
     public function assignAdminSuperusers()
     {
-        return $this->hasMany(AssignAdminSuperuser::class, 'internal_user_id');
+        return $this->hasMany(LeadAssign::class, 'internal_user_id');
     }
 
     public function isAdmin()
@@ -39,7 +39,7 @@ class InternalUser extends Authenticatable
 
     public function task()
     {
-        return $this->hasMany(Task::class, 'created_by');
+        return $this->hasMany(LeadTask::class, 'created_by');
     }
 
     public function orderAssign()

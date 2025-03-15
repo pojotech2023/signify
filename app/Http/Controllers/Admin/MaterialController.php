@@ -13,7 +13,7 @@ class MaterialController extends Controller
 {
     public function index()
     {
-        $materials = Material::all();
+        $materials = Material::orderBy('id', 'desc')->get();
         return view('admin.aggregator_list', compact('materials'));
     }
 

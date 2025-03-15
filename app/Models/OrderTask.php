@@ -11,10 +11,10 @@ class OrderTask extends Model
 
     protected $fillable = [
         'order_id',
-        'created_by',
+        'task_name',
         'task_priority',
         'entry_time',
-        'delivery_needed_by',
+        'completion_expected_by',
         'description',
         'whatsapp_audio',
         'attachments',
@@ -22,9 +22,8 @@ class OrderTask extends Model
         'vendor_mobile',
         'customer_name',
         'customer_mobile',
-        'start_date',
-        'end_date',
-        'whatsapp_message',
+        'created_by',
+        'status'
     ];
 
     public function order()

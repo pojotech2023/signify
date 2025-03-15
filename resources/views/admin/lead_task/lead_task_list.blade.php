@@ -46,18 +46,18 @@
                             onclick="redirectToLeadDetails(event, this)">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-6 d-flex align-items-center">
-                                        <h6 class="card-title mb-0">Task ID: {{ $lead_task->id }}</h6>
-                                        <span class="op-7 ms-3 fw-normal">
+                                    <div class="col-8 d-flex align-items-center">
+                                        <h6 class="card-title mb-0">Lead ID: {{ $lead_task->lead_id }} | Task ID: {{ $lead_task->id }}</h6>
+                                        <span class="op-7 ms-3 fw-normal me-2">
                                             {{ \Carbon\Carbon::parse($lead_task->created_at)->format('M, d Y h:i A') }}
                                         </span>
                                     </div>
-                                    <div class="col-6 text-end">
+                                    <div class="col-4 text-end">
                                         @php
-                                            $status = $lead_task->assignExecutive->status ?? 'Pending';
+                                            $status = $lead_task->status ?? 'New';
 
                                             $badgeClass = match ($status) {
-                                                'Pending' => 'badge-warning',
+                                                'New' => 'badge-info',
                                                 'Assigned' => 'badge-success',
                                                 'Inprogress' => 'badge-warning',
                                                 'On Hold' => 'badge-danger',

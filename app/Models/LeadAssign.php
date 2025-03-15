@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AssignAdminSuperuser extends Model
+class LeadAssign extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['internal_user_id', 'user_form_id', 'status'];
+    protected $fillable = ['internal_user_id', 'lead_id', 'status'];
 
     public function internalUser()
     {
@@ -18,6 +18,6 @@ class AssignAdminSuperuser extends Model
 
     public function aggregatorForm()
     {
-        return $this->belongsTo(AggregatorForm::class, 'user_form_id');
+        return $this->belongsTo(AggregatorForm::class, 'lead_id');
     }
 }
