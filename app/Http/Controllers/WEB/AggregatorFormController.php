@@ -30,7 +30,7 @@ class AggregatorFormController extends Controller
             'location' => 'required',
             'quantity' => 'required|integer',
             'design_service_need' => 'required',
-            'email_id' => 'required|email',
+            'email_id' => 'required|email|unique:aggregator_forms,email_id',
             'site_image' => 'required|array',
             'site_image.*' => 'file|mimes:jpg,jpeg,png,webp',
             'design_attachment' => 'required|array',

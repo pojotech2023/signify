@@ -34,9 +34,14 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <form action="{{ route('user-creation') }}" method="POST" enctype="multipart/form-data"
-                                    class="container">
+                                <form
+                                    action="{{ isset($internal_user) ? route('usercreation-update', $internal_user->id) : route('usercreation-store') }}"
+                                    method="POST" enctype="multipart/form-data" class="container">
                                     @csrf
+
+                                    @if (isset($internal_user))
+                                        @method('PATCH') {{-- Ensures PATCH request for updates --}}
+                                    @endif
 
                                     <div class="row align-items-center mt-5">
                                         <div class="col-lg-2">
@@ -47,7 +52,7 @@
                                         <div class="col-lg-4">
                                             <div class="form-group">
                                                 <input type="text" id="name" name="name" class="form-control"
-                                                    placeholder="Enter Name">
+                                                    placeholder="Enter Name"  value="{{ old('name', $internal_user->name ?? '') }}">
                                             </div>
                                             @error('name')
                                                 <div class="text-danger">{{ $message }}</div>
@@ -61,7 +66,7 @@
                                         <div class="col-lg-4">
                                             <div class="form-group">
                                                 <input type="email" id="email_id" name="email_id" class="form-control"
-                                                    placeholder="Enter Email ID">
+                                                    placeholder="Enter Email ID"  value="{{ old('email_id', $internal_user->email_id ?? '') }}">
                                             </div>
                                             @error('email_id')
                                                 <div class="text-danger">{{ $message }}</div>
@@ -108,7 +113,7 @@
                                         <div class="col-lg-4">
                                             <div class="form-group">
                                                 <input type="text" id="mobile_no" name="mobile_no" class="form-control"
-                                                    placeholder="Enter Mobile Number">
+                                                    placeholder="Enter Mobile Number" value="{{ old('mobile_no', $internal_user->mobile_no ?? '') }}">
                                             </div>
                                             @error('mobile_no')
                                                 <div class="text-danger">{{ $message }}</div>
@@ -116,7 +121,7 @@
                                         </div>
                                         <div class="col-lg-2">
                                             <div class="form-group">
-                                                <label for="role_id">Designation</label>
+                                                <label for="role_id">User Type</label>
                                             </div>
                                         </div>
                                         <div class="col-lg-4">
@@ -124,11 +129,28 @@
                                                 <select id="role_id" name="role_id" class="form-control">
                                                     <option value="">Select Role</option>
                                                     @foreach ($roles as $role)
-                                                        <option value="{{ $role->id }}">{{ $role->role_name }}</option>
+                                                        <option value="{{ $role->id }}" {{ old('role_id', $internal_user->role_id ?? '') == $role->id ? 'selected' : '' }}>
+                                                            {{ $role->role_name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
                                             @error('role_id')
+                                                <div class="text-danger">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mt-5">
+                                        <div class="col-lg-2">
+                                            <div class="form-group">
+                                                <label for="designation">Designation</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <div class="form-group">
+                                                <input type="text" id="designation" name="designation"
+                                                    class="form-control" placeholder="Enter Your Designation" value="{{ old('designation', $internal_user->designation ?? '') }}">
+                                            </div>
+                                            @error('designation')
                                                 <div class="text-danger">{{ $message }}</div>
                                             @enderror
                                         </div>

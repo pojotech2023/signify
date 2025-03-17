@@ -84,7 +84,7 @@ class LeadTaskController extends Controller
             'status' => 'Assigned',
         ]);
 
-        return redirect()->back()->with('success', 'Lead Task created successfully!');
+        return  redirect()->route('leads-list')->with('success', 'Lead Task created successfully!');
     }
     //Lead wise tasks
     public function showLeadTasks($lead_id)
@@ -301,7 +301,7 @@ class LeadTaskController extends Controller
             'end_date_time'         => $request->end_date_time,
         ]);
 
-        return back()->with('success', 'Executive task accepted successfully');
+        return redirect()->route('task-list')->with('success', 'Executive task accepted successfully');
     }
 
     //Executive Form Update or change status

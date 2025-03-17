@@ -82,7 +82,7 @@
                 {{-- User Creation (Admin only) --}}
                 @if (session('role_name') === 'Admin')
                     <li class="nav-item">
-                        <a href="{{ route('usercreation-form') }}">
+                        <a href="{{ route('usercreation-list') }}">
                             <i class="bi bi-person-plus-fill"></i>
                             <p>User Creation</p>
                         </a>

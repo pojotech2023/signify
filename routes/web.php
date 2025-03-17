@@ -124,8 +124,12 @@ Route::prefix('admin')->group(function () {
 
         //User Creation
 
-        Route::get('/user-creation/form', [UserCreationController::class, 'index'])->name('usercreation-form');
-        Route::post('/user-creation', [UserCreationController::class, 'store'])->name('user-creation');
+        Route::get('/internal-user/form/{id?}', [UserCreationController::class, 'getUserForm'])->name('usercreation-form');
+        Route::post('/internal-user/creation', [UserCreationController::class, 'store'])->name('usercreation-store');
+        Route::get('/internal-user/list', [UserCreationController::class, 'index'])->name('usercreation-list');
+        Route::patch('/internal-user/update/{id}', [UserCreationController::class, 'update'])->name('usercreation-update');
+        Route::delete('/internal-user/delete/{id}', [UserCreationController::class, 'delete'])->name('usercreation-delete');
+
     });
 
     //Common Routes for All Roles

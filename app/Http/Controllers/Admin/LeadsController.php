@@ -70,6 +70,21 @@ class LeadsController extends Controller
             }
         }
 
+        // Once Assigned User lead details see then status change Inprogress
+        $loggedInUserId = auth('admin')->id();
+
+        if ($assign_admin_superuser && $assign_admin_superuser->internal_user_id == $loggedInUserId) {
+            if (in_array($lead->status, ['Assigned', 'Re-Assigned'])) {
+                $lead->update([
+                    'status' => 'Inprogress'
+                ]);
+
+                $assign_admin_superuser->update([
+                    'status' => 'Inprogress'
+                ]);
+            }
+        }
+
         return view('admin.leads_details', compact('lead', 'admin_super_user', 'assignEnabled', 'reassignEnabled', 'assignedUserName'));
     }
 
@@ -104,7 +119,7 @@ class LeadsController extends Controller
             'status' => $status
         ]);
 
-        return redirect()->back()->with('Success', 'Admin or SuperUser' .
+        return redirect()->route('leads-list')->with('Success', 'Admin or SuperUser' .
             ($status == 'Assigned' ? 'Assigned' : 'Re-Assigned') . ' successfully!');
     }
 

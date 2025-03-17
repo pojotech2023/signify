@@ -15,6 +15,8 @@ class InternalUser extends Authenticatable
         'mobile_no',
         'email_id',
         'password',
+        'designation',
+        'profile_image'
     ];
 
     public function role()
