@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AdminAggregatorFormController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\JobController;
+use App\Http\Controllers\Admin\JobTaskController;
 use App\Http\Controllers\Admin\LeadsController;
 use App\Http\Controllers\Admin\LeadTaskController;
 use App\Http\Controllers\Admin\LoginController;
@@ -117,7 +119,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders-details/{id}', [OrderController::class, 'show'])->name('order-details');
         Route::post('/order/assign', [OrderController::class, 'orderAssign'])->name('order-assign');
         Route::post('/order-complete', [OrderController::class, 'orderComplete'])->name('order-complete');
+
+        //Orders
+        Route::get('/job/form/{id?}', [JobController::class, 'getJobForm'])->name('jobcreation-form');
+        Route::post('/job', [JobController::class, 'store'])->name('job-store');
+        Route::get('/jobs', [JobController::class, 'index'])->name('jobs-list');
+        Route::get('/jobs-details/{id}', [JobController::class, 'show'])->name('job-details');
+        Route::patch('/job-update/{id}', [JobController::class, 'update'])->name('job-update');
     });
+
 
     // Admin-Only Routes
     Route::middleware(['checkUserRole:Admin'])->group(function () {
@@ -129,7 +139,6 @@ Route::prefix('admin')->group(function () {
         Route::get('/internal-user/list', [UserCreationController::class, 'index'])->name('usercreation-list');
         Route::patch('/internal-user/update/{id}', [UserCreationController::class, 'update'])->name('usercreation-update');
         Route::delete('/internal-user/delete/{id}', [UserCreationController::class, 'delete'])->name('usercreation-delete');
-
     });
 
     //Common Routes for All Roles
@@ -139,7 +148,6 @@ Route::prefix('admin')->group(function () {
     Route::post('task-create', [LeadTaskController::class, 'store'])->name('task-create');
     Route::get('/task-details/{task_id}', [LeadTaskController::class, 'show'])->name('task-details');
     Route::post('task-executive/create', [LeadTaskController::class, 'executiveStoreTask'])->name('task-executive');
-    Route::post('/reassgin/task', [LeadTaskController::class, 'reassignExecutive'])->name('reassign-executive');
     Route::get('/leads/{lead_id}/tasks', [LeadTaskController::class, 'showLeadTasks'])->name('leads-tasks');
     Route::post('/executive/change-status', [LeadTaskController::class, 'changeStatus'])->name('change-status');
     Route::patch('/task-update/{id}', [LeadTaskController::class, 'update'])->name('task-update');
@@ -150,13 +158,22 @@ Route::prefix('admin')->group(function () {
     Route::post('order/task-create', [OrderTaskController::class, 'store'])->name('order-task-create');
     Route::get('/order/task-details/{task_id}', [OrderTaskController::class, 'show'])->name('order-task-details');
     Route::post('order/task-executive/create', [OrderTaskController::class, 'executiveStoreTask'])->name('order-task-executive');
-    Route::post('/order/reassgin/task', [OrderTaskController::class, 'reassignExecutive'])->name('order-reassign-executive');
     Route::get('/orders/{order_id}/tasks', [OrderTaskController::class, 'showOrderTasks'])->name('orders-tasks');
     Route::post('/order/executive/update-status', [OrderTaskController::class, 'changeStatus'])->name('update-status');
     Route::patch('/order/task-update/{id}', [OrderTaskController::class, 'update'])->name('order-task-update');
     Route::patch('/order/task-executive/update/{id}', [OrderTaskController::class, 'executiveUpdateTask'])->name('order-task-executive.update');
 
+    //Job Task
+    Route::get('job/task-form/{id}', [JobTaskController::class, 'getJobTaskForm'])->name('job-task-form');
+    Route::post('job/task-create', [JobTaskController::class, 'store'])->name('job-task-create');
+    Route::get('/job/task-details/{task_id}', [JobTaskController::class, 'show'])->name('job-task-details');
+    Route::post('job/task-executive/create', [JobTaskController::class, 'executiveStoreTask'])->name('job-task-executive');
+    Route::get('/jobs/{job_id}/tasks', [JobTaskController::class, 'showJobTasks'])->name('jobs-tasks');
+    Route::post('/job/executive/update-status', [JobTaskController::class, 'changeStatus'])->name('job-update-status');
+    Route::patch('/job/task-update/{id}', [JobTaskController::class, 'update'])->name('job-task-update');
+    Route::patch('/job/task-executive/update/{id}', [JobTaskController::class, 'executiveUpdateTask'])->name('job-task-executive.update');
+
+
     //Executive or Assigned User Lead and Order Task List
     Route::get('/tasks', [LeadTaskController::class, 'index'])->name('task-list');
-
 });

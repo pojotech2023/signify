@@ -53,5 +53,15 @@ class InternalUser extends Authenticatable
     {
         return $this->hasMany(OrderTask::class, 'created_by');
     }
+    
+    public function jobAssign()
+    {
+        return $this->hasMany(JobAssign::class, 'internal_user_id');
+    }
+
+    public function jobTask()
+    {
+        return $this->hasMany(JobTask::class, 'created_by');
+    }
 
 }

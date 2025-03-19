@@ -38,6 +38,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
+    <!--Alert-->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/demo.css') }}" />
@@ -95,6 +98,8 @@
 
     <!-- Sweet Alert -->
     <script src="{{ asset('admin/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+    <!--Bootstrap Alert-->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
     <!-- Kaiadmin JS -->
     <script src="{{ asset('admin/assets/js/kaiadmin.min.js') }}"></script>
@@ -131,7 +136,7 @@
         });
     </script>
     {{-- Alert --}}
-    @if (session('success'))
+    {{-- @if (session('success'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 Swal.fire({
@@ -142,7 +147,18 @@
                 });
             });
         </script>
-    @endif
+    @endif --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let alert = document.querySelector('.alert');
+            if (alert) {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                }, 10000); // Hides after 3 seconds
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -41,7 +41,6 @@
             border-color: rgb(63 111 218);
             box-shadow: 0 0 10px rgb(63 111 218);
         }
-
     </style>
 
 </head>
@@ -334,6 +333,10 @@
                     text: "{{ session('success') }}",
                     icon: "success",
                     confirmButtonText: "OK"
+                }).then(() => {
+                    @php
+                        session()->forget('success');
+                    @endphp
                 });
             @endif
         });

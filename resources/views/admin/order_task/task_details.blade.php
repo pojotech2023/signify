@@ -39,7 +39,7 @@
 
                     {{-- SuperUser Task Form --}}
 
-                    @if (session('role_name') === 'Superuser')
+                    @if (in_array(session('role_name'), ['Admin', 'Superuser']))
                         <form action="{{ route('order-task-update', $task->id) }}" method="POST" enctype="multipart/form-data"
                             class="container">
                             @csrf

@@ -49,7 +49,7 @@
 
                     {{-- Jobs --}}
                     <li class="nav-item">
-                        <a data-bs-toggle="collapse" href="#forms">
+                        <a href="{{ route('jobs-list') }}">
                             <i class="bi bi-bag-fill"></i>
                             <p>Jobs</p>
                         </a>

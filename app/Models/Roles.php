@@ -15,4 +15,8 @@ class Roles extends Model
     public function internalUser(){
         return $this->hasMany(InternalUser::class, 'role_id');
     }
+
+    public function job(){
+        return $this->hasMany(Job::class, 'role_id');
+    }
 }

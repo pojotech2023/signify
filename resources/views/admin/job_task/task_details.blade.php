@@ -7,7 +7,7 @@
                 <div class="card shadow-lg p-4 ms-4">
                     <div class="card-header d-flex align-items-center">
                         <h6 class="card-title mb-0 fw-bold me-2">
-                            Lead ID: {{ $task->lead_id }} | Task Created By: {{ $task->CreatedBy->name }} | Task ID:
+                            Job ID: {{ $task->job_id }} | Task Created By: {{ $task->CreatedBy->name }} | Task ID:
                             {{ $task->id }}
                         </h6>
                         <span class="op-7 fw-normal me-3">
@@ -40,12 +40,12 @@
                     {{-- SuperUser Task Form --}}
 
                     @if (in_array(session('role_name'), ['Admin', 'Superuser']))
-                        <form action="{{ route('task-update', $task->id) }}" method="POST" enctype="multipart/form-data"
+                        <form action="{{ route('job-task-update', $task->id) }}" method="POST" enctype="multipart/form-data"
                             class="container">
                             @csrf
                             @method('PATCH')
 
-                            <input type="hidden" name="lead_id" value="{{ $task->lead_id ?? '' }}">
+                            <input type="hidden" name="job_id" value="{{ $task->job_id ?? '' }}">
                             {{-- Task Name --}}
                             <div class="row align-items-center mt-4">
                                 <div class="col-lg-2">
@@ -179,7 +179,7 @@
                             </div>
 
                             {{-- Executive User Form Prepopulate --}}
-                            @if ($task->leadTaskAssign && $task->leadTaskAssign->leadExecutiveTask)
+                            @if ($task->jobTaskAssign && $task->jobTaskAssign->jobExecutiveTask)
                                 {{-- Header Row --}}
                                 <div class="row py-2">
                                     <div class="col-12">
@@ -199,7 +199,7 @@
                                     <div class="col-lg-8">
                                         <div class="form-group">
                                             <textarea id="remarks" class="form-control" rows="4" readonly>
-                                             {{ old('remarks', $task->leadTaskAssign->leadExecutiveTask->remarks ?? '') }}</textarea>
+                                             {{ old('remarks', $task->jobTaskAssign->jobExecutiveTask->remarks ?? '') }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -215,7 +215,7 @@
                                         <div class="form-group">
                                             <input type="text" id="address" class="form-control fw-bold text-dark"
                                                 readonly
-                                                value="{{ old('address', $task->leadTaskAssign->leadExecutiveTask->address ?? '') }}">
+                                                value="{{ old('address', $task->jobTaskAssign->jobExecutiveTask->address ?? '') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -232,7 +232,7 @@
                                         <div class="form-group">
                                             <input type="datetime-local" id="end_date_time"
                                                 class="form-control fw-bold text-dark" readonly
-                                                value="{{ old('end_date_time', $task->leadTaskAssign->leadExecutiveTask->end_date_time ? \Carbon\Carbon::parse($task->leadTaskAssign->leadExecutiveTask->end_date_time)->format('Y-m-d\TH:i') : '') }}">
+                                                value="{{ old('end_date_time', $task->jobTaskAssign->jobExecutiveTask->end_date_time ? \Carbon\Carbon::parse($task->jobTaskAssign->jobExecutiveTask->end_date_time)->format('Y-m-d\TH:i') : '') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -292,7 +292,7 @@
                                 {{-- Submit Button --}}
                                 <div class="col-lg-2 ms-auto">
                                     <button type="submit" class="btn btn-primary w-100"
-                                        {{ $task->aggregatorForm->status === 'Completed' ? 'disabled' : '' }}>Submit</button>
+                                        {{ $task->job->status === 'Completed' ? 'disabled' : '' }}>Submit</button>
                                 </div>
                         </form>
                     @endif
@@ -424,8 +424,8 @@
                         </form>
 
                         {{-- Show empty form ONLY if task is NOT accepted in Executive Login --}}
-                        @if (!$task->leadTaskAssign || !$task->leadTaskAssign->leadExecutiveTask)
-                            <form action="{{ route('task-executive') }}" method="POST" class="container">
+                        @if (!$task->jobTaskAssign || !$task->jobTaskAssign->jobExecutiveTask)
+                            <form action="{{ route('job-task-executive') }}" method="POST" class="container">
                                 @csrf
 
                                 {{-- Header Row --}}
@@ -439,7 +439,7 @@
 
                                 {{-- Pass Assigned User ID as Hidden Input --}}
                                 <input type="hidden" name="task_assigned_user_id"
-                                    value="{{ $task->leadTaskAssign->id }}">
+                                    value="{{ $task->jobTaskAssign->id }}">
 
                                 {{-- Remarks --}}
                                 <div class="row align-items-center">
@@ -505,9 +505,9 @@
                             </form>
                         @endif
                         {{-- Show form ONLY if task is accepted to executive for update --}}
-                        @if ($task->leadTaskAssign && $task->leadTaskAssign->leadExecutiveTask)
+                        @if ($task->jobTaskAssign && $task->jobTaskAssign->jobExecutiveTask)
                             <form
-                                action="{{ route('task-executive.update', $task->leadTaskAssign->leadExecutiveTask->id) }}"
+                                action="{{ route('job-task-executive.update', $task->jobTaskAssign->jobExecutiveTask->id) }}"
                                 method="POST" class="container">
                                 @csrf
                                 @method('PATCH')
@@ -523,7 +523,7 @@
 
                                 {{-- Pass Assigned User ID as Hidden Input --}}
                                 <input type="hidden" name="task_assigned_user_id"
-                                    value="{{ $task->leadTaskAssign->id }}">
+                                    value="{{ $task->jobTaskAssign->id }}">
 
                                 {{-- Pass Task ID as Hidden Input for status changes --}}
                                 <input type="hidden" name="task_id" value="{{ $task->id }}">
@@ -538,7 +538,7 @@
                                     <div class="col-lg-8">
                                         <div class="form-group">
                                             <textarea id="remarks" name="remarks" class="form-control" rows="4" placeholder="Enter remarks here...">
-                                             {{ old('remarks', $task->leadTaskAssign->leadExecutiveTask->remarks ?? '') }}</textarea>
+                                             {{ old('remarks', $task->jobTaskAssign->jobExecutiveTask->remarks ?? '') }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -554,7 +554,7 @@
                                         <div class="form-group">
                                             <input type="text" id="address" name="address"
                                                 class="form-control fw-bold text-dark" placeholder="Address"
-                                                value="{{ old('address', $task->leadTaskAssign->leadExecutiveTask->address ?? '') }}">
+                                                value="{{ old('address', $task->jobTaskAssign->jobExecutiveTask->address ?? '') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -570,7 +570,7 @@
                                         <div class="form-group">
                                             <input type="datetime-local" id="end_date_time" name="end_date_time"
                                                 class="form-control fw-bold text-dark"
-                                                value="{{ old('end_date_time', $task->leadTaskAssign->leadExecutiveTask->end_date_time ? \Carbon\Carbon::parse($task->leadTaskAssign->leadExecutiveTask->end_date_time)->format('Y-m-d\TH:i') : '') }}">
+                                                value="{{ old('end_date_time', $task->jobTaskAssign->jobExecutiveTask->end_date_time ? \Carbon\Carbon::parse($task->jobTaskAssign->jobExecutiveTask->end_date_time)->format('Y-m-d\TH:i') : '') }}">
                                         </div>
                                     </div>
                                 </div>
@@ -600,7 +600,7 @@
                                 <div class="row align-items-center mt-4">
                                     <div class="col-lg-2 ms-auto mt-4">
                                         <button type="submit" class="btn btn-primary w-100"
-                                            {{ $task->aggregatorForm->status === 'Completed' ? 'disabled' : '' }}>Submit</button>
+                                            {{ $task->job->status === 'Completed' ? 'disabled' : '' }}>Submit</button>
                                     </div>
                                 </div>
                             </form>

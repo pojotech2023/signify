@@ -97,6 +97,6 @@ class UserCreationController extends Controller
 
         $internal_user = InternalUser::findOrFail($id);
         $internal_user->delete();
-        return back()->with('Success', 'Internal User Deleted Successfully!');
+        return back()->with('success', 'Internal User Deleted Successfully!');
     }
 }

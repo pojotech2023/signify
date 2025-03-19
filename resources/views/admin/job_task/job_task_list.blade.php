@@ -3,7 +3,7 @@
     <div class="container">
         <div class="page-inner">
             <div class="page-header leads-page-header">
-                <h3 class="fw-bold mb-3">Tasks</h3>
+                <h3 class="fw-bold mb-3">Jobs - Tasks</h3>
             </div>
             <div class="row">
                 <div class="col-12 col-md-8">
@@ -41,36 +41,23 @@
             </div>
             <div class="row">
                 <div class="col-12 col-md-8">
-                    @foreach ($orderTasks->concat($leadTasks)->concat($jobTasks)->sortByDesc('id')->values() as $task)
-                        <div class="card mt-3 task-card"
-                            data-route="{{ $task->type === 'order' ? route('order-task-details', $task->id) :
-                                          ($task->type === 'lead' ? route('task-details', $task->id) : route('job-task-details', $task->id)) 
-                            }}"
+                    @foreach ($job_tasks as $job_task)
+                        <div class="card mt-3 task-card" data-route="{{ route('job-task-details', $job_task->id) }}"
                             onclick="redirectToLeadDetails(event, this)">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-8 d-flex align-items-center">
-                                        <h6 class="card-title mb-0">
-                                            @if ($task->lead_id)
-                                                Lead ID: {{ $task->lead_id }}
-                                            @endif
-                                            @if ($task->order_id)
-                                                Order ID: {{ $task->order_id }}
-                                            @endif
-                                            @if ($task->job_id)
-                                                Job ID: {{ $task->job_id }}
-                                            @endif
-                                            | Task ID: {{ $task->id }}
-                                        </h6> <span class="op-7 ms-3 fw-normal">
-                                            {{ \Carbon\Carbon::parse($task->created_at)->format('M, d Y h:i A') }}
+                                    <div class="col-6 d-flex align-items-center">
+                                        <h6 class="card-title mb-0">Task ID: {{ $job_task->id }}</h6>
+                                        <span class="op-7 ms-3 fw-normal">
+                                            {{ \Carbon\Carbon::parse($job_task->created_at)->format('M, d Y h:i A') }}
                                         </span>
                                     </div>
-                                    <div class="col-4 text-end">
+                                    <div class="col-6 text-end">
                                         @php
-                                            $status = $task->status ?? ($task->orderTaskAssign->status ?? 'New');
+                                            $status = $job_task->status ?? 'New';
 
                                             $badgeClass = match ($status) {
-                                                'New' => 'badge-info',
+                                               'New' => 'badge-info',
                                                 'Assigned' => 'badge-success',
                                                 'Inprogress' => 'badge-warning',
                                                 'On Hold' => 'badge-danger',
@@ -93,34 +80,34 @@
                                     <!-- First row: Task Priority and Entry Time -->
                                     <div class="col-md-6">
                                         <p><strong>Task Priority:</strong>
-                                            <span class="text-muted">{{ $task->task_priority }}</span>
+                                            <span class="text-muted">{{ $job_task->task_priority }}</span>
                                         </p>
                                     </div>
                                     <div class="col-md-6">
                                         <p><strong>Entry Time:</strong>
-                                            <span class="text-muted">{{ $task->entry_time }}</span>
+                                            <span class="text-muted">{{ $job_task->entry_time }}</span>
                                         </p>
                                     </div>
-
+                                
                                     <!-- Second row: Full Description -->
                                     <div class="col-md-12">
                                         <p><strong>Description:</strong>
-                                            <span class="text-muted">{{ $task->description }}</span>
+                                            <span class="text-muted">{{ $job_task->description }}</span>
                                         </p>
                                     </div>
-
+                                
                                     <!-- Third row: Vendor Details -->
                                     <div class="col-md-6">
                                         <p><strong>Vendor Name:</strong>
-                                            <span class="text-muted">{{ $task->vendor_name }}</span>
+                                            <span class="text-muted">{{ $job_task->vendor_name }}</span>
                                         </p>
                                     </div>
                                     <div class="col-md-6">
                                         <p><strong>Vendor Mobile:</strong>
-                                            <span class="text-muted">{{ $task->vendor_mobile }}</span>
+                                            <span class="text-muted">{{ $job_task->vendor_mobile }}</span>
                                         </p>
                                     </div>
-                                </div>
+                                </div>                                
                             </div>
                         </div>
                     @endforeach
