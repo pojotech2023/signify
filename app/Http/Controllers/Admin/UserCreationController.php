@@ -29,7 +29,7 @@ class UserCreationController extends Controller
         $internal_users = InternalUser::with('role')
             ->whereHas('role', function ($query) {
                 $query->where('role_name', '!=', 'Admin');
-            })
+            })->orderBy('id', 'desc')
             ->get();
 
         return view('admin.user_creation.user_list', compact('internal_users'));

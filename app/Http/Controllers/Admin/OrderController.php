@@ -13,6 +13,7 @@ use App\Models\LeadAssign;
 use App\Models\LeadTask;
 use App\Models\LeadTaskAssign;
 use App\Models\OrderTask;
+use App\Models\OrderTaskAssign;
 use App\Models\Task;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,9 +54,9 @@ class OrderController extends Controller
             $lead_task->update([
                 'status' => 'Completed'
             ]);
-        
+
             $leadTaskId = $lead_task->id;
-        
+
             // Update status in lead task assign table
             LeadTaskAssign::where('task_id', $leadTaskId)->update([
                 'status' => 'Completed'
@@ -124,6 +125,21 @@ class OrderController extends Controller
                 $assignedUserName = $assignedUser->name;
             }
         }
+
+        // Once Assigned User lead details see then status change Inprogress
+        $loggedInUserId = auth('admin')->id();
+
+        if ($assign_admin_superuser && $assign_admin_superuser->internal_user_id == $loggedInUserId) {
+            if (in_array($order->status, ['Assigned', 'Re-Assigned'])) {
+                $order->update([
+                    'status' => 'Inprogress'
+                ]);
+
+                $assign_admin_superuser->update([
+                    'status' => 'Inprogress'
+                ]);
+            }
+        }
         return view('admin.order.orders_details', compact('order', 'admin_super_user', 'assignEnabled', 'reassignEnabled', 'assignedUserName'));
     }
 
@@ -166,7 +182,6 @@ class OrderController extends Controller
     //Order Complete
     public function orderComplete(Request $request)
     {
-
         $validate = Validator::make($request->all(), [
             'order_id' => 'required|exists:orders,id'
         ]);
@@ -174,26 +189,33 @@ class OrderController extends Controller
         if ($validate->fails()) {
             return redirect()->back()->withErrors($validate)->withInput();
         }
-        $orderId = $request->order_id;
 
-        $order = Order::find($orderId);
-
-        if ($order) {
-            $order->status = 'Completed';
-            $order->save();
-        }
-
-        // Update status in order table
+        //Update status in orders table
         Order::where('id', $request->order_id)->update([
             'status' => 'Completed'
         ]);
 
-        // Update status in ordertasks table
-        OrderTask::where('order_id', $request->order_id)->update([
+        //Update status in orderassign table
+        OrderAssign::where('order_id', $request->order_id)->update([
             'status' => 'Completed'
         ]);
 
+        // Update status in order task table
+        $order_task = OrderTask::where('order_id', $request->order_id)->first();
 
-        return redirect()->back()->with('Success', 'Order Completed Successfully');
+        if ($order_task) {
+            // Update status in order task table
+            $order_task->update([
+                'status' => 'Completed'
+            ]);
+
+            $orderTaskId = $order_task->id;
+
+            // Update status in order task assign table
+            OrderTaskAssign::where('order_task_id', $orderTaskId)->update([
+                'status' => 'Completed'
+            ]);
+            return redirect()->back()->with('success', 'Order Completed Successfully');
+        }
     }
 }

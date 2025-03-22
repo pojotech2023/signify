@@ -14,73 +14,127 @@ use App\Models\Shade;
 class AggregatorFormController extends Controller
 {
 
-    public function getCategories(){
+    public function getCategories()
+    {
         $categories = Category::all();
-        return response()->json('success', $categories);
-    } 
+        return response()->json([
+            'respone code' => 200,
+            'data' => $categories
+        ], 200);
+    }
 
     public function getSubcategories($category_id)
     {
         $subcategories = Subcategory::where('category_id', $category_id)->get();
-        return response()->json($subcategories);
+        return response()->json([
+            'respone code' => 200,
+            'data' => $subcategories
+        ], 200);
     }
 
     public function getMaterials($subcategory_id)
     {
         $materials = Material::where('sub_category_id', $subcategory_id)->get();
-        return response()->json($materials);
+        return response()->json([
+            'respone code' => 200,
+            'data' => $materials
+        ], 200);
+        // return response()->json($materials);
     }
 
     public function getShades($material_id)
     {
 
         $shades = Shade::where('material_id', $material_id)->get();
-        return response()->json($shades);
+        return response()->json([
+            'respone code' => 200,
+            'data' => $shades
+        ], 200);
+        // return response()->json($shades);
     }
 
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'category' => 'required',
-            'sub_category' => 'required',
-            'material_img.*' => 'required|file|mimes:jpg,jpeg,png,webp',
-            'material_name.*' => 'required|string',
-            'shades_img.*' => 'required|file|mimes:jpg,jpeg,png,webp',
-            'shades_name.*' => 'required|string',
+            'category_id' => 'required',
+            'sub_category_id' => 'required',
+            'material_id' => 'required',
             'width' => 'required|numeric',
             'height' => 'required|numeric',
             'unit' => 'required|string',
             'location' => 'required',
             'quantity' => 'required|integer',
             'design_service_need' => 'required',
-            'email_id' => 'required|email',
-            'site_image.*' => 'required|file|mimes:jpg,jpeg,png,webp',
-            'design_attachment.*' => 'required|file|mimes:jpg,jpeg,png,webp',
-            'reference_image.*' => 'required|file|mimes:jpg,jpeg,png,webp'
+            'email_id' => 'required|email|unique:aggregator_forms,email_id',
+            'site_image' => 'required|array',
+            'site_image.*' => 'file|mimes:jpg,jpeg,png,webp',
+            'design_attachment' => 'required|array',
+            'design_attachment.*' => 'file|mimes:jpg,jpeg,png,webp',
+            'reference_image' => 'required|array',
+            'reference_image.*' => 'file|mimes:jpg,jpeg,png,webp',
+            'shades' => 'required|array',
+            'shades.*.shade_id' => 'required|integer',
+            'shades.*.selected_img' => 'required|string',
         ]);
 
         if ($validate->fails()) {
             return response()->json(['errors' => $validate->errors()], 422);
         }
 
-        $validated = $request->all();
 
-        $uploadFiles = function ($files) {
-            if (!$files) return null;
-            $files = is_array($files) ? $files : [$files];
-            return implode(',', array_map(fn($file) => $file->store('uploads', 'public'), $files));
-        };
-        $validated['material_img'] = $uploadFiles($request->file('material_img'));
-        $validated['shades_img'] = $uploadFiles($request->file('shades_img'));
-        $validated['site_image'] = $uploadFiles($request->file('site_image'));
-        $validated['design_attachment'] = $uploadFiles($request->file('design_attachment'));
-        $validated['reference_image'] = $uploadFiles($request->file('reference_image'));
+        $siteImages = [];
+        if ($request->hasFile('site_image')) {
+            foreach ($request->file('site_image') as $file) {
+                $path = $file->store('uploads/site_images', 'public');
+                $siteImages[] = $path;
+            }
+        }
 
-        $validated['material_name'] = implode(',', (array) $request->input('material_name'));
-        $validated['shades_name'] = implode(',', (array) $request->input('shades_name'));
+        $designAttachments = [];
+        if ($request->hasFile('design_attachment')) {
+            foreach ($request->file('design_attachment') as $file) {
+                $path = $file->store('uploads/design_attachments', 'public');
+                $designAttachments[] = $path;
+            }
+        }
 
-        AggregatorForm::create($validated);
+        $referenceImages = [];
+        if ($request->hasFile('reference_image')) {
+            foreach ($request->file('reference_image') as $file) {
+                $path = $file->store('uploads/reference_images', 'public');
+                $referenceImages[] = $path;
+            }
+        }
+        $aggregatorForm = AggregatorForm::create([
+            'category_id' => $request->category_id,
+            'sub_category_id' => $request->sub_category_id,
+            'material_id' => $request->material_id,
+            'width' => $request->width,
+            'height' => $request->height,
+            'unit' => $request->unit,
+            'location' => $request->location,
+            'quantity' => $request->quantity,
+            'design_service_need' => $request->design_service_need,
+            'email_id' => $request->email_id,
+            'site_image' => implode(',', $siteImages),  // Convert array to comma-separated string
+            'design_attachment' => implode(',', $designAttachments),
+            'reference_image' => implode(',', $referenceImages),
+        ]);
 
-        return response()->json(['message' => 'Aggregator Form Submitted Successfully'], 200);
+        /// Save Shades with Selected Image
+        if ($request->has('shades')) {
+            foreach ($request->shades as $shade) {
+                $path = str_replace(url('/storage'), '', $shade['selected_img']);
+
+                $aggregatorForm->shade()->create([
+                    'shade_id' => $shade['shade_id'],
+                    'selected_img' => $path,
+                ]);
+            }
+        }
+
+        return response()->json([
+            'response code' => 200,
+            'message' => 'Aggregator Form Submitted Successfully'], 200);
     }
 }

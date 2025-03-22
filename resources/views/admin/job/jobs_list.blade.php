@@ -36,14 +36,16 @@
                             <input type="date" class="form-control" id="filterDate">
                         </div>
                     </div>
-                    {{-- New Row for Button --}}
-                    <div class="row mb-3">
-                        <div class="col text-end">
-                            <a href="{{ route('jobcreation-form') }}" class="btn btn-primary btn-round ms-auto">
-                                <i class="fa fa-plus"></i> Create Job
-                            </a>
+                    {{-- Create Job for Button --}}
+                    @if (session('role_name') === 'Admin')
+                        <div class="row mb-3">
+                            <div class="col text-end">
+                                <a href="{{ route('jobcreation-form') }}" class="btn btn-primary btn-round ms-auto">
+                                    <i class="fa fa-plus"></i> Create Job
+                                </a>
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             </div>
 

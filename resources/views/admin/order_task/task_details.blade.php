@@ -37,11 +37,21 @@
                         </div>
                     </div>
 
+                    <!-- Blade alert for success -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {{ session()->forget('success') }} {{-- Clear session --}}
+                    @endif
+
+
                     {{-- SuperUser Task Form --}}
 
                     @if (in_array(session('role_name'), ['Admin', 'Superuser']))
-                        <form action="{{ route('order-task-update', $task->id) }}" method="POST" enctype="multipart/form-data"
-                            class="container">
+                        <form id="taskForm" action="{{ route('order-task-update', $task->id) }}" method="POST"
+                            enctype="multipart/form-data" class="container">
                             @csrf
                             @method('PATCH')
 
@@ -49,20 +59,16 @@
                             {{-- Task Name --}}
                             <div class="row align-items-center mt-4">
                                 <div class="col-lg-2">
-                                    <div class="form-group">
-                                        <label for="task_name" class="fw-bold">Task Name</label>
-                                    </div>
+                                    <label for="task_name" class="fw-bold">Task Name</label>
                                 </div>
                                 <div class="col-lg-4 text-center">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" name="task_name"
-                                            value="{{ $task->task_name }}">
-                                    </div>
+                                    <input type="text" class="form-control" name="task_name"
+                                        value="{{ $task->task_name }}">
                                 </div>
                             </div>
 
                             {{-- Task Priority --}}
-                            <div class="row align-items-center mt-5">
+                            <div class="row align-items-center mt-4">
                                 <div class="col-lg-2">
                                     <label class="fw-bold">Task Priority</label>
                                 </div>
@@ -190,50 +196,37 @@
                                 </div>
 
                                 {{-- Remarks --}}
-                                <div class="row align-items-center">
+                                <div class="row align-items-center mt-4">
                                     <div class="col-lg-2">
-                                        <div class="form-group">
-                                            <label for="remarks" class="fw-bold">Remarks</label>
-                                        </div>
+                                        <label for="remarks" class="fw-bold">Remarks</label>
                                     </div>
-                                    <div class="col-lg-8">
-                                        <div class="form-group">
-                                            <textarea id="remarks" class="form-control" rows="4" readonly>
-                                             {{ old('remarks', $task->orderTaskAssign->orderExecutiveTask->remarks ?? '') }}</textarea>
-                                        </div>
+                                    <div class="col-md-8">
+                                        <textarea id="remarks" class="form-control" rows="4" readonly>{{ $task->orderTaskAssign->orderExecutiveTask->remarks }}</textarea>
                                     </div>
                                 </div>
 
                                 {{-- Address --}}
-                                <div class="row align-items-center">
+                                <div class="row align-items-center mt-4">
                                     <div class="col-lg-2">
-                                        <div class="form-group">
-                                            <label for="address" class="fw-bold">Address</label>
-                                        </div>
+                                        <label for="address" class="fw-bold">Address</label>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <input type="text" id="address" class="form-control fw-bold text-dark"
-                                                readonly
-                                                value="{{ old('address', $task->orderTaskAssign->orderExecutiveTask->address ?? '') }}">
-                                        </div>
+                                        <input type="text" id="address" class="form-control fw-bold text-dark"
+                                            readonly
+                                            value="{{ old('address', $task->orderTaskAssign->orderExecutiveTask->address ?? '') }}">
                                     </div>
                                 </div>
 
                                 {{-- End Date & Time --}}
-                                <div class="row align-items-centerborder-bottom pb-3"
+                                <div class="row align-items-centerborder-bottom pb-3 mt-4"
                                     style="border-bottom: 1px solid #ebecec !important;">
                                     <div class="col-lg-2">
-                                        <div class="form-group">
-                                            <label for="end_date_time" class="fw-bold">End Date & Time</label>
-                                        </div>
+                                        <label for="end_date_time" class="fw-bold">End Date & Time</label>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <input type="datetime-local" id="end_date_time"
-                                                class="form-control fw-bold text-dark" readonly
-                                                value="{{ old('end_date_time', $task->orderTaskAssign->orderExecutiveTask->end_date_time ? \Carbon\Carbon::parse($task->orderTaskAssign->orderExecutiveTask->end_date_time)->format('Y-m-d\TH:i') : '') }}">
-                                        </div>
+                                        <input type="datetime-local" id="end_date_time"
+                                            class="form-control fw-bold text-dark" readonly
+                                            value="{{ old('end_date_time', $task->orderTaskAssign->orderExecutiveTask->end_date_time ? \Carbon\Carbon::parse($task->orderTaskAssign->orderExecutiveTask->end_date_time)->format('Y-m-d\TH:i') : '') }}">
                                     </div>
                                 </div>
                             @endif
@@ -306,20 +299,15 @@
                             {{-- Task Name --}}
                             <div class="row align-items-center mt-4">
                                 <div class="col-lg-2">
-                                    <div class="form-group">
-                                        <label for="task_name" class="fw-bold">Task Name</label>
-                                    </div>
+                                    <label for="task_name" class="fw-bold">Task Name</label>
                                 </div>
                                 <div class="col-lg-4 text-center">
-                                    <div class="form-group">
-                                        <input type="text" class="form-control" value="{{ $task->task_name }}"
-                                            readonly>
-                                    </div>
+                                    <input type="text" class="form-control" value="{{ $task->task_name }}" readonly>
                                 </div>
                             </div>
 
                             {{-- Task Priority --}}
-                            <div class="row align-items-center mt-5">
+                            <div class="row align-items-center mt-4">
                                 <div class="col-lg-2">
                                     <label class="fw-bold">Task Priority</label>
                                 </div>
@@ -425,7 +413,8 @@
 
                         {{-- Show empty form ONLY if task is NOT accepted in Executive Login --}}
                         @if (!$task->orderTaskAssign || !$task->orderTaskAssign->orderExecutiveTask)
-                            <form action="{{ route('order-task-executive') }}" method="POST" class="container">
+                            <form id="taskForm" action="{{ route('order-task-executive') }}" method="POST"
+                                class="container">
                                 @csrf
 
                                 {{-- Header Row --}}
@@ -506,7 +495,7 @@
                         @endif
                         {{-- Show form ONLY if task is accepted to executive for update --}}
                         @if ($task->orderTaskAssign && $task->orderTaskAssign->orderExecutiveTask)
-                            <form
+                            <form id="taskForm"
                                 action="{{ route('order-task-executive.update', $task->orderTaskAssign->orderExecutiveTask->id) }}"
                                 method="POST" class="container">
                                 @csrf
@@ -529,49 +518,36 @@
                                 <input type="hidden" name="task_id" value="{{ $task->id }}">
 
                                 {{-- Remarks --}}
-                                <div class="row align-items-center">
+                                <div class="row align-items-center mt-4">
                                     <div class="col-lg-2">
-                                        <div class="form-group">
-                                            <label for="remarks" class="fw-bold">Remarks</label>
-                                        </div>
+                                        <label class="fw-bold">Remarks</label>
                                     </div>
-                                    <div class="col-lg-8">
-                                        <div class="form-group">
-                                            <textarea id="remarks" name="remarks" class="form-control" rows="4" placeholder="Enter remarks here...">
-                                             {{ old('remarks', $task->orderTaskAssign->orderExecutiveTask->remarks ?? '') }}</textarea>
-                                        </div>
+                                    <div class="col-md-8">
+                                        <textarea class="form-control fw-bold text-dark" rows="4" name="remarks">{{ $task->orderTaskAssign->orderExecutiveTask->remarks }}</textarea>
                                     </div>
                                 </div>
 
                                 {{-- Address --}}
-                                <div class="row align-items-center">
+                                <div class="row align-items-center mt-4">
                                     <div class="col-lg-2">
-                                        <div class="form-group">
-                                            <label for="address" class="fw-bold">Address</label>
-                                        </div>
+                                        <label for="address" class="fw-bold">Address</label>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <input type="text" id="address" name="address"
-                                                class="form-control fw-bold text-dark" placeholder="Address"
-                                                value="{{ old('address', $task->orderTaskAssign->orderExecutiveTask->address ?? '') }}">
-                                        </div>
+                                        <input type="text" id="address" name="address"
+                                            class="form-control fw-bold text-dark" placeholder="Address"
+                                            value="{{ old('address', $task->orderTaskAssign->orderExecutiveTask->address ?? '') }}">
                                     </div>
                                 </div>
 
                                 {{-- End Date & Time --}}
-                                <div class="row align-items-center">
+                                <div class="row align-items-center mt-4">
                                     <div class="col-lg-2">
-                                        <div class="form-group">
-                                            <label for="end_date_time" class="fw-bold">End Date & Time</label>
-                                        </div>
+                                        <label for="end_date_time" class="fw-bold">End Date & Time</label>
                                     </div>
                                     <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <input type="datetime-local" id="end_date_time" name="end_date_time"
-                                                class="form-control fw-bold text-dark"
-                                                value="{{ old('end_date_time', $task->orderTaskAssign->orderExecutiveTask->end_date_time ? \Carbon\Carbon::parse($task->orderTaskAssign->orderExecutiveTask->end_date_time)->format('Y-m-d\TH:i') : '') }}">
-                                        </div>
+                                        <input type="datetime-local" id="end_date_time" name="end_date_time"
+                                            class="form-control fw-bold text-dark"
+                                            value="{{ old('end_date_time', $task->orderTaskAssign->orderExecutiveTask->end_date_time ? \Carbon\Carbon::parse($task->orderTaskAssign->orderExecutiveTask->end_date_time)->format('Y-m-d\TH:i') : '') }}">
                                     </div>
                                 </div>
 
@@ -579,19 +555,15 @@
                                 <div class="row align-items-center mt-5 border-bottom pb-3"
                                     style="border-bottom: 1px solid #ebecec !important;">
                                     <div class="col-lg-2">
-                                        <div class="form-group">
-                                            <label for="status" class="fw-bold">Change Status</label>
-                                        </div>
+                                        <label for="status" class="fw-bold">Change Status</label>
                                     </div>
                                     <div class="col-md-4">
-                                        <div class="form-group">
-                                            <select class="form-select form-control" name="status" id="status">
-                                                <option value="">Select Status</option>
-                                                <option value="On Hold">On Hold</option>
-                                                <option value="Completed">Completed</option>
-                                                <option value="Canceled">Canceled</option>
-                                            </select>
-                                        </div>
+                                        <select class="form-select form-control" name="status" id="status">
+                                            <option value="">Select Status</option>
+                                            <option value="On Hold">On Hold</option>
+                                            <option value="Completed">Completed</option>
+                                            <option value="Canceled">Canceled</option>
+                                        </select>
                                     </div>
 
                                 </div>
@@ -610,4 +582,33 @@
             </div>
         </div>
     </div>
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let alert = document.querySelector('.alert');
+            const form = document.getElementById('taskForm');
+            const spinner = document.getElementById('loadingSpinner');
+
+            //Success alert handling
+            if (alert) {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                }, 3000);
+            }
+
+            //Show spinner only on job form submission
+            if (form && spinner) {
+                form.addEventListener('submit', function(event) {
+                    spinner.classList.remove('d-none'); //Show spinner
+                });
+            }
+        });
+    </script>
 @endsection

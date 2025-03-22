@@ -45,7 +45,7 @@
                             @endif
 
                             <div class="row">
-                                <form
+                                <form id="userForm"
                                     action="{{ isset($internal_user) ? route('usercreation-update', $internal_user->id) : route('usercreation-store') }}"
                                     method="POST" enctype="multipart/form-data" class="container">
                                     @csrf
@@ -184,7 +184,38 @@
         </div>
     </div>
 
+    
+     <!-- Spinner -->
+     <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
     <!-- jQuery for Dynamic Fields -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="{{ asset('admin/assets/js/aggregator.js') }}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let alert = document.querySelector('.alert');
+            const form = document.getElementById('userForm');
+            const spinner = document.getElementById('loadingSpinner');
+    
+            //Success alert handling
+            if (alert) {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    window.location.href = "{{ route('usercreation-list') }}";
+                }, 3000);
+            }
+    
+            //Show spinner only on job form submission
+            if (form && spinner) {
+                form.addEventListener('submit', function(event) {
+                    spinner.classList.remove('d-none'); //Show spinner
+                });
+            }
+        });
+    </script>
 @endsection

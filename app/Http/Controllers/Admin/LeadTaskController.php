@@ -290,7 +290,7 @@ class LeadTaskController extends Controller
             'end_date_time'         => $request->end_date_time,
         ]);
 
-        return redirect()->route('task-list')->with('success', 'Executive task accepted successfully');
+        return redirect()->back()->with('success', 'Executive task accepted successfully');
     }
 
     //Executive Form Update or change status

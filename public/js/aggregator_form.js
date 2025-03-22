@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Reset subcategory dropdown
                     subcategoryDropdown.innerHTML = '<option value="">Select Sub Category</option>';
 
-                    if (data.length > 0) {
-                        data.forEach(subcategory => {
+                    if (data.data && data.data.length > 0) {
+                        data.data.forEach(subcategory => {
                             let option = document.createElement("option");
                             option.value = subcategory.id;
                             option.textContent = subcategory.sub_category;
@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(data => {
                     materialImagesContainer.innerHTML = "";
 
-                    if (data.length > 0) {
-                        data.forEach(material => {
+                    if (data.data.length > 0) {
+                        data.data.forEach(material => {
                             let imagePath = `/storage/${material.main_img}`;
 
                             // Collect sub-images from separate columns
@@ -131,10 +131,10 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 shadeImagesContainer.innerHTML = "";
 
-                if (data.length > 0) {
+                if (data.data.length > 0) {
                     let cardDiv = document.createElement("div");
 
-                    data.forEach((shade) => {
+                    data.data.forEach((shade) => {
                         let shadeImages = [
                             shade.shade_img1,
                             shade.shade_img2,
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         let rowDiv = document.createElement("div");
                         rowDiv.className = "d-flex align-items-center mb-3";
-                        rowDiv.setAttribute("data-shade-row-id", shade.id); // ✅ Unique row identifier
+                        rowDiv.setAttribute("data-shade-row-id", shade.id); //Unique row identifier
                         rowDiv.style.borderBottom = "1px solid #eee";
                         rowDiv.style.paddingBottom = "10px";
 
@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         cardDiv.appendChild(rowDiv);
 
-                        // ✅ Hidden inputs to store selected shade and image
+                        // Hidden inputs to store selected shade and image
                         let hiddenShadeIdInput = document.createElement("input");
                         hiddenShadeIdInput.type = "hidden";
                         hiddenShadeIdInput.name = `shades[${shade.id}][shade_id]`;
@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // ✅ Capture selected shade image
+    // Capture selected shade image
     document.getElementById("shade-images").addEventListener("click", function (event) {
         let clickedImg = event.target.closest("img");
 
@@ -213,19 +213,19 @@ document.addEventListener("DOMContentLoaded", function () {
             let shadeId = clickedImg.getAttribute("data-shade-id");
 
             if (shadeId) {
-                // ✅ Get the parent row for the clicked image
+                // Get the parent row for the clicked image
                 let parentRow = clickedImg.closest(`[data-shade-row-id="${shadeId}"]`);
 
                 if (parentRow) {
-                    // ✅ Deselect previously selected image in this row
+                    // Deselect previously selected image in this row
                     parentRow.querySelectorAll("img").forEach(img => {
                         img.classList.remove("selected-shade");
                     });
 
-                    // ✅ Highlight the clicked image
+                    // Highlight the clicked image
                     clickedImg.classList.add("selected-shade");
 
-                    // ✅ Update the hidden input value
+                    // Update the hidden input value
                     // document.getElementById(`hidden_shade_id_${shadeId}`).value = clickedImg.getAttribute("data-img-id");
                     let hiddenInput = parentRow.querySelector(`#hidden_shade_selected_img_${shadeId}`);
                     if (hiddenInput) {
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // ✅ Add CSS for selected image highlight
+    // Add CSS for selected image highlight
     let style = document.createElement("style");
     style.innerHTML = `
         .selected-shade {
@@ -284,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let currentIndex = 0;
 
         function updateContent() {
-        // ✅ Check if it's a video
+        //Check if it's a video
         if (subImages[currentIndex].endsWith('.mp4')) {
             imgElement.style.display = "none";
             videoElement.src = subImages[currentIndex];

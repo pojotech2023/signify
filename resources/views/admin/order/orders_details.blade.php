@@ -17,6 +17,15 @@
                         </span>
                     </div>
 
+                    <!-- Blade alert for success -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {{ session()->forget('success') }} {{-- Clear session --}}
+                    @endif
+
                     <form action="" method="POST" enctype="multipart/form-data" class="container">
                         @csrf
                         <div class="row align-items-center mt-5">
@@ -286,7 +295,7 @@
                     <strong>Order ID:</strong> {{ $order->id }}
                 </div>
                 <div class="modal-footer">
-                    <form action="{{ route('order-complete') }}" method="POST">
+                    <form id="assignForm" action="{{ route('order-complete') }}" method="POST">
                         @csrf
                         <input type="hidden" name="order_id" value="{{ $order->id }}">
                         <button type="submit" class="btn btn-success">Yes, Confirm</button>
@@ -296,5 +305,36 @@
             </div>
         </div>
     </div>
+
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let alert = document.querySelector('.alert');
+            const form = document.getElementById('assignForm');
+            const spinner = document.getElementById('loadingSpinner');
+
+            //Success alert handling
+            if (alert) {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    window.location.href = "{{ route('orders-list') }}";
+                }, 3000);
+            }
+
+            //Show spinner only on job form submission
+            if (form && spinner) {
+                form.addEventListener('submit', function(event) {
+                    spinner.classList.remove('d-none'); //Show spinner
+                });
+            }
+        });
+    </script>
 
 @endsection

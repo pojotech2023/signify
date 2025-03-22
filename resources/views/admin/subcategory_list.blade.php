@@ -22,11 +22,22 @@
                         <div class="card-header">
                             <div class="d-flex align-items-center">
                                 <h4 class="card-title">Sub Category List</h4>
-                                <button class="btn btn-primary btn-round ms-auto" id="addButton" data-bs-toggle="modal" data-bs-target="#addModal">
+                                <button class="btn btn-primary btn-round ms-auto" id="addButton" data-bs-toggle="modal"
+                                    data-bs-target="#addModal">
                                     <i class="fa fa-plus"></i> Add Sub Category
                                 </button>
                             </div>
                         </div>
+
+                        <!-- Blade alert for success -->
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            {{ session()->forget('success') }} {{-- Clear session --}}
+                        @endif
 
                         @if ($subcategories->isEmpty())
                             <p class="text-center mt-3"> No Sub Categories found. Please add a Sub Category.</p>
@@ -50,15 +61,18 @@
                                                     <td>{{ $subcategory->sub_category }}</td>
                                                     <td>
                                                         <div class="form-button-action">
-                                                            <button type="button" class="btn btn-link btn-primary btn-lg editButton"
+                                                            <button type="button"
+                                                                class="btn btn-link btn-primary btn-lg editButton"
                                                                 data-id="{{ $subcategory->id }}"
                                                                 data-subcategory="{{ $subcategory->sub_category }}"
                                                                 data-category-id="{{ $subcategory->category_id }}"
                                                                 data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="fa fa-edit"></i>
                                                             </button>
-                                                            <button type="button" class="btn btn-link btn-danger deleteButton"
-                                                                data-id="{{ $subcategory->id }}" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                            <button type="button"
+                                                                class="btn btn-link btn-danger deleteButton"
+                                                                data-id="{{ $subcategory->id }}" data-bs-toggle="modal"
+                                                                data-bs-target="#deleteModal">
                                                                 <i class="fa fa-times"></i>
                                                             </button>
                                                         </div>
@@ -139,7 +153,8 @@
     </div>
 
     <!-- Delete Confirmation Modal (Outside Loop) -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -163,6 +178,13 @@
         </div>
     </div>
 
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
     <!-- JavaScript -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -173,6 +195,7 @@
             const subcategoryInput = document.getElementById("sub_category");
             const subcategoryIdInput = document.getElementById("subcategory_id");
             const saveButton = document.getElementById("saveButton");
+            const spinner = document.getElementById("loadingSpinner");
 
             document.getElementById("addButton").addEventListener("click", function() {
                 modalTitle.innerText = "Add Subcategory";
@@ -198,11 +221,26 @@
                 });
             });
 
-            $('.deleteButton').click(function () {
+            $('.deleteButton').click(function() {
                 var id = $(this).data('id');
                 var action = "{{ route('subcategory-delete', ':id') }}".replace(':id', id);
                 $('#deleteForm').attr('action', action);
             });
+
+            //Show Spinner and Disable Form on Submit
+            subcategoryForm.addEventListener("submit", function() {
+                spinner.classList.remove("d-none"); // Show spinner
+                saveButton.disabled = true; // Disable button to prevent multiple clicks
+            });
+
+            //Auto-hide success alert after 3 seconds
+            const successAlert = document.querySelector(".alert-success");
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.classList.remove("show");
+                    successAlert.classList.add("fade");
+                }, 3000);
+            }
         });
     </script>
 @endsection

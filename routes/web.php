@@ -120,7 +120,7 @@ Route::prefix('admin')->group(function () {
         Route::post('/order/assign', [OrderController::class, 'orderAssign'])->name('order-assign');
         Route::post('/order-complete', [OrderController::class, 'orderComplete'])->name('order-complete');
 
-        //Orders
+        //Jobs
         Route::get('/job/form/{id?}', [JobController::class, 'getJobForm'])->name('jobcreation-form');
         Route::post('/job', [JobController::class, 'store'])->name('job-store');
         Route::get('/jobs', [JobController::class, 'index'])->name('jobs-list');
@@ -133,7 +133,6 @@ Route::prefix('admin')->group(function () {
     Route::middleware(['checkUserRole:Admin'])->group(function () {
 
         //User Creation
-
         Route::get('/internal-user/form/{id?}', [UserCreationController::class, 'getUserForm'])->name('usercreation-form');
         Route::post('/internal-user/creation', [UserCreationController::class, 'store'])->name('usercreation-store');
         Route::get('/internal-user/list', [UserCreationController::class, 'index'])->name('usercreation-list');

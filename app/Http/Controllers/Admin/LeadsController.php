@@ -17,7 +17,7 @@ class LeadsController extends Controller
     {
         $role = session('role_name');
         $user = Auth::guard('admin')->user();
-
+ 
         if ($user) {
             $userID = $user->id;
             $status = $request->input('status');

@@ -3,213 +3,223 @@
 {{-- @section('title', 'Dashboard') --}}
 
 @section('content')
-<div class="container">
-    <div class="page-inner">
-      <div
-        class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4"
-      >
-        <div>
-          <h3 class="fw-bold mb-3">Dashboard</h3>
-          {{-- <h6 class="op-7 mb-2">Today Sales</h6>
+    <div class="container">
+        <div class="page-inner">
+            <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
+                <div>
+                    <h3 class="fw-bold mb-3">Dashboard</h3>
+                    {{-- <h6 class="op-7 mb-2">Today Sales</h6>
           <p>Sales Summary</p> --}}
-        </div>
-        {{-- <div class="ms-md-auto py-2 py-md-0">
+                </div>
+                {{-- <div class="ms-md-auto py-2 py-md-0">
           <a href="#" class="btn btn-label-info btn-round me-2">Manage</a>
           <a href="#" class="btn btn-primary btn-round">Add Customer</a>
         </div> --}}
-      </div>
-      <div class="row">
-        <div class="col-sm-6 col-md-3">
-          <div class="card card-stats card-round">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-icon">
-                  <div
-                    class="icon-big text-center icon-primary bubble-shadow-small"
-                  >
-                  <i class="bi bi-bar-chart-line-fill"></i>
-                  </div>
-                </div>
-                <div class="col col-stats ms-3 ms-sm-0">
-                  <div class="numbers">
-                    <p class="card-category">Leads</p>
-                    <h4 class="card-title">1,294</h4>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="card card-stats card-round">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-icon">
-                  <div
-                    class="icon-big text-center icon-info bubble-shadow-small"
-                  >
-                    <i class="bi bi-cart-check-fill"></i>
-                  </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-4">
+                    <a href="{{ route('leads-list') }}" class="text-decoration-none">
+                        <div class="card card-stats card-round">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-icon">
+                                        <div class="icon-big text-center icon-primary bubble-shadow-small">
+                                            <i class="bi bi-bar-chart-line-fill"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col col-stats ms-3 ms-sm-0">
+                                        <div class="numbers">
+                                            <p class="card-category">Leads</p>
+                                            <h4 class="card-title">1,294</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                   </a>
                 </div>
-                <div class="col col-stats ms-3 ms-sm-0">
-                  <div class="numbers">
-                    <p class="card-category">Orders</p>
-                    <h4 class="card-title">1303</h4>
-                  </div>
+                <div class="col-sm-6 col-md-4">
+                  <a href="{{ route('orders-list') }}" class="text-decoration-none">
+                    <div class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-icon">
+                                    <div class="icon-big text-center icon-warning bubble-shadow-small">
+                                        <i class="bi bi-cart-check-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="col col-stats ms-3 ms-sm-0">
+                                    <div class="numbers">
+                                        <p class="card-category">Orders</p>
+                                        <h4 class="card-title">1303</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </a>
                 </div>
-              </div>
+                <div class="col-sm-6 col-md-4">
+                  <a href="{{ route('jobs-list') }}" class="text-decoration-none">
+                    <div class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-icon">
+                                    <div class="icon-big text-center icon-success bubble-shadow-small">
+                                        <i class="bi bi-bag-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="col col-stats ms-3 ms-sm-0">
+                                    <div class="numbers">
+                                        <p class="card-category">Jobs</p>
+                                        <h4 class="card-title">1,345</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-sm-6 col-md-4">
+                  <a href="{{ route('usercreation-list') }}" class="text-decoration-none">
+                    <div class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-icon">
+                                    <div class="icon-big text-center icon-danger bubble-shadow-small">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                                <div class="col col-stats ms-3 ms-sm-0">
+                                    <div class="numbers">
+                                        <p class="card-category">User Creation</p>
+                                        <h4 class="card-title">276</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                  <a href="{{ route('material-list') }}" class="text-decoration-none">
+                    <div class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-icon">
+                                    <div class="icon-big text-center icon-info bubble-shadow-small">
+                                        <i class="bi bi-file-earmark-text-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="col col-stats ms-3 ms-sm-0">
+                                    <div class="numbers">
+                                        <p class="card-category">Aggregator Form</p>
+                                        <h4 class="card-title">576</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <div class="card card-stats card-round">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-icon">
+                                    <div class="icon-big text-center icon-secondary bubble-shadow-small">
+                                        <i class="bi bi-file-earmark-bar-graph-fill"></i>
+                                    </div>
+                                </div>
+                                <div class="col col-stats ms-3 ms-sm-0">
+                                    <div class="numbers">
+                                        <p class="card-category">Report</p>
+                                        <h4 class="card-title">976</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="card card-stats card-round">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-icon">
-                  <div
-                    class="icon-big text-center icon-warning bubble-shadow-small"
-                  >
-                    <i class="fas fa-user-check"></i>
-                  </div>
+
+            {{-- <div class="col-sm-6 col-md-3">
+                <div class="card card-stats card-round">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-icon">
+                                <div class="icon-big text-center icon-warning bubble-shadow-small">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                            </div>
+                            <div class="col col-stats ms-3 ms-sm-0">
+                                <div class="numbers">
+                                    <p class="card-category">Accounts</p>
+                                    <h4 class="card-title">$ 1,345</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col col-stats ms-3 ms-sm-0">
-                  <div class="numbers">
-                    <p class="card-category">Accounts</p>
-                    <h4 class="card-title">$ 1,345</h4>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-          <div class="card card-stats card-round">
-            <div class="card-body">
-              <div class="row align-items-center">
-                <div class="col-icon">
-                  <div
-                    class="icon-big text-center icon-secondary bubble-shadow-small"
-                  >
-                  <i class="bi bi-graph-up-arrow"></i>
+            <div class="col-sm-6 col-md-3">
+              <div class="card card-stats card-round">
+                  <div class="card-body">
+                      <div class="row align-items-center">
+                          <div class="col-icon">
+                              <div class="icon-big text-center icon-secondary bubble-shadow-small">
+                                  <i class="bi bi-graph-up-arrow"></i>
+                              </div>
+                          </div>
+                          <div class="col col-stats ms-3 ms-sm-0">
+                              <div class="numbers">
+                                  <p class="card-category">R&D</p>
+                                  <h4 class="card-title">576</h4>
+                              </div>
+                          </div>
+                      </div>
                   </div>
-                </div>
-                <div class="col col-stats ms-3 ms-sm-0">
-                  <div class="numbers">
-                    <p class="card-category">R&D</p>
-                    <h4 class="card-title">576</h4>
-                  </div>
-                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col-icon">
-                    <div
-                      class="icon-big text-center icon-info bubble-shadow-small"
-                    >
-                    <i class="bi bi-chat-left-text-fill"></i>
-                    </div>
-                  </div>
-                  <div class="col col-stats ms-3 ms-sm-0">
-                    <div class="numbers">
-                      <p class="card-category">HR</p>
-                      <h4 class="card-title">576</h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col-icon">
-                    <div
-                      class="icon-big text-center icon-secondary bubble-shadow-small"
-                    >
-                    <i class="bi bi-gear-wide-connected"></i>
-                    </div>
-                  </div>
-                  <div class="col col-stats ms-3 ms-sm-0">
-                    <div class="numbers">
-                      <p class="card-category">PR</p>
-                      <h4 class="card-title">576</h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col-icon">
-                    <div
-                      class="icon-big text-center icon-success bubble-shadow-small"
-                    >
-                    <i class="fas fa-users"></i>
-                    </div>
-                  </div>
-                  <div class="col col-stats ms-3 ms-sm-0">
-                    <div class="numbers">
-                      <p class="card-category">User Creation</p>
-                      <h4 class="card-title">576</h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col-icon">
-                    <div
-                      class="icon-big text-center icon-danger bubble-shadow-small"
-                    >
-                    <i class="bi bi-file-earmark-text-fill"></i>
-                    </div>
-                  </div>
-                  <div class="col col-stats ms-3 ms-sm-0">
-                    <div class="numbers">
-                      <p class="card-category">Aggregator Form</p>
-                      <h4 class="card-title">576</h4>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
           <div class="col-sm-6 col-md-3">
-            <div class="card card-stats card-round">
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col-icon">
-                    <div
-                      class="icon-big text-center icon-warning bubble-shadow-small"
-                    >
-                    <i class="bi bi-file-earmark-bar-graph-fill"></i>
-                    </div>
+              <div class="card card-stats card-round">
+                  <div class="card-body">
+                      <div class="row align-items-center">
+                          <div class="col-icon">
+                              <div class="icon-big text-center icon-info bubble-shadow-small">
+                                  <i class="bi bi-chat-left-text-fill"></i>
+                              </div>
+                          </div>
+                          <div class="col col-stats ms-3 ms-sm-0">
+                              <div class="numbers">
+                                  <p class="card-category">HR</p>
+                                  <h4 class="card-title">576</h4>
+                              </div>
+                          </div>
+                      </div>
                   </div>
-                  <div class="col col-stats ms-3 ms-sm-0">
-                    <div class="numbers">
-                      <p class="card-category">Report</p>
-                      <h4 class="card-title">576</h4>
-                    </div>
-                  </div>
-                </div>
               </div>
-            </div>
           </div>
-      </div>
-      {{-- <div class="row">
+          <div class="col-sm-6 col-md-3">
+              <div class="card card-stats card-round">
+                  <div class="card-body">
+                      <div class="row align-items-center">
+                          <div class="col-icon">
+                              <div class="icon-big text-center icon-secondary bubble-shadow-small">
+                                  <i class="bi bi-gear-wide-connected"></i>
+                              </div>
+                          </div>
+                          <div class="col col-stats ms-3 ms-sm-0">
+                              <div class="numbers">
+                                  <p class="card-category">PR</p>
+                                  <h4 class="card-title">576</h4>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div> --}}
+            {{-- <div class="row">
         <div class="col-md-8">
           <div class="card card-round">
             <div class="card-header">
@@ -729,5 +739,5 @@
         </div>
       </div>
     </div> --}}
-  </div>
-@endsection
+        </div>
+    @endsection

@@ -25,6 +25,16 @@
                             </button>
                         </div>
 
+                        <!-- Blade alert for success -->
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            {{ session()->forget('success') }} {{-- Clear session --}}
+                        @endif
+
                         @if ($categories->isEmpty())
                             <p class="text-center mt-3">No Categories found. Please add a Category.</p>
                         @else
@@ -46,17 +56,17 @@
                                                     <td>
                                                         <div class="form-button-action">
                                                             <!-- Edit Button -->
-                                                            <button type="button" class="btn btn-link btn-primary btn-lg editButton"
-                                                                data-id="{{ $category->id }}" 
+                                                            <button type="button"
+                                                                class="btn btn-link btn-primary btn-lg editButton"
+                                                                data-id="{{ $category->id }}"
                                                                 data-category="{{ $category->category }}"
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#addModal">
+                                                                data-bs-toggle="modal" data-bs-target="#addModal">
                                                                 <i class="fa fa-edit"></i>
                                                             </button>
                                                             <!-- Delete Button -->
-                                                            <button type="button" class="btn btn-link btn-danger deleteButton"
-                                                                data-id="{{ $category->id }}" 
-                                                                data-bs-toggle="modal"
+                                                            <button type="button"
+                                                                class="btn btn-link btn-danger deleteButton"
+                                                                data-id="{{ $category->id }}" data-bs-toggle="modal"
                                                                 data-bs-target="#deleteModal">
                                                                 <i class="fa fa-times"></i>
                                                             </button>
@@ -102,14 +112,15 @@
                 <div class="modal-body">
                     <form id="categoryForm" action="{{ route('category-store') }}" method="POST">
                         @csrf
-                        <input type="hidden" id="category_id" name="category_id"> 
+                        <input type="hidden" id="category_id" name="category_id">
 
                         <div class="row align-items-center">
                             <div class="col-lg-2">
                                 <label for="category">Category</label>
                             </div>
                             <div class="col-lg-10">
-                                <input id="category" name="category" type="text" class="form-control" placeholder="Enter Category" required />
+                                <input id="category" name="category" type="text" class="form-control"
+                                    placeholder="Enter Category" required />
                             </div>
                         </div>
 
@@ -147,18 +158,26 @@
             </div>
         </div>
     </div>
+    
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
     <!-- JavaScript -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const modalTitle = document.getElementById("modalTitle");
             const categoryForm = document.getElementById("categoryForm");
             const categoryInput = document.getElementById("category");
             const categoryIdInput = document.getElementById("category_id");
             const saveButton = document.getElementById("saveButton");
+            const spinner = document.getElementById("loadingSpinner");
 
             // Add Category Button Click
-            document.getElementById("addButton").addEventListener("click", function () {
+            document.getElementById("addButton").addEventListener("click", function() {
                 modalTitle.innerText = "Add Category";
                 saveButton.innerText = "Add";
                 categoryForm.action = "{{ route('category-store') }}";
@@ -168,7 +187,7 @@
 
             // Edit Category Button Click
             document.querySelectorAll(".editButton").forEach(button => {
-                button.addEventListener("click", function () {
+                button.addEventListener("click", function() {
                     const categoryId = this.getAttribute("data-id");
                     const categoryName = this.getAttribute("data-category");
 
@@ -182,12 +201,28 @@
 
             // Delete Button Click
             document.querySelectorAll(".deleteButton").forEach(button => {
-                button.addEventListener("click", function () {
+                button.addEventListener("click", function() {
                     const categoryId = this.getAttribute("data-id");
-                    const action = "{{ route('category-delete', ':id') }}".replace(':id', categoryId);
+                    const action = "{{ route('category-delete', ':id') }}".replace(':id',
+                        categoryId);
                     document.getElementById("deleteForm").setAttribute("action", action);
                 });
             });
+
+            //Show Spinner and Disable Form on Submit
+            categoryForm.addEventListener("submit", function() {
+                spinner.classList.remove("d-none"); // Show spinner
+                saveButton.disabled = true; // Disable button to prevent multiple clicks
+            });
+
+            //Auto-hide success alert after 3 seconds
+            const successAlert = document.querySelector(".alert-success");
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.classList.remove("show");
+                    successAlert.classList.add("fade");
+                }, 3000);
+            }
         });
     </script>
 @endsection

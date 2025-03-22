@@ -25,6 +25,16 @@
                             </div>
                         </div>
 
+                        <!-- Blade alert for success -->
+                        @if (session('success'))
+                            <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                            </div>
+                            {{ session()->forget('success') }} {{-- Clear session --}}
+                        @endif
+
                         @if ($materials->isEmpty())
                             <p class="text-center mt-3"> No Materials and Shades found. Please add an Aggregator Form.</p>
                         @else
@@ -123,6 +133,14 @@
                 const action = "{{ route('material-delete', ':id') }}".replace(':id', categoryId);
                 document.getElementById("deleteForm").setAttribute("action", action);
             });
+            //Auto-hide success alert after 3 seconds
+            const successAlert = document.querySelector(".alert-success");
+            if (successAlert) {
+                setTimeout(() => {
+                    successAlert.classList.remove("show");
+                    successAlert.classList.add("fade");
+                }, 3000);
+            }
         });
     </script>
 @endsection

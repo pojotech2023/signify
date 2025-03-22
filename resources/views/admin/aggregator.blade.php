@@ -43,8 +43,19 @@
                             </div>
                         </div>
                         <div class="card-body">
+
+                             <!-- Blade alert for success -->
+                             @if (session('success'))
+                             <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                                 {{ session('success') }}
+                                 <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                     aria-label="Close"></button>
+                             </div>
+                             {{ session()->forget('success') }} {{-- Clear session --}}
+                         @endif
+
                             <div class="row">
-                                <form
+                                <form id="aggregatorForm"
                                     action="{{ isset($material) ? route('material-update', $material->id) : route('aggregator-store') }}"
                                     method="POST" enctype="multipart/form-data" class="container">
                                     @csrf
@@ -336,6 +347,12 @@
             </div>
         </div>
     </div>
+     <!-- Spinner -->
+     <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
     <!-- for Dynamic Fields -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -363,8 +380,8 @@
                     .then(response => response.json())
                     .then(data => {
                         subcategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
-                        if (data.length > 0) {
-                            data.forEach(subcategory => {
+                        if (data.data.length > 0) {
+                            data.data.forEach(subcategory => {
                                 let option = document.createElement("option");
                                 option.value = subcategory.id;
                                 option.textContent = subcategory.sub_category;
@@ -424,7 +441,27 @@
                 });
             });
         });
+        //Spinner and Alert
+        document.addEventListener("DOMContentLoaded", function() {
+        let alert = document.querySelector('.alert');
+        const form = document.getElementById('aggregatorForm');
+        const spinner = document.getElementById('loadingSpinner');
+
+        //Success alert handling
+        if (alert) {
+            setTimeout(() => {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+                window.location.href = "{{ route('material-list') }}";
+            }, 3000);
+        }
+
+        //Show spinner only on job form submission
+        if (form && spinner) {
+            form.addEventListener('submit', function(event) {
+                spinner.classList.remove('d-none'); //Show spinner
+            });
+        }
+    });
     </script>
-
-
 @endsection

@@ -22,7 +22,7 @@ class Job extends Model
 
     public function jobAssign()
     {
-        return $this->hasMany(JobAssign::class, 'job_id');
+        return $this->hasOne(JobAssign::class, 'job_id')->latestOfMany();
     }
 
     public function jobTask()

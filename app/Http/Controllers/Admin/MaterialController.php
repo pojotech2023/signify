@@ -157,7 +157,7 @@ class MaterialController extends Controller
         }
 
 
-        return redirect()->back()->with('success', 'Material updated successfully');
+        return redirect()->back()->with('success', 'Aggregator data updated successfully');
     }
 
     //Material single sub image delete

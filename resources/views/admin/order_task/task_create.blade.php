@@ -19,8 +19,17 @@
                         </span>
                     </div>
 
-                    <form action="{{ route('order-task-create') }}" method="POST" enctype="multipart/form-data"
-                        class="container">
+                    <!-- Blade alert for success -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                            {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {{ session()->forget('success') }} {{-- Clear session --}}
+                    @endif
+
+                    <form id="taskForm" action="{{ route('order-task-create') }}" method="POST"
+                        enctype="multipart/form-data" class="container">
                         @csrf
 
                         <input type="hidden" name="order_id" value="{{ $order->id ?? '' }}">
@@ -62,7 +71,7 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
                         <div class="row align-items-center mt-4">
                             <div class="col-lg-2">
                                 <div class="form-group">
@@ -71,7 +80,8 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <input type="datetime-local" name="completion_expected_by" id="completion_expected_by" required>
+                                    <input type="datetime-local" name="completion_expected_by" id="completion_expected_by"
+                                        required>
                                 </div>
                                 @error('completion_expected_by')
                                     <div class="text-danger">{{ $message }}</div>
@@ -175,8 +185,8 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <select class="form-select form-control" name="internal_user_id" id="internal_user_id"
-                                        required>
+                                    <select class="form-select form-control" name="internal_user_id"
+                                        id="internal_user_id" required>
                                         <option value="">Select Assignee</option>
                                         @foreach ($internal_user_list as $user)
                                             <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -197,6 +207,12 @@
             </div>
         </div>
     </div>
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -208,6 +224,27 @@
             dateInput.addEventListener("change", function() {
                 console.log("Selected Date:", dateInput.value);
             });
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            let alert = document.querySelector('.alert');
+            const form = document.getElementById('taskForm');
+            const spinner = document.getElementById('loadingSpinner');
+
+            //Success alert handling
+            if (alert) {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    window.location.href = "{{ route('orders-list') }}";
+                }, 3000);
+            }
+
+            //Show spinner only on job form submission
+            if (form && spinner) {
+                form.addEventListener('submit', function(event) {
+                    spinner.classList.remove('d-none'); //Show spinner
+                });
+            }
         });
     </script>
 @endsection
