@@ -60,21 +60,34 @@
             color: white;
             z-index: 2;
         }
+
+        .service-card-app {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .tec-icon {
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 
 <body>
 
     <!--<div class="onloadpage" id="page_loader">
-		<div class="pre-content">
-			<div class="logo-pre"><img src="images/logo.png" alt="Logo" class="img-fluid" /></div>
-			<div class="pre-text- text-radius text-light text-animation bg-b">Niwax - Creative Agency & Portfolio HTML
-				Template Are 2 Seconds Away. Have Patience</div>
-		</div>
-	</div>-->
+  <div class="pre-content">
+   <div class="logo-pre"><img src="images/logo.png" alt="Logo" class="img-fluid" /></div>
+   <div class="pre-text- text-radius text-light text-animation bg-b">Niwax - Creative Agency & Portfolio HTML
+    Template Are 2 Seconds Away. Have Patience</div>
+  </div>
+ </div>-->
 
 
-   @include('header')
+    @include('header')
     <section class="hero-slider hero-style">
         <div class="swiper-container">
 
@@ -82,8 +95,9 @@
 
                 <div class="swiper-slide">
                     <!-- <img src="" alt=""> -->
-                    <div class="slide-inner slide-bg-image background-img" data-background="./img/download/12.jpeg">
-                        <div class="gradient-overlay"></div> <!-- Gradient overlay -->
+                    <div class="slide-inner slide-bg-image background-img"
+                        data-background="./images/signify/slider1.jpeg">
+                        {{-- <div class="gradient-overlay"></div> 
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-6">
@@ -104,19 +118,19 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <!-- <img src="images/hero/mobile-app.png"> -->
                                 </div>
                             </div>
 
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
 
                 <div class="swiper-slide">
-                    <div class="slide-inner slide-bg-image background-image" data-background="./img/download/11.jpeg">
-                        <div class="gradient-overlay"></div> <!-- Gradient overlay -->
-                        <div class="container">
+                    <div class="slide-inner slide-bg-image background-image"
+                        data-background="./images/signify/slider2.jpeg">
+                        {{-- <div class="gradient-overlay"></div>  --}}
+                        {{-- <div class="container">
                             <div class="row">
                                 <div class="col-md-6">
                                     <div data-swiper-parallax="300" class="slide-title">
@@ -139,7 +153,7 @@
                                     <!-- <img src="images/hero/web-development.png"> -->
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -147,8 +161,9 @@
 
 
                 <div class="swiper-slide">
-                    <div class="slide-inner slide-bg-image background-img" data-background="./img/download/1.jpeg">
-                        <div class="gradient-overlay"></div> <!-- Gradient overlay -->
+                    <div class="slide-inner slide-bg-image background-img"
+                        data-background="./images/signify/slider3.jpeg">
+                        {{-- <div class="gradient-overlay"></div> 
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-6">
@@ -172,7 +187,7 @@
                                     <!-- <img src="images/hero/digital-marketing.png"> -->
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -192,14 +207,16 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="common-heading text-l">
-                        <h2 class="mb30">Welcome to <span class="text-second text-bold">Sai Saravana Men's Hostel </span></h2>
-                        <p class="text-justify"> where comfort meets convenience. Located at Gate No. 4, Plot No. 4, near DLF Back Gate, Sri Lakshmi Nagar, Mugalivakkam, Chennai, Tamil Nadu 600116, our hostel offers a safe and secure living environment designed for students and professionals alike. </p>
-                        <p class="mt10 text-justify">We pride ourselves on providing well-furnished rooms, modern amenities, and a peaceful atmosphere to make your stay enjoyable and stress-free. Whether you're in Chennai for work or studies, Sai Saravana Men's Hostel is your ideal home away from home.</p>
-
+                        <h2 class="mb30">Welcome to <span class="text-second text-bold">Signify </span></h2>
+                        <p class="text-justify"> Signify is a signage company that specializes in Indoor signages,
+                            Outdoor Signages, and Custom Signages. </p>
+                        <p class="mt10 text-justify">We offer a wide range of visual communication solutions to help
+                            businesses increase their visibility and convey their messages effectively. We specialize in
+                            designing, manufacturing and installing high-quality indoor and outdoor branding, signage,
+                            and retail display solutions.</p>
+                        <p class="mt10 text-justify">Our services include small format signage, outdoor signs, digital
+                            signages, and more.</p>
                     </div>
-
-
-
                 </div>
                 <div class="col-lg-6">
                     <div class="funfact">
@@ -216,7 +233,8 @@
                                 <div class="funfct srcl3">
                                     <img src="images/icons/team.svg" alt="team">
                                     <span class="services-cuntr counter">50</span><span class="services-cuntr">+</span>
-                                    <p>Talented Squad </p>
+                                    <p>Experienced Professionals
+                                    </p>
                                 </div>
                             </div>
 
@@ -224,7 +242,7 @@
                                 <div class="funfct srcl5">
                                     <img src="images/icons/computers.svg" alt="projects">
                                     <span class="services-cuntr counter">100</span><span class="services-cuntr">%</span>
-                                    <p>Projects Delivered</p>
+                                    <p>Successful Installations</p>
                                 </div>
                             </div>
                             <div class="col-lg-6 col-md-6 col-sm-12 col-6">
@@ -248,196 +266,183 @@
             <div class="row justify-content-center">
                 <div class="col-lg-12">
                     <div class="common-heading ptag">
-                        <span>services</span>
-                        <h2>At Sai Saravana Men's Hostel, we offer a range of services to ensure your stay is hassle-free:</h2>
+                        <span>Our Products</span>
+                        <h2>We offer Metal, Acrylic, Vinyl, Neon, Safety, Backlit Signages, Digital Prints, Glass Films,
+                            and more to elevate your brand.</h2>
                     </div>
                 </div>
-                <!-- <p class="mb30 text-center">Thanks to the creativity, our Web and
-					Mobile Apps security and stability, integrated solutions and quality
-					services, the Pojo Technology has turned into world's renowned
-					destination for innovation, perceptive and business management
-
-				</p> -->
             </div>
             <div class="row upset">
                 <div class="col-lg-4 col-md-6 mt30 wow fadeIn" data-wow-delay="0.2s">
                     <div class="service-card-app hoshd">
-                        <h4>Fully Furnished Rooms</h4>
-                        <ul class="-service-list mt10">
-                            <!-- <li> <a href="#">iPhone</a> </li>
-							<li> <a href="#">Android</a> </li>
-							<li> <a href="#">Cross Platform</a> </li> -->
-                        </ul>
+                        <h4>Metal Signages</h4>
                         <div class="tec-icon mt30">
-                            <img src="./img/download/1.jpeg" alt="">
-                            <!-- <ul class="servc-icon-sldr">
-								<li><a href="#">
-										<div class="img-iconbb"><img src="images/icons/android.svg" alt="img"></div>
-									</a></li>
-								<li><a href="#">
-										<div class="img-iconbb"><img src="images/icons/apple.svg" alt="img"></div>
-									</a></li>
-								<li><a href="#">
-										<div class="img-iconbb"><img src="images/icons/tablet.svg" alt="img"></div>
-									</a></li>
-							</ul> -->
+                            <img src="./images/signify/s1.jpg" alt="">
                         </div>
-                        <p class="mt20 text-justify">Comfortable rooms with beds, wardrobes, and study tables.
-                        </p>
-                        <!-- <a href="mobile-app-development.html" class="mt20 link-prbs">Read More <i
-								class="fas fa fa-arrow-circle-right"></i></a> -->
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mt30 wow fadeIn" data-wow-delay="0.5s">
-                    <div class="service-card-app hoshd">
-                        <h4>Hygienic Food</h4>
-                        <ul class="-service-list mt10">
-
-                        </ul>
-                        <div class="tec-icon mt30">
-                            <ul class="servc-icon-sldr">
-                                <img src="./img/download/8.jpeg" alt="">
-                            </ul>
-                        </div>
-                        <p class="mt20 text-justify"> Fresh and healthy vegetarian and non-vegetarian meals served daily.
+                        <p class="mt20 text-justify">
+                            Metal signages are durable and versatile, often used for outdoor advertising, business
+                            sings, and informational signs.
                         </p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mt30 wow fadeIn" data-wow-delay="0.5s">
                     <div class="service-card-app hoshd">
-                        <h4>High-Speed Internet</h4>
-                        <ul class="-service-list mt10">
-
-                        </ul>
+                        <h4>Acrylic Signages</h4>
                         <div class="tec-icon mt30">
                             <ul class="servc-icon-sldr">
-                                <img src="./img/download/11.jpeg" alt="">
+                                <img src="./images/signify/s2.jpg" alt="">
                             </ul>
                         </div>
-                        <p class="mt20 text-justify">24/7 Wi-Fi to stay connected for work, studies, or leisure.
+                        <p class="mt20 text-justify">
+                            Acrylic signages are known for their sleek and modern appearance.
                         </p>
                     </div>
                 </div>
                 <div class="col-lg-4 col-md-6 mt30 wow fadeIn" data-wow-delay="0.5s">
                     <div class="service-card-app hoshd">
-                        <h4>Laundry Services</h4>
-                        <ul class="-service-list mt10">
-
-                        </ul>
+                        <h4>Vinyl Signages</h4>
                         <div class="tec-icon mt30">
                             <ul class="servc-icon-sldr">
-                                <img src="./img/download/2.jpeg" alt="">
+                                <img src="./images/signify/s3.jpg" alt="">
                             </ul>
                         </div>
-                        <p class="mt20 text-justify"> Hassle-free laundry facilities for your convenience.
+                        <p class="mt20 text-justify">
+                            Vinyl singages are flexible and cost-effective, often used for banners, window graphics, and
+                            vechile wraps.
                         </p>
                     </div>
-                    <a href="{{route('product')}}" class="btn btn-primary mt-2 d-flex justify-content-center">View More</a>
+                </div>
+                <div class="col-lg-4 col-md-6 mt30 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="service-card-app hoshd">
+                        <h4>Night Glow Signages</h4>
+                        <div class="tec-icon mt30">
+                            <ul class="servc-icon-sldr">
+                                <img src="./images/signify/s4.jpg" alt="">
+                            </ul>
+                        </div>
+                        <p class="mt20 text-justify">
+                            Night glow signages are designed to be visible in low-light conditions.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mt30 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="service-card-app hoshd">
+                        <h4>Safety Signages</h4>
+                        <div class="tec-icon mt30">
+                            <ul class="servc-icon-sldr">
+                                <img src="./images/signify/s5.jpg" alt="">
+                            </ul>
+                        </div>
+                        <p class="mt20 text-justify">
+                            Saftety signages are essential for conveying important safety information and warnings.
+                        </p>
+                    </div>
+                    <a href="{{ route('product') }}" class="btn btn-primary mt-5 d-flex justify-content-center">View
+                        More</a>
+                </div>
+                <div class="col-lg-4 col-md-6 mt30 wow fadeIn" data-wow-delay="0.5s">
+                    <div class="service-card-app hoshd">
+                        <h4>Back Lit Signages</h4>
+                        <div class="tec-icon mt30">
+                            <ul class="servc-icon-sldr">
+                                <img src="./images/signify/s6.jpg" alt="">
+                            </ul>
+                        </div>
+                        <p class="mt20 text-justify">
+                            Back lit signages are illuminated from behind, creating a striking visual effect.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
         </div>
     </section>
 
-
-
-
-
-
-
-
-
-
-
     <!-- <section class="clients-section-app pad-tb">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-lg-8">
-					<div class="common-heading text-w">
+  <div class="container">
+   <div class="row justify-content-center">
+    <div class="col-lg-8">
+     <div class="common-heading text-w">
 
-						<h2 class="mb30">Some of our Clients</h2>
-					</div>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col-lg-12">
-					<div class="client-logoset">
-						<ul class="row text-center clearfix apppg">
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay=".2s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-1.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>Admire</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay=".4s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-2.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>Annai Masala</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay=".6s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-3.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>MK Auto Plast</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay=".8s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-4.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>Bestie</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-5.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>BTM</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1.2s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-6.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>Camping</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1.4s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-7.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>CPS</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1.6s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-8.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>Escon Logo</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1.8s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-9.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>Event Service</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="2s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-10.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>Jai Academy</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="2.2s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-11.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>JJ</p>
-							</li>
-							<li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="2.4s">
-								<div class="brand-logo hoshd"><img src="images/client/client-logo-12.jpg" alt="clients"
-										class="img-fluid"></div>
-								<p>Jungle Hikers</p>
-							</li>
-						</ul>
-					</div>
-					<div class="-cta-btn mt70">
-						<div class="free-cta-title v-center wow zoomInDown">
-							<a href="our-clients.html" class="btn-outline lnk">View More<span class="circle"></span></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section> -->
-
-
-
-
+      <h2 class="mb30">Some of our Clients</h2>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-lg-12">
+     <div class="client-logoset">
+      <ul class="row text-center clearfix apppg">
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay=".2s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-1.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>Admire</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay=".4s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-2.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>Annai Masala</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay=".6s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-3.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>MK Auto Plast</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay=".8s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-4.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>Bestie</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-5.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>BTM</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1.2s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-6.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>Camping</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1.4s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-7.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>CPS</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1.6s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-8.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>Escon Logo</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="1.8s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-9.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>Event Service</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="2s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-10.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>Jai Academy</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="2.2s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-11.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>JJ</p>
+       </li>
+       <li class="col-lg-2 col-md-3 col-sm-4 col-6 mt30 wow fadeIn" data-wow-delay="2.4s">
+        <div class="brand-logo hoshd"><img src="images/client/client-logo-12.jpg" alt="clients"
+          class="img-fluid"></div>
+        <p>Jungle Hikers</p>
+       </li>
+      </ul>
+     </div>
+     <div class="-cta-btn mt70">
+      <div class="free-cta-title v-center wow zoomInDown">
+       <a href="our-clients.html" class="btn-outline lnk">View More<span class="circle"></span></a>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </section> -->
 
     <section class="testinomial-section-app bg-none pad-tb">
         <div class="container">
@@ -447,16 +452,6 @@
                         <span>What Our Residents Say</span>
                         <h2>Over 200+ Satisfied Guests</h2>
                     </div>
-                    <!-- <div class="review-title-ref mt40">
-						<div class="cta-card mt40">
-							<a href="#" class="btn-outline lnk">Write a Reviews<span class="circle"></span></a>
-						</div>
-					</div>
-					<div class="row mt30">
-						<a href="#" target="blank" class="wow fadeIn col-lg-4 col-4" data-wow-delay=".2s"><img
-								src="images/about/reviews-icon-1.png" alt="review" class="img-fluid"></a>
-
-					</div> -->
                 </div>
                 <div class="col-lg-7">
                     <div class="pl50">
@@ -464,24 +459,10 @@
                         <div class="testimonial-card-a tcd owl-carousel">
                             <div class="testimonial-card">
                                 <div class="tt-text">
-                                    <p>The rooms are comfortable, the food is delicious, and the location is perfect. Sai Saravana Men's Hostel feels like home!</p>
-                                </div>
-                                <div class="client-thumbs mt30">
-                                    <div class="media v-center upset">
-                                        <div class="user-image bdr-radius"><img
-                                                src="images/user-thumb/pojo-testimonial.png" alt="girl"
-                                                class="img-fluid rounded-circle" /></div>
-                                        <div class="media-body user-info v-center">
-                                            <h5> – Aisha K</h5>
+                                    <p>
+                                        Signify designed and installed an amazing outdoor sign for our store. It has
+                                        significantly increased foot traffic and brand visibility!
 
-                                            <i class="fas fa-quote-right posiqut"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="testimonial-card">
-                                <div class="tt-text">
-                                    <p>From Wi-Fi to laundry, everything is well-maintained. It's the best place for students looking for affordable and secure accommodation.
                                     </p>
                                 </div>
                                 <div class="client-thumbs mt30">
@@ -490,7 +471,7 @@
                                                 src="images/user-thumb/pojo-testimonial.png" alt="girl"
                                                 class="img-fluid rounded-circle" /></div>
                                         <div class="media-body user-info v-center">
-                                            <h5>– Suresh P</h5>
+                                            <h5> – Rahul M</h5>
 
                                             <i class="fas fa-quote-right posiqut"></i>
                                         </div>
@@ -499,7 +480,9 @@
                             </div>
                             <div class="testimonial-card">
                                 <div class="tt-text">
-                                    <p>The staff is friendly and helpful, and the hostel is always clean and secure. I would recommend it to anyone staying in Chennai.</p>
+                                    <p>
+                                        The custom neon signage from Signify perfectly matches our brand identity. Their
+                                        attention to detail and quick turnaround were impressive! </p>
                                 </div>
                                 <div class="client-thumbs mt30">
                                     <div class="media v-center upset">
@@ -507,7 +490,67 @@
                                                 src="images/user-thumb/pojo-testimonial.png" alt="girl"
                                                 class="img-fluid rounded-circle" /></div>
                                         <div class="media-body user-info v-center">
-                                            <h5>– Bharath S</h5>
+                                            <h5>– Priya S</h5>
+
+                                            <i class="fas fa-quote-right posiqut"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="testimonial-card">
+                                <div class="tt-text">
+                                    <p>
+                                        We ordered backlit and acrylic signs for our office, and the quality was
+                                        outstanding. Highly recommend Signify for professional signage solutions!
+                                    </p>
+                                </div>
+                                <div class="client-thumbs mt30">
+                                    <div class="media v-center upset">
+                                        <div class="user-image bdr-radius"><img
+                                                src="images/user-thumb/pojo-testimonial.png" alt="girl"
+                                                class="img-fluid rounded-circle" /></div>
+                                        <div class="media-body user-info v-center">
+                                            <h5>– Arjun S</h5>
+
+                                            <i class="fas fa-quote-right posiqut"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="testimonial-card">
+                                <div class="tt-text">
+                                    <p>
+
+                                        Signify created a stunning backlit sign for our store. The quality and design
+                                        have truly elevated our brand presence! </p>
+                                </div>
+                                <div class="client-thumbs mt30">
+                                    <div class="media v-center upset">
+                                        <div class="user-image bdr-radius"><img
+                                                src="images/user-thumb/pojo-testimonial.png" alt="girl"
+                                                class="img-fluid rounded-circle" /></div>
+                                        <div class="media-body user-info v-center">
+                                            <h5>– Ravi S</h5>
+
+                                            <i class="fas fa-quote-right posiqut"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="testimonial-card">
+                                <div class="tt-text">
+                                    <p>
+                                        The custom acrylic signage from Signify was exactly what we needed. Professional
+                                        service and quick installation!
+                                    </p>
+                                </div>
+                                <div class="client-thumbs mt30">
+                                    <div class="media v-center upset">
+                                        <div class="user-image bdr-radius"><img
+                                                src="images/user-thumb/pojo-testimonial.png" alt="girl"
+                                                class="img-fluid rounded-circle" /></div>
+                                        <div class="media-body user-info v-center">
+                                            <h5>– Meera S</h5>
 
                                             <i class="fas fa-quote-right posiqut"></i>
                                         </div>
@@ -521,27 +564,29 @@
         </div>
     </section>
     @include('footer')
+
+
     <!-- <div class="footer-row3">
-		<div class="copyright">
-			<div class="container">
-				<div class="row">
-					<div class="col-lg-12">
-						<div class="footer-social-media-icons">
-							<a href="https://www.facebook.com/careercounsellorkerala?mibextid=ZbWKwL
+  <div class="copyright">
+   <div class="container">
+    <div class="row">
+     <div class="col-lg-12">
+      <div class="footer-social-media-icons">
+       <a href="https://www.facebook.com/careercounsellorkerala?mibextid=ZbWKwL
 					" target="blank"><i class="fab fa-facebook"></i></a>
-				
-					<a href=" https://instagram.com/mycareercounsellor?igshid=OGQ5ZDc2ODk2ZA==" target="blank"><i
-							class="fab fa-instagram"></i></a>
-					<a href="https://youtube.com/@mycareercounsellor?si=deOSl3bAqhPsV4ph" target="blank"><i
-							class="fab fa-youtube"></i></a>
+    
+     <a href=" https://instagram.com/mycareercounsellor?igshid=OGQ5ZDc2ODk2ZA==" target="blank"><i
+       class="fab fa-instagram"></i></a>
+     <a href="https://youtube.com/@mycareercounsellor?si=deOSl3bAqhPsV4ph" target="blank"><i
+       class="fab fa-youtube"></i></a>
 
-						</div>
+      </div>
 
-					</div>
-				</div>
-			</div>
-		</div>
-	</div> -->
+     </div>
+    </div>
+   </div>
+  </div>
+ </div> -->
 
 
     <script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>

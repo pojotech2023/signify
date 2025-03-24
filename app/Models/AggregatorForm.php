@@ -20,6 +20,7 @@ class AggregatorForm extends Model
         'quantity',
         'design_service_need',
         'email_id',
+        'mobile_no',
         'site_image',
         'design_attachment',
         'reference_image',

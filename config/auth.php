@@ -41,9 +41,13 @@ return [
             'provider' => 'users',
         ],
         'admin' => [ // Keep admin guard
-        'driver' => 'session',
-        'provider' => 'internal_users',
-    ],
+            'driver' => 'session',
+            'provider' => 'internal_users',
+        ],
+        'api' => [
+            'driver' =>'sanctum',
+            'provider' => 'internal_users',
+        ]
     ],
 
     /*

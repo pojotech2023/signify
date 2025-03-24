@@ -9,7 +9,7 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-	<link href="images/logo/icms.png" rel="icon">
+	<link href="images/logo/logo.png" rel="icon">
 
 	<link href="css/bootstrap.min.css" rel="stylesheet">
 	<link href="css/plugin.min.css" rel="stylesheet">
@@ -64,7 +64,8 @@
 							</div>
 							<div class="text pl-4">
 								<!-- <p><span>Registered Office:</span>Maliyakkal, Princy Villa Chekom ,Pathanapuram Kollam , Kerala-689695.</p> -->
-								<p><span>Corporate Office:</span>Gate No. 4, Plot No. 4, near DLF Back Gate, Sri Lakshmi Nagar, Krishnaveni Nagar, Mugalivakkam, Chennai, Tamil Nadu 600116.</p>
+								<p><span>Corporate Office:</span>100, Alapakkam Main Road, Alapkkam, Porur, Chennai -
+									600116.</p>
 							</div>
 							
 						</div>
@@ -73,8 +74,8 @@
 								<i class="fas fa-phone-alt"></i>
 							</div>
 							<div class="text pl-4">
-								<p><span>Phone:</span> <a href="tel:+91 70109 60294">+91 70109 60294</a></p>
-								<p><span>Phone:</span> <a href="tel:+91 70928 50142">+91  70928 50142</a></p>
+								<p><span>Phone:</span> <a href="tel:+917401707707">+91 74017 07707</a></p>
+								{{-- <p><span>Phone:</span> <a href="tel:+91 70928 50142">+91  70928 50142</a></p> --}}
 							</div>
 						</div>
 						<div class="dbox d-flex align-items-start">
@@ -83,14 +84,14 @@
 							</div>
 							<div class="text pl-4">
 								<p><span>Email:</span> <a
-										href="mailto:saisaravanapg@gmail.com">saisaravanapg@gmail.com
+										href="mailto:signify@gmail.com">signify@gmail.com
 
 									</a>
 								</p>
 							</div>
 						</div>
 						
-						<div class="dbox d-flex align-items-start">
+						{{-- <div class="dbox d-flex align-items-start">
 							<div class="icon d-flex align-items-center justify-content-center">
 								<i class="fas fa-digital-tachograph"></i>
 							</div>
@@ -101,7 +102,7 @@
 									</a>
 								</p>
 							</div>
-						</div>
+						</div> --}}
 
 					</div>
 				</div>
@@ -111,8 +112,8 @@
 						<p class="mb60 mt10">We will catch you as early as we receive the message</p>
 					</div>
 					<div class="form-block">
-						<form method="post" action="https://api.web3forms.com/submit">
-							<input type="hidden" name="access_key" value="">
+						<form method="post" action="https://formsubmit.co/signify@gmail.com">
+							<input type="hidden" name="_subject" value="New Form Submission in Signify">
 							<div class="row">
 								<div class="form-group col-sm-6">
 									<input type="text" name="first_name" placeholder="First Name" required>									
@@ -155,7 +156,7 @@
 			<div class="row justify-content-center">
 				<div class="col-lg-12">
 					<div class="map-div">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1943.6040378349321!2d80.17120788854709!3d13.022417596824413!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5261d5f66007e3%3A0x12be4aafbfb1a2e9!2sSAI%20SARAVANA%20Men&#39;s%20HOSTEL!5e0!3m2!1sen!2sin!4v1737980542791!5m2!1sen!2sin" width="100%" class="rounded" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+						<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.800748496793!2d80.1627279745477!3d13.048351313192!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52613df516fa2d%3A0xf0fca0c7b8a7f98!2s100%2C%20Alapakkam%20Main%20Rd%2C%20Thirumurugan%20Nagar%2C%20Alappakam%2C%20Alapakkam%2C%20Porur%2C%20Chennai%2C%20Tamil%20Nadu%20600116!5e0!3m2!1sen!2sin!4v1742652893359!5m2!1sen!2sin" width="100%" height="850" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 					</div>
 				</div>
 			</div>
@@ -164,18 +165,16 @@
 
 
 	@include('footer')
-	<div class="footer-row3">
+	{{-- <div class="footer-row3">
 		<div class="copyright">
 			<div class="container">
 				<div class="row">
 					<div class="col-lg-12">
 						<div class="footer-social-media-icons">
 							<a href="" target="blank"><i class="fab fa-facebook"></i></a>
-							<!-- <a href="https://whatsapp.com/channel/0029VaAp5558qIzkROqAVj3R" target="blank"><img
-								src="./img/download/whatsapp.png" width="18px" alt=""></a> -->
+							
 						<a href=" " target="blank"><i
 								class="fab fa-instagram"></i></a>
-						<!-- <a href="javascript:void(0)" target="blank"><i class="fab fa-linkedin"></i></a> -->
 						<a href="" target="blank"><i
 								class="fab fa-youtube"></i></a>
 						</div>
@@ -184,7 +183,7 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> --}}
 
 
 	<script data-cfasync="false" src="../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>

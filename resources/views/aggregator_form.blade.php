@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <link href="images/logo/icms.png" rel="icon">
+    <link href="images/logo/logo.png" rel="icon">
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/plugin.min.css" rel="stylesheet">
@@ -250,6 +250,22 @@
                         <input type="email" id="email" name="email_id" class="form-control">
                     </div>
                     @error('email_id')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="row align-items-center">
+                <div class="col-lg-2">
+                    <div class="form-group">
+                        <label for="mobile_no">Mobile Number</label>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="form-group d-flex align-items-center gap-2">
+                        <input type="text" id="mobile_no" name="mobile_no" class="form-control">
+                    </div>
+                    @error('mobile_no')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>

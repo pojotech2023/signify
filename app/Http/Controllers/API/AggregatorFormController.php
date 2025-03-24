@@ -72,16 +72,15 @@ class AggregatorFormController extends Controller
             'design_attachment.*' => 'file|mimes:jpg,jpeg,png,webp',
             'reference_image' => 'required|array',
             'reference_image.*' => 'file|mimes:jpg,jpeg,png,webp',
-            'shades' => 'required|array',
-            'shades.*.shade_id' => 'required|integer',
-            'shades.*.selected_img' => 'required|string',
+            'shades' => 'required|string',
+            'mobile_no' => 'required|string|max:10',
         ]);
 
         if ($validate->fails()) {
             return response()->json(['errors' => $validate->errors()], 422);
         }
 
-
+       
         $siteImages = [];
         if ($request->hasFile('site_image')) {
             foreach ($request->file('site_image') as $file) {
@@ -105,6 +104,8 @@ class AggregatorFormController extends Controller
                 $referenceImages[] = $path;
             }
         }
+
+
         $aggregatorForm = AggregatorForm::create([
             'category_id' => $request->category_id,
             'sub_category_id' => $request->sub_category_id,
@@ -119,22 +120,29 @@ class AggregatorFormController extends Controller
             'site_image' => implode(',', $siteImages),  // Convert array to comma-separated string
             'design_attachment' => implode(',', $designAttachments),
             'reference_image' => implode(',', $referenceImages),
+            'mobile_no' => $request->mobile_no
         ]);
 
-        /// Save Shades with Selected Image
-        if ($request->has('shades')) {
-            foreach ($request->shades as $shade) {
-                $path = str_replace(url('/storage'), '', $shade['selected_img']);
 
+        // Decode Shades JSON
+        $shades = json_decode($request->shades, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return response()->json(['error' => 'Invalid JSON in shades'], 422);
+        }
+
+        // Save Shades with Selected Image
+        foreach ($shades as $shade) {
+            if (isset($shade['shade_id']) && isset($shade['selected_img'])) {
                 $aggregatorForm->shade()->create([
                     'shade_id' => $shade['shade_id'],
-                    'selected_img' => $path,
+                    'selected_img' => $shade['selected_img'],
                 ]);
             }
         }
 
         return response()->json([
             'response code' => 200,
-            'message' => 'Aggregator Form Submitted Successfully'], 200);
+            'message' => 'Aggregator Form Submitted Successfully'
+        ], 200);
     }
 }

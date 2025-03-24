@@ -40,6 +40,7 @@ class AggregatorFormController extends Controller
             'shades' => 'required|array',
             'shades.*.shade_id' => 'required|integer',
             'shades.*.selected_img' => 'required|string',
+            'mobile_no' => 'required|string|max:10',
         ]);
 
         if ($validate->fails()) {
@@ -85,6 +86,7 @@ class AggregatorFormController extends Controller
             'site_image' => implode(',', $siteImages),  // Convert array to comma-separated string
             'design_attachment' => implode(',', $designAttachments),
             'reference_image' => implode(',', $referenceImages),
+            'mobile_no' => $request->mobile_no
         ]);
 
         /// Save Shades with Selected Image

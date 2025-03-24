@@ -178,6 +178,20 @@
                         <div class="row align-items-center">
                             <div class="col-lg-2">
                                 <div class="form-group">
+                                    <label for="mobile_no" class="fw-bold">Mobile Number</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-group d-flex align-items-center gap-2">
+                                    <input type="text" class="form-control fw-bold text-dark"
+                                        value="{{ $lead->mobile_no }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-center">
+                            <div class="col-lg-2">
+                                <div class="form-group">
                                     <label for="design_service_need" class="fw-bold">Design Service Need</label>
                                 </div>
                             </div>
@@ -185,6 +199,81 @@
                                 <div class="form-group d-flex align-items-center gap-2">
                                     <input type="text" class="form-control fw-bold text-dark"
                                         value="{{ ucfirst($lead->design_service_need) }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center mt-4">
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="site_image" class="fw-bold">Site Image</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-10 text-center">
+                                <div class="form-group d-flex flex-wrap gap-3">
+                                    @php
+                                        $images = explode(',', $lead->site_image);
+                                    @endphp
+                                    @if (!empty($images))
+                                        @foreach ($images as $image)
+                                            <div class="text-center">
+                                                <img src="{{ asset('storage/' . $image) }}" alt="Site Image"
+                                                    class="img-fluid mt-2"
+                                                    style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px;">
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted mt-2">No image available</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center mt-4">
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="design_attachment" class="fw-bold">Design Attachments</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-10 text-center">
+                                <div class="form-group d-flex flex-wrap gap-3">
+                                    @php
+                                        $images = explode(',', $lead->design_attachment);
+                                    @endphp
+                                    @if (!empty($images))
+                                        @foreach ($images as $image)
+                                            <div class="text-center">
+                                                <img src="{{ asset('storage/' . $image) }}" alt="Site Image"
+                                                    class="img-fluid mt-2"
+                                                    style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px;">
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted mt-2">No image available</p>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center mt-4">
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="reference_image" class="fw-bold">Reference Image</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-10 text-center">
+                                <div class="form-group d-flex flex-wrap gap-3">
+                                    @php
+                                        $images = explode(',', $lead->reference_image);
+                                    @endphp
+                                    @if (!empty($images))
+                                        @foreach ($images as $image)
+                                            <div class="text-center">
+                                                <img src="{{ asset('storage/' . $image) }}" alt="Site Image"
+                                                    class="img-fluid mt-2"
+                                                    style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px;">
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted mt-2">No image available</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>

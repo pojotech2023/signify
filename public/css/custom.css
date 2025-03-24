@@ -79,3 +79,27 @@
 .left-arrow:hover, .right-arrow:hover {
     color: gray;
 }
+
+/* floating action button whatsapp */
+.fab-whatsapp {
+    position: fixed;
+    bottom: 100px;
+    right: 10px;
+    background-color: #25d366;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .fab-whatsapp img {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .fab-whatsapp:hover {
+    background-color: #128c7e;
+    /* Darker green on hover */
+  }

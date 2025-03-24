@@ -40,7 +40,7 @@ class UserCreationController extends Controller
         $validate = Validator::make($request->all(), [
             'role_id' => 'required|exists:roles,id',
             'name' => 'required|string|max:255',
-            'mobile_no' => 'required|string|max:10',
+            'mobile_no' => 'required|string|digits:10',
             'email_id' => 'required|email|unique:internal_users,email_id',
             // 'password' => 'required|confirmed',
             'designation' => 'required'

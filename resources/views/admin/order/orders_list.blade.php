@@ -96,7 +96,7 @@
                                             <span class="text-muted">{{ $order->lead->shade->first()->shade->shade_name }}</span>
                                         </p>
                                         <p><strong>Mobile Number:</strong>
-                                            <span class="text-muted">{{ $order->lead->email_id }}</span>
+                                            <span class="text-muted">{{ $order->lead->mobile_no }}</span>
                                         </p>
                                     </div>
                                 </div>

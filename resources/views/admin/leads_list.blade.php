@@ -99,7 +99,7 @@
                                             <span class="text-muted">{{ $lead->shade->first()->shade->shade_name }}</span>
                                         </p>
                                         <p><strong>Mobile Number:</strong>
-                                            <span class="text-muted">{{ $lead->email_id }}</span>
+                                            <span class="text-muted">{{ $lead->mobile_no }}</span>
                                         </p>
                                     </div>
                                 </div>

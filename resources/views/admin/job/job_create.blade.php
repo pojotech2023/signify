@@ -158,7 +158,7 @@
                                             </div>
                                         @endif
 
-                                        {{-- Display Assigned User in Edit Mode --}}
+                                        {{-- Display Assigned User in Edit Mode for Admin --}}
                                         @if (isset($job) && isset($assignedUserName))
                                             <div class="row align-items-center mt-3">
                                                 <div class="col-lg-2">
