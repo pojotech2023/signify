@@ -54,7 +54,14 @@
 .popup-image {
     width: 400px;
     height: 400px;
-    object-fit: cover;
+    object-fit: contain;
+    border-radius: 8px;
+}
+/* Video */
+.popup-video {
+    width: 400px;
+    height: 400px;
+    object-fit: contain;
     border-radius: 8px;
 }
 

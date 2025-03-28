@@ -40,7 +40,7 @@ class AggregatorFormController extends Controller
             'shades' => 'required|array',
             'shades.*.shade_id' => 'required|integer',
             'shades.*.selected_img' => 'required|string',
-            'mobile_no' => 'required|string|max:10',
+            'mobile_no' => 'required|numeric|digits:10',
         ]);
 
         if ($validate->fails()) {

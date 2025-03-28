@@ -45,7 +45,7 @@ class AggregatorFormController extends Controller
     public function getShades($material_id)
     {
 
-        $shades = Shade::where('material_id', $material_id)->get();
+        $shades = Shade::where('material_id', $material_id) ->with('shadeImage')->get();
         return response()->json([
             'respone code' => 200,
             'data' => $shades

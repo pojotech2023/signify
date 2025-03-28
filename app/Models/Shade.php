@@ -39,4 +39,9 @@ class Shade extends Model
     {
         return $this->hasMany(AggregatorFormShade::class);
     }
+
+    public function shadeImage()
+    {
+        return $this->hasMany(ShadeImage::class);
+    }
 }

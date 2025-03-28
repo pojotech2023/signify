@@ -3,6 +3,13 @@
 document.addEventListener("DOMContentLoaded", function () {
     /** ======= Category wise Subcategory Dropdown list SECTION ======= **/
     document.getElementById("category_id").addEventListener("change", function () {
+
+        // Clear previous materials and shades when category changes
+        document.getElementById("material-images").innerHTML = "";
+        document.getElementById("shade-images").innerHTML = "";
+        document.getElementById("material-section").style.display = "none";
+        document.getElementById("shades-section").style.display = "none";
+
         let categoryId = this.value;
         let subcategoryDropdown = document.getElementById("subcategory");
 
@@ -44,6 +51,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /** ======= Subcategory wise Material list SECTION ======= **/
     document.getElementById("subcategory").addEventListener("change", function () {
+
+        // Clear previous materials and shades when subcategory changes
+        document.getElementById("material-images").innerHTML = "";
+        document.getElementById("shade-images").innerHTML = "";
+        document.getElementById("material-section").style.display = "none";
+        document.getElementById("shades-section").style.display = "none";
+
         let subcategoryId = this.value;
         let materialSection = document.getElementById("material-section");
         let materialImagesContainer = document.getElementById("material-images");
@@ -81,8 +95,12 @@ document.addEventListener("DOMContentLoaded", function () {
                                     <img src="${imagePath}" class="card-img-top material-card" data-material-id="${material.id}"
                                      alt="${material.material_name}" style="cursor: pointer;">
                                     <div class="card-body d-flex justify-content-between align-items-center">
-                                        <p class="card-text">${material.material_name}</p>
-                                        ${subImages.length > 0 ? `<span class="plus-icon" data-sub-imgs='${JSON.stringify(subImages)}' style="cursor: pointer; text-decoration: underline; color: blue; font-size:10px">View More</span>` : ''}
+                                        <div class="col-8 text-truncate">
+                                            <p class="card-text m-0">${material.material_name}</p>
+                                        </div>
+                                        <div class="col-4 text-end">
+                                            ${subImages.length > 0 ? `<span class="plus-icon" data-sub-imgs='${JSON.stringify(subImages)}' style="cursor: pointer; text-decoration: underline; color: blue; font-size: 10px">View More</span>` : ''}
+                                        </div>
                                     </div>
                                 </div>
                             `;
@@ -113,6 +131,11 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("material-images").addEventListener("click", function (event) {
         let card = event.target.closest(".material-card");
         if (card) {
+
+            // Clear previous shades when material changes
+            document.getElementById("shade-images").innerHTML = "";
+            document.getElementById("shades-section").style.display = "none";
+
             let materialId = card.getAttribute("data-material-id");
             document.getElementById("hidden_material_id").value = materialId;
             loadShades(materialId);
@@ -135,43 +158,41 @@ document.addEventListener("DOMContentLoaded", function () {
                     let cardDiv = document.createElement("div");
 
                     data.data.forEach((shade) => {
-                        let shadeImages = [
-                            shade.shade_img1,
-                            shade.shade_img2,
-                            shade.shade_img3,
-                            shade.shade_img4
-                        ].filter(img => img !== null);
+                        let shadeImages = shade.shade_image.map(img => img.shade_img).filter(img => img !== null);
 
                         let rowDiv = document.createElement("div");
-                        rowDiv.className = "d-flex align-items-center mb-3";
-                        rowDiv.setAttribute("data-shade-row-id", shade.id); //Unique row identifier
-                        rowDiv.style.borderBottom = "1px solid #eee";
-                        rowDiv.style.paddingBottom = "10px";
+                        rowDiv.className = "mb-3";
+                        rowDiv.setAttribute("data-shade-row-id", shade.id);
 
                         let nameDiv = document.createElement("div");
-                        nameDiv.className = "col-md-4";
-                        nameDiv.innerHTML = `${shade.shade_name}`;
-                        nameDiv.style.textAlign = "left";
+                        nameDiv.className = "mb-2 font-weight-bold";
+                        nameDiv.innerText = `${shade.shade_name}`;
 
-                        let imagesDiv = document.createElement("div");
-                        imagesDiv.className = "col-md-8 d-flex flex-wrap";
+                        let imagesGrid = document.createElement("div");
+                        imagesGrid.className = "grid-container";
 
                         shadeImages.forEach((imgPath, index) => {
                             let shadeImagePath = `${window.location.origin}/storage/${imgPath}`;
-                            imagesDiv.innerHTML += `
-                                <div style="position: relative; display: inline-block; margin: 5px; cursor: pointer;">
-                                    <img src="${shadeImagePath}" 
-                                        alt="Shade Image" 
-                                        width="100" height="70"
-                                        style="object-fit: cover; border-radius: 4px; border: 1px solid #ccc;"
-                                        data-shade-id="${shade.id}"
-                                        data-img-id="${index + 1}">
-                                </div>
-                            `;
+                            let imgDiv = document.createElement("div");
+                            imgDiv.className = "grid-item";
+
+                            imgDiv.innerHTML = `
+                            <img src="${shadeImagePath}" 
+                                alt="Shade Image" 
+                                width="100" height="100"
+                                style="object-fit: contain; border-radius: 4px; border: 1px solid #ccc; cursor: pointer;"
+                                data-shade-id="${shade.id}"
+                                data-img-id="${index + 1}">
+                        `;
+
+                            imgDiv.addEventListener("click", () => handleShadeSelection(imgDiv, shade.id, shadeImagePath));
+
+                            imagesGrid.appendChild(imgDiv);
                         });
 
+
                         rowDiv.appendChild(nameDiv);
-                        rowDiv.appendChild(imagesDiv);
+                        rowDiv.appendChild(imagesGrid);
 
                         cardDiv.appendChild(rowDiv);
 
@@ -211,40 +232,68 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (clickedImg) {
             let shadeId = clickedImg.getAttribute("data-shade-id");
+            let imgSrc = clickedImg.getAttribute("src");
 
             if (shadeId) {
-                // Get the parent row for the clicked image
-                let parentRow = clickedImg.closest(`[data-shade-row-id="${shadeId}"]`);
-
-                if (parentRow) {
-                    // Deselect previously selected image in this row
-                    parentRow.querySelectorAll("img").forEach(img => {
-                        img.classList.remove("selected-shade");
-                    });
-
-                    // Highlight the clicked image
-                    clickedImg.classList.add("selected-shade");
-
-                    // Update the hidden input value
-                    // document.getElementById(`hidden_shade_id_${shadeId}`).value = clickedImg.getAttribute("data-img-id");
-                    let hiddenInput = parentRow.querySelector(`#hidden_shade_selected_img_${shadeId}`);
-                    if (hiddenInput) {
-                        hiddenInput.value = clickedImg.getAttribute("src");
-                    }
-                }
+                handleShadeSelection(clickedImg, shadeId, imgSrc);
             }
         }
     });
 
-    // Add CSS for selected image highlight
+    function handleShadeSelection(imgElement, shadeId, imgSrc) {
+        // Find the specific row using the shade ID
+        let parentRow = document.querySelector(`[data-shade-row-id="${shadeId}"]`);
+
+        if (parentRow) {
+            //Deselect previously selected image in this row
+            parentRow.querySelectorAll(".selected-shade").forEach(img => {
+                img.classList.remove("selected-shade");
+            });
+
+            //Highlight the clicked image
+            imgElement.classList.add("selected-shade");
+
+            //Update hidden input value
+            let hiddenInput = parentRow.querySelector(`#hidden_shade_selected_img_${shadeId}`);
+            if (hiddenInput) {
+                hiddenInput.value = imgSrc;
+            }
+        }
+    }
+
+    // CSS for grid layout and selected image highlight
     let style = document.createElement("style");
     style.innerHTML = `
-        .selected-shade {
-            border: 2px solid #007bff !important;
-            box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
-        }
-    `;
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr); /* 5x5 grid */
+        gap: 8px;
+    }
+    .grid-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 120px; /* Set equal height for divs */
+    }
+    .grid-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        aspect-ratio: 1 / 1;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        transition: transform 0.2s ease;
+    }
+    .grid-item img:hover {
+        transform: scale(1.05);
+    }
+    .selected-shade {
+        border: 1px solid #007bff !important;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+    }
+`;
     document.head.appendChild(style);
+
 
 
     /** ======= Show Popup with Sub-Images and Navigation ======= **/
@@ -284,18 +333,18 @@ document.addEventListener("DOMContentLoaded", function () {
         let currentIndex = 0;
 
         function updateContent() {
-        //Check if it's a video
-        if (subImages[currentIndex].endsWith('.mp4')) {
-            imgElement.style.display = "none";
-            videoElement.src = subImages[currentIndex];
-            videoElement.style.display = "block";
-        } else {
-            videoElement.style.display = "none";
-            imgElement.src = subImages[currentIndex];
-            imgElement.style.display = "block";
+            //Check if it's a video
+            if (subImages[currentIndex].endsWith('.mp4')) {
+                imgElement.style.display = "none";
+                videoElement.src = subImages[currentIndex];
+                videoElement.style.display = "block";
+            } else {
+                videoElement.style.display = "none";
+                imgElement.src = subImages[currentIndex];
+                imgElement.style.display = "block";
+            }
         }
-    }
-    updateContent();
+        updateContent();
 
         leftArrow.addEventListener("click", () => {
             if (currentIndex > 0) {

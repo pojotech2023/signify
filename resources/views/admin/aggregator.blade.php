@@ -44,15 +44,15 @@
                         </div>
                         <div class="card-body">
 
-                             <!-- Blade alert for success -->
-                             @if (session('success'))
-                             <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
-                                 {{ session('success') }}
-                                 <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                     aria-label="Close"></button>
-                             </div>
-                             {{ session()->forget('success') }} {{-- Clear session --}}
-                         @endif
+                            <!-- Blade alert for success -->
+                            @if (session('success'))
+                                <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
+                                    {{ session('success') }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                                {{ session()->forget('success') }} {{-- Clear session --}}
+                            @endif
 
                             <div class="row">
                                 <form id="aggregatorForm"
@@ -215,9 +215,11 @@
                                     <h5 class="mt-4">Shades</h5>
                                     <div id="shades-container">
                                         @if (isset($material) && $material->shades->count() > 0)
-                                            @foreach ($material->shades as $shade)
+                                            @foreach ($material->shades as $key => $shade)
                                                 <div class="row align-items-center shade-row">
                                                     <input type="hidden" name="shade_id[]" value="{{ $shade->id }}">
+
+                                                    <!-- Shade Name -->
                                                     <div class="col-lg-2">
                                                         <div class="form-group">
                                                             <label for="shade_name">Shade Name</label>
@@ -226,61 +228,54 @@
                                                     <div class="col-lg-4">
                                                         <div class="form-group">
                                                             <input type="text" name="shade_name[]"
-                                                                class="form-control" value="{{ $shade->shade_name }}">
+                                                                class="form-control" value="{{ $shade->shade_name }}"
+                                                                required>
+                                                            @error("shade_name.$key")
+                                                                <div class="text-danger">{{ $message }}</div>
+                                                            @enderror
                                                         </div>
-                                                        @error('shade_name')
-                                                            <div class="text-danger">{{ $message }}</div>
-                                                        @enderror
                                                     </div>
 
-                                                    <!-- Shade Image -->
+                                                    <!-- Shade Images -->
                                                     <div class="col-lg-2">
                                                         <div class="form-group">
-                                                            <label for="shade_img">Shade Images</label>
+                                                            <label for="shade_img">Shade Images (Max: 25)</label>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-4">
                                                         <div class="d-flex">
-                                                            <input type="file"
-                                                                name="shade_img[{{ isset($loop) ? $loop->index : 0 }}][]"
-                                                                multiple accept="image/*" class="form-control">
-                                                            <button type="button"
-                                                                class="btn btn-success ms-2 add-shade"><i
-                                                                    class="fas fa-plus"></i></button>
-                                                            @if ($shade->shade_img)
-                                                                <img src="{{ asset('storage/' . $shade->shade_img) }}"
-                                                                    width="50" class="ms-2">
-                                                            @endif
+                                                            <input type="file" id="shade_img_{{ $key }}"
+                                                                name="shade_img[{{ $key }}][]"
+                                                                accept=".jpg,.jpeg,.png,.webp" multiple>
+                                                            <button type="button" class="btn btn-success ms-2 add-shade">
+                                                                <i class="fas fa-plus"></i>
+                                                            </button>
                                                         </div>
-                                                        @error('shade_img')
+                                                        @error("shade_img.$key.*")
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <div class="col-lg-6">
-                                                        @if (isset($shade))
+
+                                                    <!-- Existing Images -->
+                                                    <div class="col-lg-12">
+                                                        @if ($shade->shadeImage->count())
                                                             <div class="mt-2 d-flex flex-wrap">
-                                                                @foreach (range(1, 4) as $imgIndex)
-                                                                    @php
-                                                                        $shadeImgKey = 'shade_img' . $imgIndex;
-                                                                    @endphp
+                                                                @foreach ($shade->shadeImage as $image)
+                                                                    <div
+                                                                        style="position: relative; display: inline-block; margin: 5px; width: 100px; height: 100px;">
 
-                                                                    @if (!empty($shade->$shadeImgKey))
-                                                                        <div
-                                                                            style="position: relative; display: inline-block; margin: 5px;">
-                                                                            <img src="{{ asset('storage/' . $shade->$shadeImgKey) }}"
-                                                                                alt="Shade Image" width="70">
+                                                                        <img src="{{ asset('storage/' . $image->shade_img) }}"
+                                                                            alt="Shade Image"
+                                                                            style="width: 100%; height: 100%; object-fit: contain; border: 1px solid #ddd; border-radius: 5px;">
 
-                                                                            <!-- Delete Icon -->
-                                                                            <button type="button"
-                                                                                class="delete-shadeimage"
-                                                                                data-id="{{ $shade->id }}"
-                                                                                data-field="{{ $shadeImgKey }}"
-                                                                                style="position: absolute; top: 0; right: 0; background: transparent; color: red; border: none; padding: 5px; cursor: pointer;">
-                                                                                <i class="bi bi-trash3-fill"
-                                                                                    style="font-size: 16px;"></i>
-                                                                            </button>
-                                                                        </div>
-                                                                    @endif
+                                                                        <button type="button" class="delete-shadeimage"
+                                                                            data-id="{{ $shade->id }}"
+                                                                            data-path="{{ $image->shade_img }}"
+                                                                            style="position: absolute; top: 0; right: 0; background: transparent; color: red; border: none; padding: 5px; cursor: pointer;">
+                                                                            <i class="bi bi-trash3-fill"
+                                                                                style="font-size: 16px;"></i>
+                                                                        </button>
+                                                                    </div>
                                                                 @endforeach
                                                             </div>
                                                         @endif
@@ -288,7 +283,7 @@
                                                 </div>
                                             @endforeach
                                         @else
-                                            {{-- Show empty fields when adding new shades --}}
+                                            {{-- Add New Shade --}}
                                             <div class="row align-items-center shade-row">
                                                 <div class="col-lg-2">
                                                     <div class="form-group">
@@ -298,22 +293,22 @@
                                                 <div class="col-lg-4">
                                                     <div class="form-group">
                                                         <input type="text" name="shade_name[]" class="form-control"
-                                                            placeholder="Enter Shade Name">
+                                                            placeholder="Enter Shade Name" required>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-lg-2">
                                                     <div class="form-group">
-                                                        <label for="shade_img">Shade Image</label>
+                                                        <label for="shade_img">Shade Images (Max: 25)</label>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="d-flex">
-                                                        <input type="file"
-                                                            name="shade_img[{{ isset($loop) ? $loop->index : 0 }}][]"
-                                                            multiple accept="image/*" class="form-control">
-                                                        <button type="button" class="btn btn-success ms-2 add-shade"><i
-                                                                class="fas fa-plus"></i></button>
+                                                        <input type="file" name="shade_img[0][]"
+                                                            accept=".jpg,.jpeg,.png,.webp" multiple>
+                                                        <button type="button" class="btn btn-success ms-2 add-shade">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -337,8 +332,8 @@
                                 <form id="deleteShadeImageForm" method="POST" action="{{ route('shade.deleteImage') }}"
                                     style="display: none;">
                                     @csrf
-                                    <input type="hidden" name="id" id="deleteShadeImageId">
-                                    <input type="hidden" name="field" id="deleteShadeImageField">
+                                    <input type="hidden" name="shade_id" id="deleteShadeImageId">
+                                    <input type="hidden" name="shade_img" id="deleteShadeImagePath">
                                 </form>
                             </div>
                         </div>
@@ -347,8 +342,8 @@
             </div>
         </div>
     </div>
-     <!-- Spinner -->
-     <div class="d-flex justify-content-center mt-3">
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center mt-3">
         <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
             <span class="visually-hidden">Loading...</span>
         </div>
@@ -432,36 +427,35 @@
         document.addEventListener("DOMContentLoaded", function() {
             document.querySelectorAll(".delete-shadeimage").forEach(button => {
                 button.addEventListener("click", function() {
-                    let materialId = this.getAttribute("data-id");
-                    let field = this.getAttribute("data-field");
-                    document.getElementById("deleteShadeImageId").value = materialId;
-                    document.getElementById("deleteShadeImageField").value = field;
-
+                    let shadeId = this.getAttribute("data-id");
+                    let shadeImg = this.getAttribute("data-path");
+                    document.getElementById("deleteShadeImageId").value = shadeId;
+                    document.getElementById("deleteShadeImagePath").value = shadeImg;
                     document.getElementById("deleteShadeImageForm").submit();
                 });
             });
         });
         //Spinner and Alert
         document.addEventListener("DOMContentLoaded", function() {
-        let alert = document.querySelector('.alert');
-        const form = document.getElementById('aggregatorForm');
-        const spinner = document.getElementById('loadingSpinner');
+            let alert = document.querySelector('.alert');
+            const form = document.getElementById('aggregatorForm');
+            const spinner = document.getElementById('loadingSpinner');
 
-        //Success alert handling
-        if (alert) {
-            setTimeout(() => {
-                alert.classList.remove('show');
-                alert.classList.add('fade');
-                window.location.href = "{{ route('material-list') }}";
-            }, 3000);
-        }
+            //Success alert handling
+            if (alert) {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    window.location.href = "{{ route('material-list') }}";
+                }, 3000);
+            }
 
-        //Show spinner only on job form submission
-        if (form && spinner) {
-            form.addEventListener('submit', function(event) {
-                spinner.classList.remove('d-none'); //Show spinner
-            });
-        }
-    });
+            //Show spinner only on job form submission
+            if (form && spinner) {
+                form.addEventListener('submit', function(event) {
+                    spinner.classList.remove('d-none'); //Show spinner
+                });
+            }
+        });
     </script>
 @endsection

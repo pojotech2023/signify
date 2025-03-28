@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\InternalUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -39,6 +40,15 @@ class AuthController extends Controller
         return response()->json([
            'response code' => 401,
             'message' => 'Invalid mobile number'
+        ]);
+    }
+
+    public function logout()
+    {
+        Auth::guard('admin')->logout();
+        return response()->json([
+            'response code' => 200,
+            'message' => 'User Successfully Loggedout'
         ]);
     }
 }

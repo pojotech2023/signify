@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\SubCategory;
 use App\Models\Material;
 use App\Models\Shade;
+use App\Models\ShadeImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -29,7 +30,7 @@ class AdminAggregatorFormController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all()); 
+        //dd($request->all()); 
         $validate = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required',
@@ -40,9 +41,9 @@ class AdminAggregatorFormController extends Controller
             'video' => 'nullable|mimes:mp4,mov,avi,wmv|max:5120',
             'shade_name' => 'required|array',
             'shade_name.*' => 'required|string',
-            'shade_img' => 'required|array',
-            'shade_img.*' => 'required|array',
-            'shade_img.*.*' => 'required|image|mimes:jpg,jpeg,png,webp',
+            'shade_img' => 'nullable|array',
+            'shade_img.*' => 'nullable|array|max:50',
+            'shade_img.*.*' => 'image|mimes:jpg,jpeg,png,webp',
 
         ]);
 
@@ -85,47 +86,30 @@ class AdminAggregatorFormController extends Controller
             'video' => $videoPath,
         ]);
 
-        // Store Shades
-        $material_id = $material->id;
         if ($request->has('shade_name')) {
             foreach ($request->shade_name as $key => $shadeName) {
-                $shadeImages = array_fill(0, 4, null); // Initialize with 4 null values
-        
-                // Check if this shade has associated images
-                if (isset($request->shade_img[$key]) && is_array($request->shade_img[$key])) {
-                    foreach ($request->shade_img[$key] as $imgKey => $file) {
-                        if ($imgKey < 4) { // Store up to 4 images
-                            $shadeImages[$imgKey] = $file->store('shades', 'public');
-                        }
-                    }
-                }
-        
-                Shade::create([
+                // Insert into shades table
+                $shade = Shade::create([
                     'category_id' => $request->category_id,
                     'sub_category_id' => $request->sub_category_id,
-                    'material_id' => $material_id,
+                    'material_id' => $material->id,
                     'shade_name' => $shadeName,
-                    'shade_img1' => $shadeImages[0] ?? null,
-                    'shade_img2' => $shadeImages[1] ?? null,
-                    'shade_img3' => $shadeImages[2] ?? null,
-                    'shade_img4' => $shadeImages[3] ?? null,
                 ]);
+
+                // Store Multiple Files for Each Shade
+                if ($request->hasFile("shade_img.$key")) {
+                    foreach ($request->file("shade_img.$key") as $file) {
+                        $path = $file->store('shades', 'public');
+
+                        ShadeImage::create([
+                            'shade_id' => $shade->id,
+                            'shade_img' => $path
+                        ]);
+                    }
+                }
             }
         }
-        
-        // if ($request->hasFile('shade_img')) {
-        //     foreach ($request->shade_name as $key => $shadeName) {
-        //         $shadeImgPath = $request->file('shade_img')[$key]->store('shades', 'public');
 
-        //         Shade::create([
-        //             'category_id' => $request->category_id,
-        //             'sub_category_id' => $request->sub_category_id,
-        //             'material_id' => $material_id,
-        //             'shade_name' => $shadeName,
-        //             'shade_img' => $shadeImgPath
-        //         ]);
-        //     }
-        // }
 
         return redirect()->back()->with('success', 'Aggregator data saved successfully.');
     }

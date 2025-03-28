@@ -41,9 +41,9 @@ class LeadTaskController extends Controller
             'attachments'        => 'required|array',
             'attachments.*'      => 'file|mimes:jpeg,png,jpg,webp',
             'vendor_name'        => 'required',
-            'vendor_mobile'      => 'required|string|max:15',
+            'vendor_mobile'      => 'required|numeric|digits:10',
             'customer_name'      => 'required',
-            'customer_mobile'    => 'required|string|max:15',
+            'customer_mobile'    => 'required|numeric|digits:10',
             'internal_user_id'   => 'required|exists:internal_users,id'
 
         ]);
@@ -91,14 +91,15 @@ class LeadTaskController extends Controller
     public function showLeadTasks($lead_id)
     {
 
-        $lead_tasks = LeadTask::with([
-            'aggregatorForm',
-            'CreatedBy',
-            'leadTaskAssign',
-        ])->where('lead_id', $lead_id)
+        $lead_tasks = LeadTask::where('lead_id', $lead_id)
             ->orderBy('id', 'desc')
             ->get();
 
+            // with([
+            //     'aggregatorForm',
+            //     'CreatedBy',
+            //     'leadTaskAssign',
+            // ])->
         return view('admin.lead_task.lead_task_list', compact('lead_tasks'));
     }
 

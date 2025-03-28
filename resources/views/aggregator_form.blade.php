@@ -41,6 +41,53 @@
             border-color: rgb(63 111 218);
             box-shadow: 0 0 10px rgb(63 111 218);
         }
+
+        .material-card {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+
+        .shade-card {
+            height: 100px;
+            object-fit: contain;
+            background-color: #f8f8f8;
+            border-radius: 5px;
+        }
+
+        .card-text {
+            font-size: 14px !important;
+        }
+
+        .material-main-card {
+            height: 320px;
+            /* Fixed height for consistent card size */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-text {
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .plus-icon {
+            font-size: 10px;
+            color: blue;
+            cursor: pointer;
+            text-decoration: underline;
+        }
     </style>
 
 </head>
@@ -51,7 +98,7 @@
 
     <section class="service-section-app  dark-bg2 pb-5 mt100">
         <form action="{{ route('aggregatorform') }}" method="POST" enctype="multipart/form-data" class="container">
-            <h3 class="text-center pb-4">AGGREGATOR FORM</h3>
+            <h3 class="text-center pb-4">What are you looking for?</h3>
             @csrf
             <div class="row align-items-center mt-5">
                 <div class="col-lg-2">

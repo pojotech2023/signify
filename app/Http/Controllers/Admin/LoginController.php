@@ -17,7 +17,7 @@ class LoginController extends Controller
     public function adminLogin(Request $request)
     {
         $request->validate([
-            'mobile_no' => 'required|numeric'
+            'mobile_no' => 'required|numeric|digits:10'
         ]);
     
         $user = InternalUser::where('mobile_no', $request->mobile_no)->first();
