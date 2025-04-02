@@ -30,7 +30,7 @@ class AdminAggregatorFormController extends Controller
 
     public function store(Request $request)
     {
-        //dd($request->all()); 
+        dd($request->all()); 
         $validate = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required',
@@ -42,8 +42,8 @@ class AdminAggregatorFormController extends Controller
             'shade_name' => 'required|array',
             'shade_name.*' => 'required|string',
             'shade_img' => 'nullable|array',
-            'shade_img.*' => 'nullable|array|max:50',
-            'shade_img.*.*' => 'image|mimes:jpg,jpeg,png,webp',
+            'shade_img.*' => 'nullable|array|max:30',
+            'shade_img.*.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
 
         ]);
 

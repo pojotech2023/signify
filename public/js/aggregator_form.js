@@ -113,6 +113,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         document.querySelectorAll(".plus-icon").forEach(icon => {
                             icon.addEventListener("click", function () {
                                 let subImages = JSON.parse(this.getAttribute("data-sub-imgs"));
+                                let mainImg = this.closest(".card").querySelector("img").src;
+                                subImages.unshift(mainImg);
                                 showSubImagesPopup(subImages);
                             });
                         });
@@ -131,6 +133,13 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("material-images").addEventListener("click", function (event) {
         let card = event.target.closest(".material-card");
         if (card) {
+
+            document.querySelectorAll(".material-card").forEach(item => {
+                item.classList.remove("selected-material");
+            });
+
+            // Highlight the selected material
+            card.classList.add("selected-material");
 
             // Clear previous shades when material changes
             document.getElementById("shade-images").innerHTML = "";
@@ -288,6 +297,10 @@ document.addEventListener("DOMContentLoaded", function () {
         transform: scale(1.05);
     }
     .selected-shade {
+        border: 1px solid #007bff !important;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
+    }
+    .selected-material {
         border: 1px solid #007bff !important;
         box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
     }

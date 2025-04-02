@@ -213,10 +213,10 @@ class LeadTaskController extends Controller
 
         $task = LeadTask::findOrFail($id);
 
-        // ✅ Initialize $attachments with existing attachments (if any)
+        // Initialize $attachments with existing attachments (if any)
         $attachments = $task->attachments ? explode(',', $task->attachments) : [];
 
-        // ✅ Handle new attachments (if any)
+        //Handle new attachments (if any)
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
                 $path = $file->store('task/attachments', 'public');
@@ -224,7 +224,7 @@ class LeadTaskController extends Controller
             }
         }
 
-        // ✅ Update task data
+        // Update task data
         $task->update([
             'lead_id'               => $request->lead_id,
             'task_name'             => $request->task_name,
@@ -240,7 +240,7 @@ class LeadTaskController extends Controller
             'created_by'            => auth('admin')->id(),
         ]);
 
-        // ✅ Reassign to new executive (if provided)
+        //Reassign to new executive (if provided)
         //dd($request->all());
         if ($request->filled('internal_user_id')) {
             LeadTaskAssign::create([

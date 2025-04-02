@@ -5,6 +5,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\LeadController;
 use App\Http\Controllers\API\LeadTaskController;
 use App\Http\Controllers\API\MaterialController;
+use App\Http\Controllers\API\TaskListController;
 use App\Http\Controllers\API\UserCreationController;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -47,6 +48,12 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::post('/task-create', [LeadTaskController::class, 'store']);
   Route::get('/leads/{lead_id}/tasks', [LeadTaskController::class, 'showLeadTasks']);
   Route::get('/task-details/{task_id}', [LeadTaskController::class, 'show']);
+  Route::post('/task-update/{id}', [LeadTaskController::class, 'update']);
+  Route::post('task-executive/create', [LeadTaskController::class, 'executiveStoreTask']);
+  Route::patch('/task-executive/update/{id}', [LeadTaskController::class, 'executiveUpdateTask']);
+
+  //Executive Task List
+  Route::get('/tasks', [TaskListController::class, 'index']);
 
   //Usercreation
   Route::get('/internal-user/list', [UserCreationController::class, 'index']);
