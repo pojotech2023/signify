@@ -36,7 +36,7 @@ class LeadController extends Controller
         }
         $leads = $query->orderBy('id', 'desc')->get();
 
-        // Transform the response to include only required fields
+        // Change the response to include only required fields
         $filteredLeads = $leads->map(function ($lead) {
             return [
                 'id' => $lead->id,
@@ -51,6 +51,7 @@ class LeadController extends Controller
         });
         return response()->json([
             'response_code' => 200,
+            'message' => 'Lead Fetched Successfully!.',
             'data' => $filteredLeads
         ]);
     }
@@ -58,11 +59,6 @@ class LeadController extends Controller
     public function show($id)
     {
         $lead = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade'])->findOrFail($id);
-
-        //Admin & Superuser list
-        $admin_super_user = InternalUser::with('role')->whereHas('role', function ($query) {
-            $query->whereIn('role_name', ['Admin', 'SuperUser']);
-        })->get();
 
         // Fetch the latest assignment for this lead_id
         $assign_admin_superuser = LeadAssign::where('lead_id', $id)
@@ -102,14 +98,34 @@ class LeadController extends Controller
         }
 
         $data = [
-            'lead' => $lead,
-            'admin_superuser_list' => $admin_super_user->map(function($user){
+            'id' => $lead->id,
+            'category' => optional($lead->category)->category,
+            'sub_category' => optional($lead->subcategory)->sub_category,
+            'material_name' => optional($lead->material)->material_name,
+            'material_main_img' => optional($lead->material)->main_img,
+            'sub_img1' => optional($lead->material)->sub_img1,
+            'sub_img2' => optional($lead->material)->sub_img2,
+            'sub_img3' => optional($lead->material)->sub_img3,
+            'sub_img4' => optional($lead->material)->sub_img4,
+            'shade' => $lead->shade->map(function ($shade) {
                 return [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'role' => $user->role->role_name
+                    'selected_img' => $shade->selected_img,
+                    'shade_name' => optional($shade->shade)->shade_name,
                 ];
             }),
+            'width' => $lead->width,
+            'height' => $lead->height,
+            'unit' => $lead->unit,
+            'location' => $lead->location,
+            'quantity' => $lead->quantity,
+            'design_service_need' => $lead->design_service_need,
+            'email_id' => $lead->email_id,
+            'mobile_no' => $lead->mobile_no,
+            'site_image' => $lead->site_image,
+            'design_attachment' => $lead->design_attachment,
+            'reference_image' => $lead->reference_image,
+            'status' => $lead->status,
+            'created_at' => $lead->created_at,
             'assignEnabled' => $assignEnabled,
             'reassignEnabled' =>  $reassignEnabled,
             'assignedUserName' => $assignedUserName,
@@ -117,45 +133,45 @@ class LeadController extends Controller
 
         return response()->json([
             'response code' => 200,
+            'message' => 'Lead Detail Fetched Successfully!.',
             'data' => $data
         ]);
-
     }
 
-   // Admin lead assign to admin or superuser
-   public function leadAssign(Request $request)
-   {
-       //dd($request->all());
-       $validate = Validator::make($request->all(), [
-           'assign_user_id'     => 'nullable|exists:internal_users,id',
-           'reassign_user_id'   => 'nullable|exists:internal_users,id',
-           'lead_id'            => 'required|exists:aggregator_forms,id',
-       ]);
-       if ($validate->fails()) {
-           return redirect()->back()->withErrors($validate)->withInput();
-       }
+    // Admin lead assign to admin or superuser
+    public function leadAssign(Request $request)
+    {
+        //dd($request->all());
+        $validate = Validator::make($request->all(), [
+            'assign_user_id'     => 'nullable|exists:internal_users,id',
+            'reassign_user_id'   => 'nullable|exists:internal_users,id',
+            'lead_id'            => 'required|exists:aggregator_forms,id',
+        ]);
+        if ($validate->fails()) {
+            return redirect()->back()->withErrors($validate)->withInput();
+        }
 
-       $status = 'Assigned';
-       $internalUserId = $request->assign_user_id;
+        $status = 'Assigned';
+        $internalUserId = $request->assign_user_id;
 
-       if ($request->reassign_user_id) {
-           $status = 'Re-Assigned';
-           $internalUserId = $request->reassign_user_id;
-       }
+        if ($request->reassign_user_id) {
+            $status = 'Re-Assigned';
+            $internalUserId = $request->reassign_user_id;
+        }
 
-       LeadAssign::create([
-           'internal_user_id' => $internalUserId,
-           'lead_id' => $request->lead_id,
-           'status' => $status
-       ]);
+        LeadAssign::create([
+            'internal_user_id' => $internalUserId,
+            'lead_id' => $request->lead_id,
+            'status' => $status
+        ]);
 
-       AggregatorForm::where('id', $request->lead_id)->update([
-           'status' => $status
-       ]);
+        AggregatorForm::where('id', $request->lead_id)->update([
+            'status' => $status
+        ]);
 
-       return response()->json([
-        'response code' => 200,
-        'message' => 'Admin or SuperUser successfully!'
-       ]);
-   }
+        return response()->json([
+            'response code' => 200,
+            'message' => 'Lead Assinged or Re-assigned successfully!'
+        ]);
+    }
 }

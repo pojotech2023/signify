@@ -15,12 +15,9 @@ class TaskListController extends Controller
 {
     public function index()
     {
-        $user = auth('api')->user();
+        $user = Auth::guard('api')->user();
         $userID = $user->id;
-        $roleId = $user->role_id;
-
-        $role = Roles::where('id', $roleId)->first();
-        $role = $role->role_name;
+        $role  = $user->role->role_name;
 
         if ($user) {
             if (in_array($role, ['Accounts', 'PR', 'HR', 'R&D'])) {
@@ -48,6 +45,7 @@ class TaskListController extends Controller
             }
             return response()->json([
                 'response_code' => 200,
+                'message' => 'Task List Fetched Successfully!.',
                 'data' => [
                     'orderTasks' => $orderTasks,
                     'leadTasks' => $leadTasks,

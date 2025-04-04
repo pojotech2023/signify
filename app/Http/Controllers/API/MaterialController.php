@@ -95,7 +95,7 @@ class MaterialController extends Controller
         }
         return response()->json([
             'response code' => 200,
-            'message' => 'Material & Shades Added Successfully'
+            'message' => 'Material & Shades Added Successfully',
         ], 200);
     }
 

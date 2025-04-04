@@ -30,7 +30,7 @@ class AdminAggregatorFormController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all()); 
+        //dd($request->all()); 
         $validate = Validator::make($request->all(), [
             'category_id' => 'required|exists:categories,id',
             'sub_category_id' => 'required',
@@ -48,7 +48,6 @@ class AdminAggregatorFormController extends Controller
         ]);
 
         if ($validate->fails()) {
-            //dd($validate->errors()->all());
             return redirect()->back()->withErrors($validate)->withInput();
         }
 

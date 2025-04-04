@@ -32,7 +32,7 @@ class AuthController extends Controller
                 'data' => [
                     'response code' => 200,
                     'token' => $token,
-                    'internalUser' => $loggedUser,
+                    'user' => $loggedUser,
                     'role_name' => $loggedUser->role->role_name ?? null
                 ]
             ]);

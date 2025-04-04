@@ -4,21 +4,20 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\LeadTask;
-use App\Models\LeadTaskAssign;
-use App\Models\LeadExecutiveTask;
-use App\Models\InternalUser;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
+use App\Models\InternalUser;
+use App\Models\Order;
+use App\Models\OrderTask;
+use App\Models\OrderTaskAssign;
+use App\Models\OrderExecutiveTask;
 
-class LeadTaskController extends Controller
+class OrderTaskController extends Controller
 {
-    //Superuser lead task create
     public function store(Request $request)
     {
         //dd($request->all());
         $validate = Validator::make($request->all(), [
-            'lead_id'            => 'required|exists:aggregator_forms,id',
+            'order_id'            => 'required|exists:orders,id',
             'task_name'          => 'required|string',
             'task_priority'      => 'required|string|max:255',
             'completion_expected_by' => 'required',
@@ -26,9 +25,9 @@ class LeadTaskController extends Controller
             'attachments'        => 'required|array',
             'attachments.*'      => 'file|mimes:jpeg,png,jpg,webp',
             'vendor_name'        => 'required',
-            'vendor_mobile'      => 'required|numeric|digits:10',
+            'vendor_mobile'      => 'required|string|max:15',
             'customer_name'      => 'required',
-            'customer_mobile'    => 'required|numeric|digits:10',
+            'customer_mobile'    => 'required|string|max:15',
             'internal_user_id'   => 'required|exists:internal_users,id'
 
         ]);
@@ -36,6 +35,7 @@ class LeadTaskController extends Controller
         if ($validate->fails()) {
             return response()->json(['error' => $validate->errors()], 422);
         }
+
 
         $attachments = [];
 
@@ -45,8 +45,8 @@ class LeadTaskController extends Controller
                 $attachments[] = $path;
             }
         }
-        $task = LeadTask::create([
-            'lead_id'            => $request->lead_id,
+        $task = OrderTask::create([
+            'order_id'            => $request->order_id,
             'task_name'          => $request->task_name,
             'task_priority'      => $request->task_priority,
             'entry_time'         => now(),
@@ -60,8 +60,8 @@ class LeadTaskController extends Controller
             'created_by'         => auth('api')->id(),
         ]);
 
-        LeadTaskAssign::create([
-            'task_id'     => $task->id,
+        OrderTaskAssign::create([
+            'order_task_id'     => $task->id,
             'internal_user_id' => $request->internal_user_id,
             'status'       => 'Assigned',
         ]);
@@ -72,55 +72,55 @@ class LeadTaskController extends Controller
 
         return  response()->json([
             'response code' => 200,
-            'message' => 'Lead Task Created successfully',
+            'message' => 'Order Task Created successfully',
             'data' => $task
         ]);
     }
 
-    //Lead wise tasks
-    public function showLeadTasks($lead_id)
+    //Order wise Tasks
+    public function showOrderTasks($order_id)
     {
-        $lead_tasks = LeadTask::where('lead_id', $lead_id)
+        $order_tasks = OrderTask::where('order_id', $order_id)
             ->orderBy('id', 'desc')
             ->get();
 
         return  response()->json([
             'response code' => 200,
-            'message' => 'Lead Wise Task Fetched successfully',
-            'data' => $lead_tasks
+            'message' => 'Order wise Task Fetched Successfully',
+            'data' => $order_tasks
         ]);
     }
 
     //Task Details
     public function show($task_id)
     {
-        $task = LeadTask::select(
-            'lead_tasks.*',
+        $task = OrderTask::select(
+            'order_tasks.*',
             'internal_users.name as created_by_name',
             'executive.name as assigned_executive_name',
-            'lead_executive_tasks.id as lead_executive_task_id',
-            'lead_executive_tasks.task_assigned_user_id',
-            'lead_executive_tasks.remarks',
-            'lead_executive_tasks.address',
-            'lead_executive_tasks.end_date_time'
+            'order_executive_tasks.id as order_executive_task_id',
+            'order_executive_tasks.task_assigned_user_id',
+            'order_executive_tasks.remarks',
+            'order_executive_tasks.address',
+            'order_executive_tasks.end_date_time'
 
         )
-            ->leftJoin('internal_users', 'lead_tasks.created_by', '=', 'internal_users.id')
-            ->leftJoin('lead_task_assigns', 'lead_task_assigns.task_id', '=', 'lead_tasks.id')
-            ->leftJoin('internal_users as executive', 'lead_task_assigns.internal_user_id', '=', 'executive.id')
-            ->leftJoin('lead_executive_tasks', 'lead_executive_tasks.task_assigned_user_id', '=', 'lead_task_assigns.id')
-            ->where('lead_tasks.id', $task_id)
-            ->latest('lead_task_assigns.created_at')
+            ->leftJoin('internal_users', 'order_tasks.created_by', '=', 'internal_users.id')
+            ->leftJoin('order_task_assigns', 'order_task_assigns.order_task_id', '=', 'order_tasks.id')
+            ->leftJoin('internal_users as executive', 'order_task_assigns.internal_user_id', '=', 'executive.id')
+            ->leftJoin('order_executive_tasks', 'order_executive_tasks.task_assigned_user_id', '=', 'order_task_assigns.id')
+            ->where('order_tasks.id', $task_id)
+            ->latest('order_task_assigns.created_at')
             ->firstOrFail();
 
         return  response()->json([
             'response code' => 200,
-            'message' => 'Lead Task Details Fetched successfully',
+            'message' => 'Order Task Detail Fetched Successfully',
             'data' => $task
         ]);
     }
 
-    //superuser lead task update
+    //superuser order task update
     public function update(Request $request, $id)
     {
         //dd($request->all());
@@ -142,7 +142,7 @@ class LeadTaskController extends Controller
             return response()->json(['error' => $validate->erros()], 422);
         }
 
-        $task = LeadTask::findOrFail($id);
+        $task = OrderTask::findOrFail($id);
 
 
         //updating only STATUS
@@ -150,22 +150,22 @@ class LeadTaskController extends Controller
             $task->update(['status' => $request->status]);
 
             // Update the latest assigned task status
-            LeadTaskAssign::where('task_id', $task->id)
+            OrderTaskAssign::where('order_task_id', $task->id)
                 ->latest('created_at')
                 ->first()
                 ->update(['status' => $request->status]);
 
             return response()->json([
                 'response code' => 200,
-                'message' => 'Lead Task status updated successfully',
-                'data' => $task
+                'message' => 'Order Task status updated successfully',
+                'data' => $task->status
             ]);
         }
 
         //Reassign to new executive 
         if ($request->filled('internal_user_id') && $request->only('internal_user_id')) {
-            LeadTaskAssign::create([
-                'task_id'          => $task->id,
+            OrderTaskAssign::create([
+                'order_task_id'          => $task->id,
                 'internal_user_id' => $request->internal_user_id,
                 'status'           => 'Re-Assigned',
             ]);
@@ -174,8 +174,8 @@ class LeadTaskController extends Controller
 
             return response()->json([
                 'response code' => 200,
-                'message' => 'Lead Task Re-assigned successfully',
-                'data' => $task
+                'message' => 'Order Task Re-assigned successfully',
+                'data' => $task->status
             ]);
         }
 
@@ -193,7 +193,7 @@ class LeadTaskController extends Controller
         }
 
         $task->update([
-            'lead_id'               => $request->lead_id,
+            'order_id'              => $request->order_id,
             'task_name'             => $request->task_name,
             'task_priority'         => $request->task_priority,
             'entry_time'            => now(),
@@ -208,7 +208,7 @@ class LeadTaskController extends Controller
 
         return  response()->json([
             'response code' => 200,
-            'message' => 'Lead Task  updated successfully',
+            'message' => 'Order Task updated successfully',
             'data' => $task
         ]);
     }
@@ -219,7 +219,7 @@ class LeadTaskController extends Controller
     public function executiveStoreTask(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'task_assigned_user_id'  => 'required|exists:lead_task_assigns,id',
+            'task_assigned_user_id'  => 'required|exists:order_task_assigns,id',
             'remarks'                => 'required',
             'address'                => 'required',
             'end_date_time'          => 'required',
@@ -229,7 +229,7 @@ class LeadTaskController extends Controller
             return response()->json(['errors' => $validate->errors()], 422);
         }
 
-        $executive_task = LeadExecutiveTask::create([
+        $executive_task = OrderExecutiveTask::create([
             'task_assigned_user_id' => $request->task_assigned_user_id,
             'remarks'               => $request->remarks,
             'address'               => $request->address,
@@ -237,7 +237,7 @@ class LeadTaskController extends Controller
         ]);
         return  response()->json([
             'response code' => 200,
-            'message' => 'Lead Executive task accepted successfully',
+            'message' => 'Order Executive task accepted successfully',
             'data' => $executive_task
         ]);
     }
@@ -248,7 +248,7 @@ class LeadTaskController extends Controller
         //dd($request->all());
         $validate = Validator::make($request->all(), [
             'task_id'                => 'nullable',
-            'task_assigned_user_id'  => 'nullable|exists:lead_task_assigns,id',
+            'task_assigned_user_id'  => 'nullable|exists:order_task_assigns,id',
             'remarks'                => 'nullable',
             'address'                => 'nullable',
             'end_date_time'          => 'nullable',
@@ -258,15 +258,15 @@ class LeadTaskController extends Controller
             return response()->json(['errors' => $validate->errors()], 422);
         }
 
-        $executive_task = LeadExecutiveTask::findOrFail($id);
+        $executive_task = OrderExecutiveTask::findOrFail($id);
 
         if ($request->filled('status') && $request->only('status')) 
         {
-            LeadTask::where('id', $request->task_id)->update([
+            OrderTask::where('id', $request->task_id)->update([
                 'status' => $request->status
             ]);
 
-            LeadTaskAssign::where('task_id', $request->task_id)
+            OrderTaskAssign::where('order_task_id', $request->task_id)
                 ->where('internal_user_id', auth('api')->id())
                 ->update([
                     'status' => $request->status
@@ -274,7 +274,7 @@ class LeadTaskController extends Controller
 
             return response()->json([
                 'response code' => 200,
-                'message' => 'Lead Executive Task status updated successfully',
+                'message' => 'Order Executive Task status updated successfully',
             ]);
         }
 
@@ -287,7 +287,7 @@ class LeadTaskController extends Controller
 
         return  response()->json([
             'response code' => 200,
-            'message' => 'Lead Executive task updated successfully',
+            'message' => 'Order Executive task updated successfully',
             'data' => $executive_task
         ]);
     }

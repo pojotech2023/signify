@@ -22,15 +22,18 @@ class UserCreationController extends Controller
 
         return response()->json([
             'response code' => 200,
+            'message' => 'User Fetched Successfully',
             'data' => $internal_users
         ]);
     }
 
+    //UserType list except admin
     public function role()
     {
         $roles = Roles::where('role_name', '!=', 'Admin')->get();
         return response()->json([
             'response code' => 200,
+            'message' => 'Role execpted Admin Fetched Successfully',
             'data' => $roles
         ]);
     }
@@ -46,8 +49,7 @@ class UserCreationController extends Controller
             'designation' => 'required'
         ]);
 
-        if($validate->fails())
-        {
+        if ($validate->fails()) {
             return response()->json(['errors' => $validate->errors()], 422);
         }
 
@@ -113,5 +115,40 @@ class UserCreationController extends Controller
             'message' => 'User Creation Deleted Successfully',
             'data' => $internal_user
         ], 200);
+    }
+
+    //All internal user list
+    public function internalUserAll()
+    {
+        $all_internalUser = InternalUser::with('role')->get();
+        return response()->json([
+            'response code' => 200,
+            'message' => 'All Internal User list Fetched Successfully',
+            'data' => $all_internalUser->map(fn($user) => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'role_id' => $user->role_id,
+                'role_name' => $user->role->role_name ?? null,
+            ])
+        ]);
+    }
+
+    //Admin and Superuser List
+    public function adminSuperuserList()
+    {
+        $admin_superuser = InternalUser::with('role')->whereHas('role', function ($query) {
+            $query->whereIn('role_name', ['Admin', 'SuperUser']);
+        })->get();
+
+        return response()->json([
+            'response code' => 200,
+            'message' => 'Admin and Super User list Fetched Successfully',
+            'data' => $admin_superuser->map(fn($user) => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'role_id' => $user->role_id,
+                'role_name' => $user->role->role_name ?? null,
+            ])
+        ]);
     }
 }
