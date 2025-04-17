@@ -65,4 +65,18 @@ class InternalUser extends Authenticatable
         return $this->hasMany(JobTask::class, 'created_by');
     }
 
+    public function deviceToken()
+    {
+        return $this->hasMany(DeviceToken::class, 'internal_user_id');
+    }
+
+    public function attendance()
+    {
+        return $this->hasMany(Attendance::class, 'internal_user_id');
+    }
+
+    protected $hidden = [
+        'password'
+    ];
+
 }

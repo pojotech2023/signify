@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AggregatorFormController;
+use App\Http\Controllers\API\AttendanceController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\LeadController;
 use App\Http\Controllers\API\LeadTaskController;
@@ -8,15 +9,21 @@ use App\Http\Controllers\API\MaterialController;
 use App\Http\Controllers\API\TaskListController;
 use App\Http\Controllers\API\UserCreationController;
 use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\CustomerProfileController;
+use App\Http\Controllers\API\DeviceTokenController;
 use App\Http\Controllers\API\SubcategoryController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\OrderTaskController;
 use App\Http\Controllers\API\JobController;
 use App\Http\Controllers\API\JobTaskController;
+use App\Http\Controllers\API\NotificationController;
+use App\Http\Controllers\API\VendorController;
+use App\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use SebastianBergmann\CodeCoverage\Report\Html\CustomCssFile;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,10 +47,19 @@ Route::get('/get-categories', [AggregatorFormController::class, 'getCategories']
 Route::get('/get-subcategories/{category_id}', [AggregatorFormController::class, 'getSubcategories']);
 Route::get('/get-materials/{subcategory_id}', [AggregatorFormController::class, 'getMaterials']);
 Route::get('/get-shades/{material_id}', [AggregatorFormController::class, 'getShades']);
-Route::post('/aggregator_form', [AggregatorFormController::class, 'store']);
 
-//admin
+//test
+Route::post('/send-notification', [NotificationController::class, 'send']);
+
 Route::middleware('auth:sanctum')->group(function () {
+
+  //Device Token Store
+  Route::post('/save-device-token', [DeviceTokenController::class, 'store']);
+
+  //UserForm
+  Route::post('/aggregator_form', [AggregatorFormController::class, 'store']);
+
+  //admin
 
   //Usercreation
   Route::get('/internal-user/list', [UserCreationController::class, 'index']);
@@ -77,49 +93,65 @@ Route::middleware('auth:sanctum')->group(function () {
   Route::get('/admin-superuser', [UserCreationController::class, 'adminSuperuserList']);
 
   //Lead
-  Route::get('/leads', [LeadController::class, 'index']);
+  Route::post('/leads', [LeadController::class, 'index']);
   Route::get('/leads-details/{id}', [LeadController::class, 'show']);
   Route::post('/assign/admin-superuser', [LeadController::class, 'leadAssign']);
 
   //Lead Task
   Route::post('/task-create', [LeadTaskController::class, 'store']);
-  Route::get('/leads/{lead_id}/tasks', [LeadTaskController::class, 'showLeadTasks']);
+  Route::post('/leads/{lead_id}/tasks', [LeadTaskController::class, 'showLeadTasks']);
   Route::get('/task-details/{task_id}', [LeadTaskController::class, 'show']);
   Route::post('/task-update/{id}', [LeadTaskController::class, 'update']);
   Route::post('task-executive/create', [LeadTaskController::class, 'executiveStoreTask']);
-  Route::patch('/task-executive/update/{id}', [LeadTaskController::class, 'executiveUpdateTask']);
+  Route::post('/task-executive/update/{id}', [LeadTaskController::class, 'executiveUpdateTask']);
 
   //Orders
   Route::post('/order', [OrderController::class, 'store']);
-  Route::get('/orders', [OrderController::class, 'index']);
+  Route::post('/orders', [OrderController::class, 'index']);
   Route::get('/orders-details/{id}', [OrderController::class, 'show']);
   Route::post('/order/assign', [OrderController::class, 'orderAssign']);
   Route::post('/order-complete', [OrderController::class, 'orderComplete']);
 
   //Order Task
   Route::post('/order/task-create', [OrderTaskController::class, 'store']);
-  Route::get('/orders/{order_id}/tasks', [OrderTaskController::class, 'showOrderTasks']);
+  Route::post('/orders/{order_id}/tasks', [OrderTaskController::class, 'showOrderTasks']);
   Route::get('/order/task-details/{task_id}', [OrderTaskController::class, 'show']);
   Route::post('/order/task-update/{id}', [OrderTaskController::class, 'update']);
   Route::post('order/task-executive/create', [OrderTaskController::class, 'executiveStoreTask']);
-  Route::patch('/order/task-executive/update/{id}', [OrderTaskController::class, 'executiveUpdateTask']);
+  Route::post('/order/task-executive/update/{id}', [OrderTaskController::class, 'executiveUpdateTask']);
 
   //Jobs
   Route::get('/department-list', [JobController::class, 'departmentList']);
   Route::post('/job', [JobController::class, 'store']);
-  Route::get('/jobs', [JobController::class, 'index']);
+  Route::post('/jobs', [JobController::class, 'index']);
   Route::get('/jobs-details/{id}', [JobController::class, 'show']);
   Route::patch('/job-update/{id}', [JobController::class, 'update']);
 
-   //Job Task
-   Route::post('job/task-create', [JobTaskController::class, 'store']);
-   Route::get('/jobs/{job_id}/tasks', [JobTaskController::class, 'showJobTasks']);
-   Route::get('/job/task-details/{task_id}', [JobTaskController::class, 'show']);
-   Route::post('/job/task-update/{id}', [JobTaskController::class, 'update']);
-   Route::post('job/task-executive/create', [JobTaskController::class, 'executiveStoreTask']);
-   Route::patch('/job/task-executive/update/{id}', [JobTaskController::class, 'executiveUpdateTask']);
+  //Job Task
+  Route::post('job/task-create', [JobTaskController::class, 'store']);
+  Route::post('/jobs/{job_id}/tasks', [JobTaskController::class, 'showJobTasks']);
+  Route::get('/job/task-details/{task_id}', [JobTaskController::class, 'show']);
+  Route::post('/job/task-update/{id}', [JobTaskController::class, 'update']);
+  Route::post('job/task-executive/create', [JobTaskController::class, 'executiveStoreTask']);
+  Route::post('/job/task-executive/update/{id}', [JobTaskController::class, 'executiveUpdateTask']);
 
 
   //Executive Task List
   Route::get('/tasks', [TaskListController::class, 'index']);
+
+  //Vendors
+  Route::get('/vendor', [VendorController::class, 'index']);
+  Route::post('/vendor', [VendorController::class, 'store']);
+  Route::patch('/vendor-update/{id}', [VendorController::class, 'update']);
+  Route::delete('/vendor-delete/{id}', [VendorController::class, 'delete']);
+  Route::post('/vendors/search', [VendorController::class, 'search']);
+
+  //Attendances
+  Route::post('/attendance', [AttendanceController::class, 'store']);
+  Route::get('/attendance/details', [AttendanceController::class, 'show']);
+
+  //Customer Profile
+  Route::get('profile', [CustomerProfileController::class, 'index']);
+  Route::patch('profile', [CustomerProfileController::class, 'update']);
+  Route::get('logged/profile', [CustomerProfileController::class, 'show']);
 });

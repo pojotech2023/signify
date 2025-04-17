@@ -21,7 +21,7 @@
                     "Font Awesome 5 Brands",
                     "simple-line-icons",
                 ],
-                urls: ["assets/css/fonts.min.css"],
+                urls: ["{{ asset('admin/assets/css/fonts.min.css') }}"]
             },
             active: function() {
                 sessionStorage.fonts = true;
@@ -39,8 +39,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     <!--Bootstrap5-->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-
+    {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet"> --}}
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/demo.css') }}" />
@@ -108,6 +107,7 @@
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
     <script src="{{ asset('admin/assets/js/setting-demo.js') }}"></script>
     <script src="{{ asset('admin/assets/js/demo.js') }}"></script>
+
     <script>
         $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
             type: "line",

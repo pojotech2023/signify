@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\InternalUser;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,13 @@ class AuthController extends Controller
 
         $loggedUser = InternalUser::where('mobile_no', $request->mobile_no)->first();
 
+        if (!$loggedUser) {
+            
+            $loggedUser = User::firstOrCreate([
+                'mobile_no' => $request->mobile_no,
+            ]);
+        }
+
         if ($loggedUser) {
             $token = $loggedUser->createToken('authToken')->plainTextToken;
 
@@ -38,17 +46,28 @@ class AuthController extends Controller
             ]);
         }
         return response()->json([
-           'response code' => 401,
+            'response code' => 401,
             'message' => 'Invalid mobile number'
         ]);
     }
 
-    public function logout()
+    // public function logout()
+    // {
+    //     Auth::guard('admin')->logout();
+    //     return response()->json([
+    //         'response code' => 200,
+    //         'message' => 'User Successfully Loggedout'
+    //     ]);
+    // }
+    public function logout(Request $request)
     {
-        Auth::guard('admin')->logout();
+        if ($request->user()) {
+            $request->user()->currentAccessToken()->delete(); // Deletes the current token
+        }
+
         return response()->json([
-            'response code' => 200,
-            'message' => 'User Successfully Loggedout'
+            'status' => true,
+            'message' => 'User successfully logged out'
         ]);
     }
 }

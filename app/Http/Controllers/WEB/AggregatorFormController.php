@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\AggregatorForm;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Category;
-
+use App\Models\DeviceToken;
+use App\Services\FirebaseService;
 
 class AggregatorFormController extends Controller
 {
@@ -28,9 +29,11 @@ class AggregatorFormController extends Controller
             'height' => 'required|numeric',
             'unit' => 'required|string',
             'location' => 'required',
-            'quantity' => 'required|integer',
+            'quantity' => 'required|numeric',
             'design_service_need' => 'required',
             'email_id' => 'required|email|unique:aggregator_forms,email_id',
+            'how_heard' => 'required|string',
+            'remarks' => 'nullable|string|max:255',
             'site_image' => 'required|array',
             'site_image.*' => 'file|mimes:jpg,jpeg,png,webp',
             'design_attachment' => 'required|array',
@@ -40,14 +43,13 @@ class AggregatorFormController extends Controller
             'shades' => 'required|array',
             'shades.*.shade_id' => 'required|integer',
             'shades.*.selected_img' => 'required|string',
-            'mobile_no' => 'required|numeric|digits:10',
         ]);
 
         if ($validate->fails()) {
             //dd($validate->errors()); // Check for validation errors
             return redirect()->back()->withErrors($validate)->withInput();
         }
-        
+
 
         $siteImages = [];
         if ($request->hasFile('site_image')) {
@@ -73,6 +75,7 @@ class AggregatorFormController extends Controller
             }
         }
         $aggregatorForm = AggregatorForm::create([
+            'user_id' => auth()->user()->id,
             'category_id' => $request->category_id,
             'sub_category_id' => $request->sub_category_id,
             'material_id' => $request->material_id,
@@ -83,10 +86,12 @@ class AggregatorFormController extends Controller
             'quantity' => $request->quantity,
             'design_service_need' => $request->design_service_need,
             'email_id' => $request->email_id,
+            'how_heard' => $request->how_heard,
+            'remarks' => $request->remarks,
             'site_image' => implode(',', $siteImages),  // Convert array to comma-separated string
             'design_attachment' => implode(',', $designAttachments),
             'reference_image' => implode(',', $referenceImages),
-            'mobile_no' => $request->mobile_no
+            'mobile_no' => auth()->user()->mobile_no
         ]);
 
         /// Save Shades with Selected Image
@@ -99,6 +104,19 @@ class AggregatorFormController extends Controller
                     'selected_img' => $path,
                 ]);
             }
+        }
+
+        // After Form submitted Show notification in all admin
+        $adminTokens = DeviceToken::whereHas('internalUser.role', function($query){
+                $query->where('role_name', 'Admin');
+        })->pluck('device_token'); 
+
+        $title = "New Aggregator Form";
+        $body = "A new aggregator form submitted by " . auth()->user()->mobile_no;
+
+        $firebase = new FirebaseService();
+        foreach ($adminTokens as $token) {
+            $firebase->sendNotification($token, $title, $body);
         }
 
         return redirect()->back()->with('success', 'Form submitted successfully!');

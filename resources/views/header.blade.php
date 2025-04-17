@@ -25,7 +25,10 @@
                     <li>
                         <a href="{{ route('contact') }}" class="menu-links">Contact Us</a>
                     </li>
-
+                    <li>
+                        <a href="{{ route('profile') }}" class="menu-links">Profile</a>
+                    </li>
+                    
                 </ul>
 
                 <ul class="nav-list right-end-btn">
@@ -59,6 +62,9 @@
                 </li>
                 <li>
                     <a href="{{ route('contact') }}">Contact Us</a>
+                </li>
+                <li>
+                    <a href="{{ route('profile') }}">Profile</a>
                 </li>
                 <li><a href="{{ route('login') }}"><span class="circle"></span>Login </a> </li>
             </ul>

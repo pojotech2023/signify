@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AdminAggregatorFormController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CustomerProfileController;
+use App\Http\Controllers\Admin\DeviceTokenController;
 use App\Http\Controllers\Admin\JobController;
 use App\Http\Controllers\Admin\JobTaskController;
 use App\Http\Controllers\Admin\LeadsController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\Admin\OrderTaskController;
 use App\Http\Controllers\Admin\SubCategoryController;
 use App\Http\Controllers\Admin\TaskController;
 use App\Http\Controllers\Admin\UserCreationController;
+use App\Http\Controllers\Admin\VendorController;
 use App\Http\Controllers\WEB\AggregatorFormController;
 use App\Models\AggregatorForm;
 use App\Models\Login;
@@ -41,21 +44,31 @@ Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
 
-Route::get('/form', [AggregatorFormController::class, 'index'])->name('form');
-Route::post('/form', [AggregatorFormController::class, 'store'])->name('aggregatorform');
+Route::get('/profile', function () {
+    return view('profile');
+})->name('profile');
 
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
+Route::get('/login', [AuthController::class, 'getLoginForm'])->name('login');
+Route::post('/login', [AuthController::class, 'webLogin'])->name('login.submit');
 
 Route::get('/otp_verification', function () {
     return view('otp_verification');
 })->name('otp.page');
 
-Route::post('/login', function () {
-    return redirect()->route('otp.page');
-})->name('login.submit');
+Route::middleware('auth')->group(function () {
 
+    //Aggregator Form
+    Route::get('/form', [AggregatorFormController::class, 'index'])->name('form');
+    Route::post('/form', [AggregatorFormController::class, 'store'])->name('aggregatorform');
+
+    //User Profile
+    Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('profile');
+    Route::patch('/profile', [CustomerProfileController::class, 'update'])->name('profile.update');
+
+});
+Route::get('/push-test', function () {
+    return view('push-test');
+});
 
 //------------------------------------------ Admin-----------------------------------------------------
 Route::prefix('admin')->group(function () {
@@ -71,6 +84,9 @@ Route::prefix('admin')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
+
+    Route::post('/save-device-token', [DeviceTokenController::class, 'store'])->name('save.device.token');
+
 
     // Common Routes for Admin & Superuser
     Route::middleware(['checkUserRole:Admin,Superuser'])->group(function () {
@@ -110,7 +126,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/leads', [LeadsController::class, 'index'])->name('leads-list');
         Route::get('/leads-details/{id}', [LeadsController::class, 'show'])->name('lead-details');
         Route::post('/assign/admin-superuser', [LeadsController::class, 'leadAssign'])->name('lead-assign');
-        Route::get('/leads-list/filter', [LeadsController::class, 'getFilteredLeads'])->name('filter-leads-list');
+        Route::post('/filter/leads', [LeadsController::class, 'filterLeadsList'])->name('filter-leads-list');
 
         //Orders
 
@@ -119,6 +135,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/orders-details/{id}', [OrderController::class, 'show'])->name('order-details');
         Route::post('/order/assign', [OrderController::class, 'orderAssign'])->name('order-assign');
         Route::post('/order-complete', [OrderController::class, 'orderComplete'])->name('order-complete');
+        Route::post('/filter/orders', [OrderController::class, 'filterOrdersList'])->name('filter-orders-list');
 
         //Jobs
         Route::get('/job/form/{id?}', [JobController::class, 'getJobForm'])->name('jobcreation-form');
@@ -126,6 +143,20 @@ Route::prefix('admin')->group(function () {
         Route::get('/jobs', [JobController::class, 'index'])->name('jobs-list');
         Route::get('/jobs-details/{id}', [JobController::class, 'show'])->name('job-details');
         Route::patch('/job-update/{id}', [JobController::class, 'update'])->name('job-update');
+        Route::post('/filter/jobs', [JobController::class, 'filterJobsList'])->name('filter-jobs-list');
+
+        //Vendors
+        Route::get('/vendor', [VendorController::class, 'index'])->name('vendor-list');
+        Route::post('/vendor', [VendorController::class, 'store'])->name('vendor-store');
+        Route::patch('/vendor-update', [VendorController::class, 'update'])->name('vendor-update');
+        Route::delete('/vendor-delete/{id}', [VendorController::class, 'delete'])->name('vendor-delete');
+        Route::get('/vendors/search', [VendorController::class, 'search'])->name('vendors.search');
+
+        //Attendance List
+        Route::get('/attendance', [VendorController::class, 'attendanceList'])->name('attendance-list');
+
+        //Customer Profile List
+        Route::get('/profile-list', [CustomerProfileController::class, 'index'])->name('profile-list');
     });
 
 
@@ -151,6 +182,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/executive/change-status', [LeadTaskController::class, 'changeStatus'])->name('change-status');
     Route::patch('/task-update/{id}', [LeadTaskController::class, 'update'])->name('task-update');
     Route::patch('/task-executive/update/{id}', [LeadTaskController::class, 'executiveUpdateTask'])->name('task-executive.update');
+    Route::post('/leads/{lead_id}/filter-tasks', [LeadTaskController::class, 'filterLeadTask'])->name('filter-lead-tasks');
 
     //Order Task
     Route::get('order/task-form/{id}', [OrderTaskController::class, 'getOrderTaskForm'])->name('order-task-form');
@@ -161,6 +193,7 @@ Route::prefix('admin')->group(function () {
     Route::post('/order/executive/update-status', [OrderTaskController::class, 'changeStatus'])->name('update-status');
     Route::patch('/order/task-update/{id}', [OrderTaskController::class, 'update'])->name('order-task-update');
     Route::patch('/order/task-executive/update/{id}', [OrderTaskController::class, 'executiveUpdateTask'])->name('order-task-executive.update');
+    Route::post('/orders/{order_id}/filter-tasks', [OrderTaskController::class, 'filterOrderTask'])->name('filter-order-tasks');
 
     //Job Task
     Route::get('job/task-form/{id}', [JobTaskController::class, 'getJobTaskForm'])->name('job-task-form');
@@ -171,8 +204,9 @@ Route::prefix('admin')->group(function () {
     Route::post('/job/executive/update-status', [JobTaskController::class, 'changeStatus'])->name('job-update-status');
     Route::patch('/job/task-update/{id}', [JobTaskController::class, 'update'])->name('job-task-update');
     Route::patch('/job/task-executive/update/{id}', [JobTaskController::class, 'executiveUpdateTask'])->name('job-task-executive.update');
-
+    Route::post('/jobs/{job_id}/filter-tasks', [JobTaskController::class, 'filterJobTask'])->name('filter-job-tasks');
 
     //Executive or Assigned User Lead and Order Task List
-    Route::get('/tasks', [LeadTaskController::class, 'index'])->name('task-list');
+    Route::get('/tasks', [TaskController::class, 'index'])->name('task-list');
+    Route::post('filter-tasks', [TaskController::class, 'filterTask'])->name('filter-tasks');
 });

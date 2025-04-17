@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\AggregatorForm;
 use App\Models\InternalUser;
 use App\Models\LeadAssign;
-
+use Carbon\Carbon;
 
 class LeadController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::guard('api')->user();
 
@@ -27,7 +27,24 @@ class LeadController extends Controller
         $userID = $user->id;
         $role  = $user->role->role_name;
 
-        $query = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment']);
+        $status = $request->input('status');
+        $date = $request->input('date', Carbon::now()->format('d-m-Y'));
+
+        try {
+            $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->startOfDay();
+        } catch (\Exception $e) {
+            return response()->json([
+                'response_code' => 422,
+                'message' => 'Invalid date format. Use dd-mm-yyyy.'
+            ]);
+        }
+
+        $query = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment'])
+            ->whereDate('created_at', $parsedDate);
+
+        if (!empty($status) && $status !== 'All') {
+            $query->where('status', $status);
+        }
 
         if ($role === 'Superuser') {
             $query->whereHas('latestAssignment', function ($q) use ($userID) {
@@ -46,7 +63,8 @@ class LeadController extends Controller
                 'location' => $lead->location,
                 'mobile_no' => $lead->mobile_no,
                 'shade_name' => $lead->shade->first()?->shade?->shade_name,
-                'status' => $lead->status
+                'status' => $lead->status,
+                'created_at' => $lead->created_at
             ];
         });
         return response()->json([

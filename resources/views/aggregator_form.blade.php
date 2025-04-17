@@ -213,7 +213,7 @@
                 </div>
                 <div class="col-lg-3">
                     <div class="form-group">
-                        <select id="unit" name="unit" class="form-control">
+                        <select id="unit" name="unit" class="form-select">
                             <option value="">Select Unit</option>
                             <option value="cm">Cm</option>
                             <option value="inch">Inch</option>
@@ -303,20 +303,49 @@
             </div>
 
             <div class="row align-items-center">
-                <div class="col-lg-2">
+                <div class="col-lg-3">
                     <div class="form-group">
-                        <label for="mobile_no">Mobile Number</label>
+                        <label for="how_heard">How did you hear about us?</label>
                     </div>
                 </div>
                 <div class="col-lg-5">
                     <div class="form-group d-flex align-items-center gap-2">
-                        <input type="text" id="mobile_no" name="mobile_no" class="form-control">
+                        <select id="how_heard" name="how_heard" class="form-select">
+                            <option value="">Select</option>
+                            <option value="Instagram">Instagram</option>
+                            <option value="FB">FB</option>
+                            <option value="YouTube">YouTube</option>
+                            <option value="Twitter">Twitter (X)</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="Referral">Referral</option>
+                            <option value="Google Ads">Google Ads</option>
+                            <option value="Others">Others</option>
+                        </select>
                     </div>
-                    @error('mobile_no')
+                    @error('how_heard')
                         <div class="text-danger">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
+
+            <!-- Remarks field (hidden by default) -->
+            <div class="row align-items-center mt-2 d-none" id="remarksRow">
+                <div class="col-lg-3">
+                    <div class="form-group">
+                        <label for="remarks">Remarks</label>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="form-group">
+                        <input type="text" name="remarks" id="remarks"
+                            class="form-control">
+                    </div>
+                    @error('remarks')
+                        <div class="text-danger">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
 
             <div class="row align-items-center">
                 <div class="col-lg-2">
@@ -400,6 +429,7 @@
                     @php
                         session()->forget('success');
                     @endphp
+                    window.location.href = "{{ route('home') }}";
                 });
             @endif
         });

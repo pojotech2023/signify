@@ -11,6 +11,7 @@ use App\Models\Job;
 use App\Models\JobTask;
 use App\Models\JobTaskAssign;
 use App\Models\JobExecutiveTask;
+use Carbon\Carbon;
 
 class JobTaskController extends Controller
 {
@@ -40,7 +41,8 @@ class JobTaskController extends Controller
             'customer_name'      => 'required',
             'customer_mobile'    => 'required|string|max:15',
             'internal_user_id'   => 'required|exists:internal_users,id'
-
+        ],[
+            'internal_user_id.required' => 'Please select an assignee.',
         ]);
 
         if ($validate->fails()) {
@@ -125,15 +127,37 @@ class JobTaskController extends Controller
     public function showJobTasks($job_id)
     {
 
-        $job_tasks = JobTask::with([
-            'job',
-            'CreatedBy',
-            'jobTaskAssign',
-        ])->where('job_id', $job_id)
+        $job_tasks = JobTask::where('job_id', $job_id)
+            ->whereDate('created_at', Carbon::today())
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('admin.job_task.job_task_list', compact('job_tasks'));
+        return view('admin.job_task.job_task_list', compact('job_tasks', 'job_id'));
+    }
+
+    //filter date and status in lead wise tasks
+    public function filterJobTask(Request $request, $job_id)
+    {
+        $status = $request->input('status');
+        $date = $request->input('date');
+
+        // Validation
+        if (!$status || !$date) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['Both status and date are required.']);
+        }
+
+        $query = JobTask::where('job_id', $job_id)
+        ->whereDate('created_at', $date);
+
+        if (!empty($status) && $status !== 'All') {
+           $query->where('status', $status);
+       }
+
+       $job_tasks = $query->orderBy('id', 'desc')->get();
+
+       return view('admin.job_task.job_task_list', compact('job_tasks', 'job_id'));
     }
 
     //Superuser Task form Update
@@ -196,7 +220,7 @@ class JobTaskController extends Controller
             ]);
 
             // Update task status
-            JobTask::where('id',$task->id)->update(['status' => 'Re-Assigned']);
+            JobTask::where('id', $task->id)->update(['status' => 'Re-Assigned']);
         }
 
         if ($request->filled('status')) {

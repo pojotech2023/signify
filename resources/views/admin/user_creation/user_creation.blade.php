@@ -33,7 +33,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            
+
                             <!-- Blade alert for success -->
                             @if (session('success'))
                                 <div class="alert alert-success alert-dismissible fade show w-100" role="alert">
@@ -184,9 +184,9 @@
         </div>
     </div>
 
-    
-     <!-- Spinner -->
-     <div class="d-flex justify-content-center mt-3">
+
+    <!-- Spinner -->
+    <div class="d-flex justify-content-center mt-3">
         <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
             <span class="visually-hidden">Loading...</span>
         </div>
@@ -200,7 +200,7 @@
             let alert = document.querySelector('.alert');
             const form = document.getElementById('userForm');
             const spinner = document.getElementById('loadingSpinner');
-    
+
             //Success alert handling
             if (alert) {
                 setTimeout(() => {
@@ -209,7 +209,7 @@
                     window.location.href = "{{ route('usercreation-list') }}";
                 }, 3000);
             }
-    
+
             //Show spinner only on job form submission
             if (form && spinner) {
                 form.addEventListener('submit', function(event) {

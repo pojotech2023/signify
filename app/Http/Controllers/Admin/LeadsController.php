@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\AggregatorForm;
 use App\Models\InternalUser;
 use App\Models\LeadAssign;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
@@ -13,17 +14,16 @@ use Illuminate\Support\Facades\Auth;
 class LeadsController extends Controller
 {
     //leads list - minimal view
-    public function index(Request $request)
+    public function index()
     {
         $role = session('role_name');
         $user = Auth::guard('admin')->user();
- 
+
         if ($user) {
             $userID = $user->id;
-            $status = $request->input('status');
-            $date = $request->input('date');
 
-            $query = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment']);
+            $query = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment'])
+                ->whereDate('created_at', Carbon::today());
 
             if ($role === 'Superuser') {
                 $query->whereHas('latestAssignment', function ($q) use ($userID) {
@@ -123,24 +123,41 @@ class LeadsController extends Controller
             ($status == 'Assigned' ? 'Assigned' : 'Re-Assigned') . ' successfully!');
     }
 
-    public function getFilteredLeads(Request $request)
+    //date and status filter wise lead list
+    public function filterLeadsList(Request $request)
     {
-        $query = AggregatorForm::with(['category',  'subcategory', 'material', 'shade.shade', 'latestAssignment']);
+        $status = $request->input('status');
+        $date = $request->input('date');
 
-        // Filter by Status
-        if ($request->filled('status')) {
-            $query->whereHas('latestAssignment', function ($q) use ($request) {
-                $q->where('status', $request->status);
+        if (!$status || !$date) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['Both status and date are required.']);
+        }
+
+        $role = session('role_name');
+        $user = Auth::guard('admin')->user();
+
+        if (!$user) {
+            return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
+        }
+
+        $userID = $user->id;
+
+        $query = AggregatorForm::with(['category', 'subcategory', 'material', 'shade.shade', 'latestAssignment'])
+            ->whereDate('created_at', $date);
+        if (!empty($status) && $status !== 'All') {
+            $query->where('status', $status);
+        }
+
+        if ($role === 'Superuser') {
+            $query->whereHas('latestAssignment', function ($q) use ($userID) {
+                $q->where('internal_user_id', $userID);
             });
         }
 
-        // Filter by Date
-        if ($request->filled('date')) {
-            $query->whereDate('created_at', $request->date);
-        }
+        $leads = $query->orderBy('id', 'desc')->get();
 
-        $leads = $query->get();
-
-        return response()->json($leads);
+        return view('admin.leads_list', compact('leads'));
     }
 }

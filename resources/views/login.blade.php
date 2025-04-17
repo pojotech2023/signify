@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signify</title>
+    <link href="images/logo/logo.png" rel="icon">
     <!-- Include Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -44,11 +45,12 @@
                 <h1 class="mb-4">Login</h1>
                 <p style="color: rgb(104, 104, 104)">Login to access your travelwise account</p>
                 <form action="{{ route('login.submit') }}" method="post">
+                    @csrf 
                     <div class="mb-3">
                         <label for="mobileNumber" class="form-label">Mobile Number</label>
-                        <input type="text" class="form-control" id="mobileNumber" placeholder="Enter your mobile number" required>
+                        <input type="text" class="form-control" id="mobileNumber" name="mobile_no" placeholder="Enter your mobile number" required>
                     </div>
-                    <button type="submit" onclick="window.location.href='{{ route('otp.page') }}'"  class="btn btn-primary w-100">Login</button>
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
                 </form>
             </div>
         </div>

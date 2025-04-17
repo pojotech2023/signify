@@ -151,23 +151,24 @@
                                     @endif
                                 </div>
                             </div>
-
-
+                            
                             {{-- Vendor Details --}}
                             <div class="row align-items-center mt-4">
                                 <div class="col-lg-2">
                                     <label class="fw-bold">Vendor Details</label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control" name="vendor_name"
-                                        value="{{ $task->vendor_name }}">
+                                    <input type="text" class="form-control" name="vendor_name" id="vendor_name"
+                                        value="{{ $task->vendor_name }}" autocomplete="off">
+
+                                    <div id="vendor_suggestions" class="list-group position-absolute w-100 bg-white border"
+                                        style="z-index: 1000; display: none;"></div>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="text" class="form-control" name="vendor_mobile"
-                                        value="{{ $task->vendor_mobile }}">
+                                    <input type="text" class="form-control" name="vendor_mobile" id="vendor_mobile"
+                                        value="{{ $task->vendor_mobile }}" readonly>
                                 </div>
                             </div>
-
                             {{-- Customer Details --}}
                             <div class="row align-items-center mt-4 border-bottom pb-3"
                                 style="border-bottom: 1px solid #ebecec !important;">
@@ -589,6 +590,7 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let alert = document.querySelector('.alert');
@@ -609,6 +611,47 @@
                     spinner.classList.remove('d-none'); //Show spinner
                 });
             }
+        });
+
+        //Vendor search
+        $(document).ready(function() {
+            console.log("task.js loaded ✅");
+
+            $('#vendor_name').on('input', function() {
+                let query = $(this).val();
+                if (query.length >= 1) {
+                    $.ajax({
+                        url: "{{ route('vendors.search') }}",
+                        type: 'GET',
+                        data: {
+                            name: query
+                        },
+                        success: function(data) {
+                            let suggestions = '';
+                            data.forEach(function(vendor) {
+                                suggestions +=
+                                    `<a href="#" class="list-group-item list-group-item-action vendor-option" data-name="${vendor.name}" data-mobile="${vendor.mobile_no}">${vendor.name}</a>`;
+                            });
+                            $('#vendor_suggestions').html(suggestions).show();
+                        }
+                    });
+                } else {
+                    $('#vendor_suggestions').hide();
+                }
+            });
+
+            $(document).on('click', '.vendor-option', function(e) {
+                e.preventDefault();
+                $('#vendor_name').val($(this).data('name'));
+                $('#vendor_mobile').val($(this).data('mobile'));
+                $('#vendor_suggestions').hide();
+            });
+
+            $(document).click(function(e) {
+                if (!$(e.target).closest('#vendor_name, #vendor_suggestions').length) {
+                    $('#vendor_suggestions').hide();
+                }
+            });
         });
     </script>
 @endsection

@@ -10,6 +10,7 @@ class AggregatorForm extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'category_id',
         'sub_category_id',
         'material_id',
@@ -21,6 +22,8 @@ class AggregatorForm extends Model
         'design_service_need',
         'email_id',
         'mobile_no',
+        'how_heard',
+        'remarks',
         'site_image',
         'design_attachment',
         'reference_image',

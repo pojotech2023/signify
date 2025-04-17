@@ -28,8 +28,8 @@
                         {{ session()->forget('success') }} {{-- Clear session --}}
                     @endif
 
-                    <form id="taskForm"  action="{{ route('job-task-create') }}" method="POST" enctype="multipart/form-data"
-                        class="container">
+                    <form id="taskForm" action="{{ route('job-task-create') }}" method="POST"
+                        enctype="multipart/form-data" class="container">
                         @csrf
 
                         <input type="hidden" name="job_id" value="{{ $job->id ?? '' }}">
@@ -130,19 +130,23 @@
                                     <label for="vendor_name" class="fw-bold">Vendor Details</label>
                                 </div>
                             </div>
-                            <div class="col-lg-4">
+                            <div class="col-lg-4 position-relative">
                                 <div class="form-group">
-                                    <input type="text" id="vendor_name" name="vendor_name"
-                                        class="form-control fw-bold text-dark" placeholder="Name" required>
+                                    <input type="text" id="vendor_name" name="vendor_name" class="form-control"
+                                        placeholder="Type Vendor Name..." autocomplete="off" required>
+                                    <div id="vendor_suggestions" class="list-group position-absolute w-100"
+                                        style="z-index: 1000; display: none;"></div>
                                 </div>
                                 @error('vendor_name')
                                     <div class="text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+
                             <div class="col-lg-4">
                                 <div class="form-group">
                                     <input type="text" id="vendor_mobile" name="vendor_mobile"
-                                        class="form-control fw-bold text-dark" placeholder="Mobile Number" required>
+                                        class="form-control fw-bold text-dark" placeholder="Mobile Number" readonly
+                                        required>
                                 </div>
                                 @error('vendor_mobile')
                                     <div class="text-danger">{{ $message }}</div>
@@ -214,6 +218,7 @@
         </div>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             let dateInput = document.getElementById("todayDate");
@@ -229,7 +234,7 @@
             let alert = document.querySelector('.alert');
             const form = document.getElementById('taskForm');
             const spinner = document.getElementById('loadingSpinner');
-    
+
             //Success alert handling
             if (alert) {
                 setTimeout(() => {
@@ -238,13 +243,52 @@
                     window.location.href = "{{ route('jobs-list') }}";
                 }, 3000);
             }
-    
+
             //Show spinner only on job form submission
             if (form && spinner) {
                 form.addEventListener('submit', function(event) {
                     spinner.classList.remove('d-none'); //Show spinner
                 });
             }
+        });
+        //Vendor search
+        $(document).ready(function() {
+
+            $('#vendor_name').on('input', function() {
+                let query = $(this).val();
+                if (query.length >= 1) {
+                    $.ajax({
+                        url: "{{ route('vendors.search') }}",
+                        type: 'GET',
+                        data: {
+                            name: query
+                        },
+                        success: function(data) {
+                            let suggestions = '';
+                            data.forEach(function(vendor) {
+                                suggestions +=
+                                    `<a href="#" class="list-group-item list-group-item-action vendor-option" data-name="${vendor.name}" data-mobile="${vendor.mobile_no}">${vendor.name}</a>`;
+                            });
+                            $('#vendor_suggestions').html(suggestions).show();
+                        }
+                    });
+                } else {
+                    $('#vendor_suggestions').hide();
+                }
+            });
+
+            $(document).on('click', '.vendor-option', function(e) {
+                e.preventDefault();
+                $('#vendor_name').val($(this).data('name'));
+                $('#vendor_mobile').val($(this).data('mobile'));
+                $('#vendor_suggestions').hide();
+            });
+
+            $(document).click(function(e) {
+                if (!$(e.target).closest('#vendor_name, #vendor_suggestions').length) {
+                    $('#vendor_suggestions').hide();
+                }
+            });
         });
     </script>
 @endsection

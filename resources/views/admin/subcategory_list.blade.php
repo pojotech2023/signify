@@ -117,13 +117,16 @@
                             </div>
                             <div class="col-lg-9">
                                 <div class="form-group">
-                                    <select id="category_id" name="category_id" class="form-control" required>
+                                    <select id="category_id" name="category_id" class="form-control">
                                         <option value="">Select Category</option>
                                         @foreach ($categories as $category)
                                             <option value="{{ $category->id }}">{{ $category->category }}</option>
                                         @endforeach
                                     </select>
                                 </div>
+                                @error('category_id')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -137,8 +140,11 @@
                             <div class="col-lg-9">
                                 <div class="form-group">
                                     <input id="sub_category" name="sub_category" type="text" class="form-control"
-                                        placeholder="Enter Subcategory" required />
+                                        placeholder="Enter Subcategory" />
                                 </div>
+                                @error('sub_category')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
 
@@ -241,6 +247,30 @@
                     successAlert.classList.add("fade");
                 }, 3000);
             }
+
+            //Clear validation error when modal is closed
+            addModal._element.addEventListener('hidden.bs.modal', function() {
+                // Clear input values
+                categorySelect.value = "";
+                subcategoryInput.value = "";
+                subcategoryIdInput.value = "";
+
+                // Remove error messages and old validation styling
+                const errorMessages = addModal._element.querySelectorAll('.text-danger');
+                errorMessages.forEach(el => el.remove());
+
+                const errorInputs = addModal._element.querySelectorAll('.is-invalid');
+                errorInputs.forEach(input => input.classList.remove('is-invalid'));
+            });
+
         });
     </script>
+    @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var myModal = new bootstrap.Modal(document.getElementById('addModal'));
+                myModal.show();
+            });
+        </script>
+    @endif
 @endsection

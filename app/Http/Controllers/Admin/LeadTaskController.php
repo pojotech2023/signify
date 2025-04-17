@@ -11,6 +11,7 @@ use App\Models\OrderTask;
 use App\Models\LeadExecutiveTask;
 use App\Models\LeadTask;
 use App\Models\LeadTaskAssign;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,7 +46,8 @@ class LeadTaskController extends Controller
             'customer_name'      => 'required',
             'customer_mobile'    => 'required|numeric|digits:10',
             'internal_user_id'   => 'required|exists:internal_users,id'
-
+        ],[
+            'internal_user_id.required' => 'Please select an assignee.',
         ]);
 
         if ($validate->fails()) {
@@ -90,17 +92,37 @@ class LeadTaskController extends Controller
     //Lead wise tasks
     public function showLeadTasks($lead_id)
     {
-
         $lead_tasks = LeadTask::where('lead_id', $lead_id)
+            ->whereDate('created_at', Carbon::today())
             ->orderBy('id', 'desc')
             ->get();
 
-            // with([
-            //     'aggregatorForm',
-            //     'CreatedBy',
-            //     'leadTaskAssign',
-            // ])->
-        return view('admin.lead_task.lead_task_list', compact('lead_tasks'));
+        return view('admin.lead_task.lead_task_list', compact('lead_tasks', 'lead_id'));
+    }
+
+    //filter date and status in lead wise tasks
+    public function filterLeadTask(Request $request, $lead_id)
+    {
+        $status = $request->input('status');
+        $date = $request->input('date');
+
+        // Validation
+        if (!$status || !$date) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['Both status and date are required.']);
+        }
+
+        $query = LeadTask::where('lead_id', $lead_id)
+            ->whereDate('created_at', $date);
+            
+        if (!empty($status) && $status !== 'All') {
+            $query->where('status', $status);
+        }
+
+        $lead_tasks = $query->orderBy('id', 'desc')->get();
+
+        return view('admin.lead_task.lead_task_list', compact('lead_tasks', 'lead_id'));
     }
 
 
@@ -140,54 +162,6 @@ class LeadTaskController extends Controller
         }
 
         return view('admin.lead_task.task_details', compact('task', 'internal_user_list', 'assignedExecutiveName'));
-    }
-
-
-    //Executive Lead , Order, Job Task List
-    public function index()
-    {
-        $role = session('role_name');
-        $user = Auth::guard('admin')->user();
-
-        if ($user) {
-            $userID = $user->id;
-
-            if (in_array($role, ['Accounts', 'PR', 'HR', 'R&D'])) {
-                // Get Order Task
-                $orderTasks = OrderTask::with(['order', 'createdBy', 'orderTaskAssign'])
-                    ->whereHas('orderTaskAssign', function ($query) use ($userID) {
-                        $query->where('internal_user_id', $userID);
-                    })->get()->map(function ($task) {
-                        $task->setAttribute('type', 'order');
-                        return $task;
-                    });
-
-                //Get Lead Task
-                $leadTasks = LeadTask::with(['aggregatorForm', 'createdBy', 'leadTaskAssign'])
-                    ->whereHas('leadTaskAssign', function ($query) use ($userID) {
-                        $query->where('internal_user_id', $userID);
-                    })->get()->map(function ($task) {
-                        $task->setAttribute('type', 'lead');
-                        return $task;
-                    });
-
-                //Get Job Task
-                $jobTasks = JobTask::with(['job', 'createdBy', 'jobTaskAssign'])
-                    ->whereHas('jobTaskAssign', function ($query) use ($userID) {
-                        $query->where('internal_user_id', $userID);
-                    })->get()->map(function ($task) {
-                        $task->setAttribute('type', 'job');
-                        return $task;
-                    });
-            } else {
-                $orderTasks = collect();
-                $leadTasks = collect();
-                $jobTasks = collect();
-            }
-            return view('admin.lead_task.task_list', compact('orderTasks', 'leadTasks', 'jobTasks'));
-        } else {
-            return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
-        }
     }
 
     //Superuser Task form Update

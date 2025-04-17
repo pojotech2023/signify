@@ -10,18 +10,21 @@ use App\Models\Job;
 use App\Models\JobAssign;
 use App\Models\Roles;
 use App\Models\InternalUser;
+use Carbon\Carbon;
 
 class JobController extends Controller
 {
     //job list
-    public function index()
+    public function index(Request $request)
     {
         $role = session('role_name');
         $user = Auth::guard('admin')->user();
 
         if ($user) {
             $userID = $user->id;
-            $query = Job::with(['role', 'jobAssign']);
+
+            $query = Job::with(['role', 'jobAssign'])
+                ->whereDate('created_at', Carbon::today());
 
             if ($role === 'Superuser') {
                 $query->whereHas('jobAssign', function ($q) use ($userID) {
@@ -68,46 +71,50 @@ class JobController extends Controller
 
     public function update(Request $request, $id)
     {
-        //dd($request->all());
-        $validate = Validator::make($request->all(), [
-            'name'      => 'required|string',
-            'role_id'   => 'required|exists:roles,id',
-            'reassign_user_id'   => 'nullable|exists:internal_users,id',
-            'status'             => 'nullable|string'
-        ]);
-
-        if ($validate->fails()) {
-            return redirect()->back()->withErrors($validate)->withInput();
-        }
-
         $job = Job::findOrFail($id);
+        $roleName = session('role_name');
 
-        $job->update([
-            'name'      => $request->name,
-            'role_id'   => $request->role_id
-        ]);
-
-        if ($request->filled('reassign_user_id')) {
-            JobAssign::create([
-                'internal_user_id' => $request->reassign_user_id,
-                'job_id' => $job->id,
-                'status' => 'Re-Assigned'
+        if ($roleName === 'Admin') {
+            $validate = Validator::make($request->all(), [
+                'name' => 'required|string',
+                'role_id' => 'required|exists:roles,id',
+                'reassign_user_id' => 'nullable|exists:internal_users,id',
+                'status' => 'nullable|string'
             ]);
-            $job->update(['status' => 'Re-Assigned']);
+
+            if ($validate->fails()) {
+                return redirect()->back()->withErrors($validate)->withInput();
+            }
+
+            $job->update([
+                'name' => $request->name,
+                'role_id' => $request->role_id
+            ]);
+
+            if ($request->filled('reassign_user_id')) {
+                JobAssign::create([
+                    'internal_user_id' => $request->reassign_user_id,
+                    'job_id' => $job->id,
+                    'status' => 'Re-Assigned'
+                ]);
+                $job->update(['status' => 'Re-Assigned']);
+            }
         }
 
-        if ($request->filled('status')) {
+        if ($roleName === 'Superuser' || $roleName === 'Admin') {
+            if ($request->filled('status')) {
+                $job->update(['status' => $request->status]);
 
-            $job->update(['status' => $request->status]);
-
-            JobAssign::where('job_id', $job->id)
-                ->latest('created_at')
-                ->first()
-                ->update(['status' => $request->status]);
+                JobAssign::where('job_id', $job->id)
+                    ->latest('created_at')
+                    ->first()
+                    ?->update(['status' => $request->status]);
+            }
         }
 
         return redirect()->back()->with('success', 'Job updated successfully!');
     }
+
 
     //show empty form and job detailed view
     public function getJobForm($id = null) //id as a job id
@@ -166,5 +173,42 @@ class JobController extends Controller
         })->get();
 
         return view('admin.job.job_create', compact('roles', 'job', 'admin_super_user', 'assignEnabled', 'reassignEnabled', 'assignedUserName'));
+    }
+
+    //date and status filter wise job list
+    public function filterJobsList(Request $request)
+    {
+        $status = $request->input('status');
+        $date = $request->input('date');
+
+        if (!$status || !$date) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['Both status and date are required.']);
+        }
+
+        $role = session('role_name');
+        $user = Auth::guard('admin')->user();
+
+        if ($user) {
+            $userID = $user->id;
+
+            $query = Job::with(['role', 'jobAssign'])
+                ->whereDate('created_at', $date);
+            if (!empty($status) && $status !== 'All') {
+                $query->where('status', $status);
+            }
+
+            if ($role === 'Superuser') {
+                $query->whereHas('jobAssign', function ($q) use ($userID) {
+                    $q->where('internal_user_id', $userID);
+                });
+            }
+            $jobs = $query->orderBy('id', 'desc')->get();
+
+            return view('admin.job.jobs_list', compact('jobs'));
+        } else {
+            return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
+        }
     }
 }

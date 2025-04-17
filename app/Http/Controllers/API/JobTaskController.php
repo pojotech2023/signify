@@ -11,6 +11,7 @@ use App\Models\Job;
 use App\Models\JobTask;
 use App\Models\JobTaskAssign;
 use App\Models\JobExecutiveTask;
+use Carbon\Carbon;
 
 class JobTaskController extends Controller
 {
@@ -29,7 +30,8 @@ class JobTaskController extends Controller
             'vendor_mobile'      => 'required|string|max:15',
             'customer_name'      => 'required',
             'customer_mobile'    => 'required|string|max:15',
-            'internal_user_id'   => 'required|exists:internal_users,id'
+            'internal_user_id'   => 'required|exists:internal_users,id',
+            'whatsapp_audio'     => 'nullable|file|mimes:mp3,wav,m4a,ogg,opus'
 
         ]);
 
@@ -45,6 +47,13 @@ class JobTaskController extends Controller
                 $attachments[] = $path;
             }
         }
+
+        $audioPath = null;
+        if ($request->hasFile('whatsapp_audio')) {
+            $file = $request->file('whatsapp_audio');
+            $audioPath = $file->store('task/whatsapp_audio', 'public');
+        }
+
         $task = JobTask::create([
             'job_id'             => $request->job_id,
             'task_name'          => $request->task_name,
@@ -58,6 +67,7 @@ class JobTaskController extends Controller
             'customer_name'      => $request->customer_name,
             'customer_mobile'    => $request->customer_mobile,
             'created_by'         => auth('api')->id(),
+            'whatsapp_audio'     => $audioPath
         ]);
 
         JobTaskAssign::create([
@@ -78,12 +88,28 @@ class JobTaskController extends Controller
     }
 
     //Job wise Tasks
-    public function showJobTasks($job_id)
+    public function showJobTasks(Request $request, $job_id)
     {
+        $status = $request->input('status');
+        $date = $request->input('date', Carbon::now()->format('d-m-Y'));
 
-        $job_tasks = JobTask::where('job_id', $job_id)
-            ->orderBy('id', 'desc')
-            ->get();
+        try {
+            $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->startOfDay();
+        } catch (\Exception $e) {
+            return response()->json([
+                'response_code' => 422,
+                'message' => 'Invalid date format. Use dd-mm-yyyy.'
+            ]);
+        }
+
+        $query = JobTask::where('job_id', $job_id)
+            ->whereDate('created_at', $parsedDate);
+
+        if (!empty($status) && $status !== 'All') {
+            $query->where('status', $status);
+        }
+
+        $job_tasks = $query->orderBy('id', 'desc')->get();
 
         return  response()->json([
             'response code' => 200,
@@ -99,6 +125,7 @@ class JobTaskController extends Controller
             'job_tasks.*',
             'internal_users.name as created_by_name',
             'executive.name as assigned_executive_name',
+            'job_task_assigns.id as job_tasks_assign_id',
             'job_executive_tasks.id as job_executive_task_id',
             'job_executive_tasks.task_assigned_user_id',
             'job_executive_tasks.remarks',
@@ -135,6 +162,7 @@ class JobTaskController extends Controller
             'vendor_mobile'      => 'nullable|string|max:15',
             'customer_name'      => 'nullable|string|max:255',
             'customer_mobile'    => 'nullable|string|max:15',
+            'whatsapp_audio'     => 'nullable|file|mimes:mp3,wav,m4a,ogg,opus',
             'internal_user_id'   => 'nullable|exists:internal_users,id',
             'status'             => 'nullable|string'
         ]);
@@ -193,6 +221,17 @@ class JobTaskController extends Controller
             }
         }
 
+        //whatsapp_audio  if exsting and new audio 
+
+        $whatsapp_audio = $task->whatsapp_audio ? explode(',', $task->whatsapp_audio) : [];
+
+        if ($request->hasFile('whatsapp_audio')) {
+            $file = $request->file('whatsapp_audio');
+            $path  = $file->store('task/whatsapp_audio', 'public');
+            $whatsapp_audio[] = $path;
+        }
+
+
         $task->update([
             'job_id'               => $request->job_id,
             'task_name'             => $request->task_name,
@@ -205,6 +244,7 @@ class JobTaskController extends Controller
             'vendor_mobile'         => $request->vendor_mobile,
             'customer_name'         => $request->customer_name,
             'customer_mobile'       => $request->customer_mobile,
+            'whatsapp_audio'        => $whatsapp_audio ? implode(',', $whatsapp_audio) : null,
         ]);
 
         return  response()->json([
@@ -224,10 +264,17 @@ class JobTaskController extends Controller
             'remarks'                => 'required',
             'address'                => 'required',
             'end_date_time'          => 'required',
+            'whatsapp_audio'         => 'nullable|file|mimes:mp3,wav,m4a,ogg,opus'
         ]);
 
         if ($validate->fails()) {
             return response()->json(['errors' => $validate->errors()], 422);
+        }
+
+        $audioPath = null;
+        if ($request->hasFile('whatsapp_audio')) {
+            $file = $request->file('whatsapp_audio');
+            $audioPath = $file->store('task/whatsapp_audio', 'public');
         }
 
         $executive_task = JobExecutiveTask::create([
@@ -235,6 +282,7 @@ class JobTaskController extends Controller
             'remarks'               => $request->remarks,
             'address'               => $request->address,
             'end_date_time'         => $request->end_date_time,
+            'whatsapp_audio'       => $audioPath
         ]);
         return  response()->json([
             'response code' => 200,
@@ -252,6 +300,7 @@ class JobTaskController extends Controller
             'remarks'                => 'nullable',
             'address'                => 'nullable',
             'end_date_time'          => 'nullable',
+            'whatsapp_audio'     => 'nullable|file|mimes:mp3,wav,m4a,ogg,opus',
         ]);
 
         if ($validate->fails()) {
@@ -278,11 +327,22 @@ class JobTaskController extends Controller
             ]);
         }
 
+        //whatsapp_audio  if exsting and new audio 
+
+        $whatsapp_audio = $executive_task->whatsapp_audio ? explode(',', $executive_task->whatsapp_audio) : [];
+
+        if ($request->hasFile('whatsapp_audio')) {
+            $file = $request->file('whatsapp_audio');
+            $path  = $file->store('task/whatsapp_audio', 'public');
+            $whatsapp_audio[] = $path;
+        }
+
         $executive_task = $executive_task->update([
             'task_assigned_user_id' => $request->task_assigned_user_id,
             'remarks'               => $request->remarks,
             'address'               => $request->address,
             'end_date_time'         => $request->end_date_time,
+            'whatsapp_audio'        => $whatsapp_audio ? implode(',', $whatsapp_audio) : null,
         ]);
 
         return  response()->json([

@@ -8,6 +8,7 @@ use App\Models\LeadTask;
 use App\Models\LeadTaskAssign;
 use App\Models\LeadExecutiveTask;
 use App\Models\InternalUser;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,7 +30,8 @@ class LeadTaskController extends Controller
             'vendor_mobile'      => 'required|numeric|digits:10',
             'customer_name'      => 'required',
             'customer_mobile'    => 'required|numeric|digits:10',
-            'internal_user_id'   => 'required|exists:internal_users,id'
+            'internal_user_id'   => 'required|exists:internal_users,id',
+            'whatsapp_audio'     => 'nullable|file|mimes:mp3,wav,m4a,ogg,opus'
 
         ]);
 
@@ -45,6 +47,13 @@ class LeadTaskController extends Controller
                 $attachments[] = $path;
             }
         }
+
+        $audioPath = null;
+        if ($request->hasFile('whatsapp_audio')) {
+            $file = $request->file('whatsapp_audio');
+            $audioPath = $file->store('task/whatsapp_audio', 'public');
+        }
+
         $task = LeadTask::create([
             'lead_id'            => $request->lead_id,
             'task_name'          => $request->task_name,
@@ -58,6 +67,7 @@ class LeadTaskController extends Controller
             'customer_name'      => $request->customer_name,
             'customer_mobile'    => $request->customer_mobile,
             'created_by'         => auth('api')->id(),
+            'whatsapp_audio'     => $audioPath
         ]);
 
         LeadTaskAssign::create([
@@ -78,14 +88,31 @@ class LeadTaskController extends Controller
     }
 
     //Lead wise tasks
-    public function showLeadTasks($lead_id)
+    public function showLeadTasks(Request $request, $lead_id)
     {
-        $lead_tasks = LeadTask::where('lead_id', $lead_id)
-            ->orderBy('id', 'desc')
-            ->get();
+        $status = $request->input('status');
+        $date = $request->input('date', Carbon::now()->format('d-m-Y'));
 
-        return  response()->json([
-            'response code' => 200,
+        try {
+            $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->startOfDay();
+        } catch (\Exception $e) {
+            return response()->json([
+                'response_code' => 422,
+                'message' => 'Invalid date format. Use dd-mm-yyyy.'
+            ]);
+        }
+
+        $query = LeadTask::where('lead_id', $lead_id)
+            ->whereDate('created_at', $parsedDate);
+
+        if (!empty($status) && $status !== 'All') {
+            $query->where('status', $status);
+        }
+
+        $lead_tasks = $query->orderBy('id', 'desc')->get();
+
+        return response()->json([
+            'response_code' => 200,
             'message' => 'Lead Wise Task Fetched successfully',
             'data' => $lead_tasks
         ]);
@@ -98,6 +125,7 @@ class LeadTaskController extends Controller
             'lead_tasks.*',
             'internal_users.name as created_by_name',
             'executive.name as assigned_executive_name',
+            'lead_task_assigns.id as lead_tasks_assign_id',
             'lead_executive_tasks.id as lead_executive_task_id',
             'lead_executive_tasks.task_assigned_user_id',
             'lead_executive_tasks.remarks',
@@ -134,6 +162,7 @@ class LeadTaskController extends Controller
             'vendor_mobile'      => 'nullable|string|max:15',
             'customer_name'      => 'nullable|string|max:255',
             'customer_mobile'    => 'nullable|string|max:15',
+            'whatsapp_audio'     => 'nullable|file|mimes:mp3,wav,m4a,ogg,opus',
             'internal_user_id'   => 'nullable|exists:internal_users,id',
             'status'             => 'nullable|string'
         ]);
@@ -192,6 +221,16 @@ class LeadTaskController extends Controller
             }
         }
 
+        //whatsapp_audio  if exsting and new audio 
+
+        $whatsapp_audio = $task->whatsapp_audio ? explode(',', $task->whatsapp_audio) : [];
+
+        if ($request->hasFile('whatsapp_audio')) {
+            $file = $request->file('whatsapp_audio');
+            $path  = $file->store('task/whatsapp_audio', 'public');
+            $whatsapp_audio[] = $path;
+        }
+
         $task->update([
             'lead_id'               => $request->lead_id,
             'task_name'             => $request->task_name,
@@ -204,6 +243,7 @@ class LeadTaskController extends Controller
             'vendor_mobile'         => $request->vendor_mobile,
             'customer_name'         => $request->customer_name,
             'customer_mobile'       => $request->customer_mobile,
+            'whatsapp_audio'        => $whatsapp_audio ? implode(',', $whatsapp_audio) : null,
         ]);
 
         return  response()->json([
@@ -223,10 +263,17 @@ class LeadTaskController extends Controller
             'remarks'                => 'required',
             'address'                => 'required',
             'end_date_time'          => 'required',
+            'whatsapp_audio'         => 'nullable|file|mimes:mp3,wav,m4a,ogg,opus'
         ]);
 
         if ($validate->fails()) {
             return response()->json(['errors' => $validate->errors()], 422);
+        }
+
+        $audioPath = null;
+        if ($request->hasFile('whatsapp_audio')) {
+            $file = $request->file('whatsapp_audio');
+            $audioPath = $file->store('task/whatsapp_audio', 'public');
         }
 
         $executive_task = LeadExecutiveTask::create([
@@ -234,6 +281,7 @@ class LeadTaskController extends Controller
             'remarks'               => $request->remarks,
             'address'               => $request->address,
             'end_date_time'         => $request->end_date_time,
+            'whatsapp_audio'       => $audioPath
         ]);
         return  response()->json([
             'response code' => 200,
@@ -252,6 +300,7 @@ class LeadTaskController extends Controller
             'remarks'                => 'nullable',
             'address'                => 'nullable',
             'end_date_time'          => 'nullable',
+            'whatsapp_audio'     => 'nullable|file|mimes:mp3,wav,m4a,ogg,opus',
         ]);
 
         if ($validate->fails()) {
@@ -260,8 +309,7 @@ class LeadTaskController extends Controller
 
         $executive_task = LeadExecutiveTask::findOrFail($id);
 
-        if ($request->filled('status') && $request->only('status')) 
-        {
+        if ($request->filled('status') && $request->only('status')) {
             LeadTask::where('id', $request->task_id)->update([
                 'status' => $request->status
             ]);
@@ -278,11 +326,22 @@ class LeadTaskController extends Controller
             ]);
         }
 
+        //whatsapp_audio  if exsting and new audio 
+
+        $whatsapp_audio = $executive_task->whatsapp_audio ? explode(',', $executive_task->whatsapp_audio) : [];
+
+        if ($request->hasFile('whatsapp_audio')) {
+            $file = $request->file('whatsapp_audio');
+            $path  = $file->store('task/whatsapp_audio', 'public');
+            $whatsapp_audio[] = $path;
+        }
+
         $executive_task = $executive_task->update([
             'task_assigned_user_id' => $request->task_assigned_user_id,
             'remarks'               => $request->remarks,
             'address'               => $request->address,
             'end_date_time'         => $request->end_date_time,
+            'whatsapp_audio'        => $whatsapp_audio ? implode(',', $whatsapp_audio) : null,
         ]);
 
         return  response()->json([

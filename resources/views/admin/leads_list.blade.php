@@ -8,21 +8,23 @@
             <div class="row">
                 <div class="col-12 col-md-8">
                     {{-- Filters Section: Search, Status Dropdown & Date Picker --}}
-                    <form method="GET" action="{{ route('leads-list') }}">
+                    <form id="filterform" action="{{ route('filter-leads-list') }}" method="POST" class="row mb-3">
+                        @csrf
                         <div class="row mb-3">
-                            <div class="col-md-4">
+                            {{-- <div class="col-md-3">
                                 <div class="input-group">
                                     <span class="input-group-text">
-                                        <i class="fas fa-search"></i> <!-- Search Icon Inside -->
+                                        <i class="fas fa-search"></i> 
                                     </span>
                                     <input type="text" class="form-control" id="searchLeads"
                                         placeholder="Search Leads...">
                                 </div>
-                            </div>
-                            <div class="col-md-4">
+                            </div> --}}
+
+                            <div class="col-md-3">
                                 <div class="input-group w-100">
-                                    <select class="form-select form-control" id="filterStatus">
-                                        <option value="">All</option>
+                                    <select class="form-select form-control" id="filterStatus" name="status">
+                                        <option value="All">All</option>
                                         <option value="New">New</option>
                                         <option value="Assigned">Assigned</option>
                                         <option value="Inprogress">In Progress</option>
@@ -34,8 +36,12 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <input type="date" class="form-control" id="filterDate">
+                            <div class="col-md-3">
+                                <input type="date" class="form-control" id="date" name="date"
+                                    value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-primary w-50">Filter</button>
                             </div>
                         </div>
                     </form>
@@ -119,6 +125,13 @@
         </div>
     </div>
 
+     <!-- Spinner -->
+     <div class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
     <script>
         //redirect to leads detail page
         function redirectToLeadDetails(event, card) {
@@ -135,18 +148,17 @@
                 window.location.href = route;
             }
         }
-        //display current date in filter date
         document.addEventListener("DOMContentLoaded", function() {
-            let dateInput = document.getElementById("filterDate");
-            // Set default value to today's date
-            let today = new Date().toISOString().split('T')[0];
-            dateInput.value = today;
-            // Allow users to change the date freely
-            dateInput.addEventListener("change", function() {
-                console.log("Selected Date:", dateInput.value);
-            });
+            const form = document.getElementById('filterform');
+            const spinner = document.getElementById('loadingSpinner');
+
+            //Show spinner only on filter submission
+            if (form && spinner) {
+                form.addEventListener('submit', function(event) {
+                    spinner.classList.remove('d-none'); //Show spinner
+                });
+            }
         });
-        
     </script>
 
     <style>

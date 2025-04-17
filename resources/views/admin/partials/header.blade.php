@@ -304,7 +304,8 @@
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#"
                         aria-expanded="false">
                         <div class="avatar-sm">
-                            <img src="{{ asset('admin/assets/img/profile.jpg') }}" alt="..." class="avatar-img rounded-circle" />
+                            <img src="{{ asset('admin/assets/img/profile.jpg') }}" alt="..."
+                                class="avatar-img rounded-circle" />
                         </div>
                         <span class="profile-username">
                             <span class="fw-bold">{{ Auth::guard('admin')->user()->name ?? 'Guest' }}</span><br>
@@ -342,12 +343,16 @@
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-user-circle me-2"></i>My Profile</a>
                                 {{-- <a class="dropdown-item" href="#">My Balance</a>
-                  <a class="dropdown-item" href="#">Inbox</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Account Setting</a> --}}
+                                      <a class="dropdown-item" href="#">Inbox</a>
+                                      <div class="dropdown-divider"></div>
+                                      <a class="dropdown-item" href="#">Account Setting</a> --}}
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+                                <a class="dropdown-item" href="#"
+                                  onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout</a> 
+                                    <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" style="display: none;">
+                                      @csrf
+                                  </form>
                             </li>
                         </div>
                     </ul>

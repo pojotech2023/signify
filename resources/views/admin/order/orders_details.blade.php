@@ -203,6 +203,37 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row align-items-center">
+                            <div class="col-lg-2">
+                                <div class="form-group">
+                                    <label for="how_heard" class="fw-bold">How did you hear?</label>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-group d-flex align-items-center gap-2">
+                                    <input type="text" class="form-control fw-bold text-dark"
+                                        value="{{ ucfirst($order->lead->how_heard) }}" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if ($order->lead->how_heard === 'Others')
+                            <div class="row align-items-center">
+                                <div class="col-lg-2">
+                                    <div class="form-group">
+                                        <label for="remarks" class="fw-bold">Remarks</label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-5">
+                                    <div class="form-group d-flex align-items-center gap-2">
+                                        <input type="text" class="form-control fw-bold text-dark"
+                                            value="{{ ucfirst($order->lead->remarks) }}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="row align-items-center mt-4">
                             <div class="col-lg-2">
                                 <div class="form-group">

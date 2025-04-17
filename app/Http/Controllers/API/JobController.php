@@ -10,6 +10,7 @@ use App\Models\Job;
 use App\Models\JobAssign;
 use App\Models\Roles;
 use App\Models\InternalUser;
+use Carbon\Carbon;
 
 class JobController extends Controller
 {
@@ -58,7 +59,7 @@ class JobController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::guard('api')->user();
 
@@ -72,7 +73,24 @@ class JobController extends Controller
         $userID = $user->id;
         $role  = $user->role->role_name;
 
-        $query = Job::with(['role', 'jobAssign']);
+        $status = $request->input('status');
+        $date = $request->input('date', Carbon::now()->format('d-m-Y'));
+
+        try {
+            $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->startOfDay();
+        } catch (\Exception $e) {
+            return response()->json([
+                'response_code' => 422,
+                'message' => 'Invalid date format. Use dd-mm-yyyy.'
+            ]);
+        }
+
+        $query = Job::with(['role', 'jobAssign'])
+            ->whereDate('created_at', $parsedDate);
+
+        if (!empty($status) && $status !== 'All') {
+            $query->where('status', $status);
+        }
 
         if ($role === 'Superuser') {
             $query->whereHas('jobAssign', function ($q) use ($userID) {

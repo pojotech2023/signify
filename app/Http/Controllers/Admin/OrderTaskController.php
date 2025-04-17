@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OrderTask;
 use App\Models\OrderTaskAssign;
 use App\Models\OrderExecutiveTask;
+use Carbon\Carbon;
 
 class OrderTaskController extends Controller
 {
@@ -40,7 +41,8 @@ class OrderTaskController extends Controller
             'customer_name'      => 'required',
             'customer_mobile'    => 'required|string|max:15',
             'internal_user_id'   => 'required|exists:internal_users,id'
-
+        ],[
+            'internal_user_id.required' => 'Please select an assignee.',
         ]);
 
         if ($validate->fails()) {
@@ -83,7 +85,7 @@ class OrderTaskController extends Controller
         return redirect()->back()->with('success', 'Order Task created successfully!');
     }
 
-   
+
     //Task Details
     public function show($task_id)
     {
@@ -126,16 +128,39 @@ class OrderTaskController extends Controller
     public function showOrderTasks($order_id)
     {
 
-        $order_tasks = OrderTask::with([
-            'order',
-            'CreatedBy',
-            'orderTaskAssign',
-        ])->where('order_id', $order_id)
+        $order_tasks = OrderTask::where('order_id', $order_id)
+            ->whereDate('created_at', Carbon::today())
             ->orderBy('id', 'desc')
             ->get();
 
-        return view('admin.order_task.order_task_list', compact('order_tasks'));
+        return view('admin.order_task.order_task_list', compact('order_tasks', 'order_id'));
     }
+
+     //filter date and status in lead wise tasks
+     public function filterOrderTask(Request $request, $order_id)
+     {
+         $status = $request->input('status');
+         $date = $request->input('date');
+ 
+         // Validation
+         if (!$status || !$date) {
+             return redirect()->back()
+                 ->withInput()
+                 ->withErrors(['Both status and date are required.']);
+         }
+
+         $query = OrderTask::where('order_id', $order_id)
+         ->whereDate('created_at', $date);
+
+         if (!empty($status) && $status !== 'All') {
+            $query->where('status', $status);
+        }
+
+        $order_tasks = $query->orderBy('id', 'desc')->get();
+
+        return view('admin.order_task.order_task_list', compact('order_tasks', 'order_id'));
+     }
+ 
 
     //Superuser Task form Update
     public function update(Request $request, $id)
@@ -197,7 +222,7 @@ class OrderTaskController extends Controller
             ]);
 
             // Update task status
-            OrderTask::where('id',$task->id)->update(['status' => 'Re-Assigned']);
+            OrderTask::where('id', $task->id)->update(['status' => 'Re-Assigned']);
         }
 
         if ($request->filled('status')) {

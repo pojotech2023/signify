@@ -98,17 +98,6 @@
                     </button>
                 </div>
 
-                <!-- Validation Errors -->
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                 <div class="modal-body">
                     <form id="categoryForm" action="{{ route('category-store') }}" method="POST">
                         @csrf
@@ -120,9 +109,13 @@
                             </div>
                             <div class="col-lg-10">
                                 <input id="category" name="category" type="text" class="form-control"
-                                    placeholder="Enter Category" required />
+                                    placeholder="Enter Category" />
                             </div>
+                            @error('category')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
                         </div>
+
 
                         <div class="modal-footer border-0">
                             <button type="submit" class="btn btn-primary" id="saveButton">Add</button>
@@ -158,7 +151,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Spinner -->
     <div class="d-flex justify-content-center mt-3">
         <div class="spinner-border text-primary d-none" role="status" id="loadingSpinner">
@@ -223,6 +216,23 @@
                     successAlert.classList.add("fade");
                 }, 3000);
             }
+
+            //Clear validation error when modal is closed
+            addModal.addEventListener('hidden.bs.modal', function() {
+                categoryInput.value = ""; // Clear input field
+
+                // Remove error messages
+                const errorMsg = addModal.querySelector('.text-danger');
+                if (errorMsg) errorMsg.remove();
+            });
         });
     </script>
+    @if ($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var myModal = new bootstrap.Modal(document.getElementById('addModal'));
+                myModal.show();
+            });
+        </script>
+    @endif
 @endsection

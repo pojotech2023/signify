@@ -41,8 +41,8 @@ class AdminAggregatorFormController extends Controller
             'video' => 'nullable|mimes:mp4,mov,avi,wmv|max:5120',
             'shade_name' => 'required|array',
             'shade_name.*' => 'required|string',
-            'shade_img' => 'nullable|array',
-            'shade_img.*' => 'nullable|array|max:30',
+            'shade_img' => 'required|array',
+            'shade_img.*' => 'required|array|max:30',
             'shade_img.*.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
 
         ]);

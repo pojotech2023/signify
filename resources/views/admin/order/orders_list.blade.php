@@ -8,19 +8,21 @@
             <div class="row">
                 <div class="col-12 col-md-8">
                     {{-- Filters Section: Search, Status Dropdown & Date Picker --}}
+                    <form action="{{ route('filter-orders-list') }}" method="POST" class="row mb-3">
+                        @csrf
                     <div class="row mb-3">
-                        <div class="col-md-4">
+                        {{-- <div class="col-md-3">
                             <div class="input-group">
                                 <span class="input-group-text">
-                                    <i class="fas fa-search"></i> <!-- Search Icon Inside -->
+                                    <i class="fas fa-search"></i> 
                                 </span>
                                 <input type="text" class="form-control" id="searchLeads" placeholder="Search Leads...">
                             </div>
-                        </div>
-                        <div class="col-md-4">
+                        </div> --}}
+                        <div class="col-md-3">
                             <div class="input-group w-100">
-                                <select class="form-select form-control" id="filterStatus">
-                                    <option value="">All</option>
+                                <select class="form-select form-control" id="filterStatus" name="status">
+                                    <option value="All">All</option>
                                     <option value="New">New</option>
                                     <option value="Assigned">Assigned</option>
                                     <option value="Inprogress">In Progress</option>
@@ -32,8 +34,11 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <input type="date" class="form-control" id="filterDate">
+                        <div class="col-md-3">
+                            <input type="date" class="form-control" id="filterDate" name="date">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-50">Filter</button>
                         </div>
                     </div>
                 </div>

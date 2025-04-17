@@ -73,7 +73,7 @@
                                         </div>
                                         <div class="col-lg-4">
                                             <div class="form-group">
-                                                <select id="category_id" name="category_id" class="form-control" required>
+                                                <select id="category_id" name="category_id" class="form-control">
                                                     <option value="">Select Category</option>
                                                     {{-- @foreach ($categories as $category)
                                                         <option value="{{ $category->id }}"
@@ -228,11 +228,7 @@
                                                     <div class="col-lg-4">
                                                         <div class="form-group">
                                                             <input type="text" name="shade_name[]"
-                                                                class="form-control" value="{{ $shade->shade_name }}"
-                                                                required>
-                                                            @error("shade_name.$key")
-                                                                <div class="text-danger">{{ $message }}</div>
-                                                            @enderror
+                                                                class="form-control" value="{{ $shade->shade_name }}">
                                                         </div>
                                                     </div>
 
@@ -251,7 +247,7 @@
                                                                 <i class="fas fa-plus"></i>
                                                             </button>
                                                         </div>
-                                                        @error("shade_img.$key.*")
+                                                        @error('shade_img')
                                                             <div class="text-danger">{{ $message }}</div>
                                                         @enderror
                                                     </div>
@@ -293,7 +289,7 @@
                                                 <div class="col-lg-4">
                                                     <div class="form-group">
                                                         <input type="text" name="shade_name[]" class="form-control"
-                                                            placeholder="Enter Shade Name" required>
+                                                            placeholder="Enter Shade Name">
                                                     </div>
                                                 </div>
 
@@ -310,6 +306,9 @@
                                                             <i class="fas fa-plus"></i>
                                                         </button>
                                                     </div>
+                                                    @error('shade_img')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         @endif

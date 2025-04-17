@@ -36,91 +36,91 @@
                                 </div>
                             </div>
                         </div>
-                   </a>
+                    </a>
                 </div>
                 <div class="col-sm-6 col-md-4">
-                  <a href="{{ route('orders-list') }}" class="text-decoration-none">
-                    <div class="card card-stats card-round">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-icon">
-                                    <div class="icon-big text-center icon-warning bubble-shadow-small">
-                                        <i class="bi bi-cart-check-fill"></i>
+                    <a href="{{ route('orders-list') }}" class="text-decoration-none">
+                        <div class="card card-stats card-round">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-icon">
+                                        <div class="icon-big text-center icon-warning bubble-shadow-small">
+                                            <i class="bi bi-cart-check-fill"></i>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col col-stats ms-3 ms-sm-0">
-                                    <div class="numbers">
-                                        <p class="card-category">Orders</p>
-                                        <h4 class="card-title">1303</h4>
+                                    <div class="col col-stats ms-3 ms-sm-0">
+                                        <div class="numbers">
+                                            <p class="card-category">Orders</p>
+                                            <h4 class="card-title">1303</h4>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                  </a>
+                    </a>
                 </div>
                 <div class="col-sm-6 col-md-4">
-                  <a href="{{ route('jobs-list') }}" class="text-decoration-none">
-                    <div class="card card-stats card-round">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-icon">
-                                    <div class="icon-big text-center icon-success bubble-shadow-small">
-                                        <i class="bi bi-bag-fill"></i>
+                    <a href="{{ route('jobs-list') }}" class="text-decoration-none">
+                        <div class="card card-stats card-round">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-icon">
+                                        <div class="icon-big text-center icon-success bubble-shadow-small">
+                                            <i class="bi bi-bag-fill"></i>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col col-stats ms-3 ms-sm-0">
-                                    <div class="numbers">
-                                        <p class="card-category">Jobs</p>
-                                        <h4 class="card-title">1,345</h4>
+                                    <div class="col col-stats ms-3 ms-sm-0">
+                                        <div class="numbers">
+                                            <p class="card-category">Jobs</p>
+                                            <h4 class="card-title">1,345</h4>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
-                
+
                 <div class="col-sm-6 col-md-4">
-                  <a href="{{ route('usercreation-list') }}" class="text-decoration-none">
-                    <div class="card card-stats card-round">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-icon">
-                                    <div class="icon-big text-center icon-danger bubble-shadow-small">
-                                        <i class="fas fa-users"></i>
+                    <a href="{{ route('usercreation-list') }}" class="text-decoration-none">
+                        <div class="card card-stats card-round">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-icon">
+                                        <div class="icon-big text-center icon-danger bubble-shadow-small">
+                                            <i class="fas fa-users"></i>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col col-stats ms-3 ms-sm-0">
-                                    <div class="numbers">
-                                        <p class="card-category">User Creation</p>
-                                        <h4 class="card-title">276</h4>
+                                    <div class="col col-stats ms-3 ms-sm-0">
+                                        <div class="numbers">
+                                            <p class="card-category">User Creation</p>
+                                            <h4 class="card-title">276</h4>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                  </a>
+                    </a>
                 </div>
                 <div class="col-sm-6 col-md-4">
-                  <a href="{{ route('material-list') }}" class="text-decoration-none">
-                    <div class="card card-stats card-round">
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-icon">
-                                    <div class="icon-big text-center icon-info bubble-shadow-small">
-                                        <i class="bi bi-file-earmark-text-fill"></i>
+                    <a href="{{ route('material-list') }}" class="text-decoration-none">
+                        <div class="card card-stats card-round">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-icon">
+                                        <div class="icon-big text-center icon-info bubble-shadow-small">
+                                            <i class="bi bi-file-earmark-text-fill"></i>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col col-stats ms-3 ms-sm-0">
-                                    <div class="numbers">
-                                        <p class="card-category">Aggregator Form</p>
-                                        <h4 class="card-title">576</h4>
+                                    <div class="col col-stats ms-3 ms-sm-0">
+                                        <div class="numbers">
+                                            <p class="card-category">Aggregator Form</p>
+                                            <h4 class="card-title">576</h4>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                  </a>
+                    </a>
                 </div>
                 <div class="col-sm-6 col-md-4">
                     <div class="card card-stats card-round">
@@ -740,4 +740,65 @@
       </div>
     </div> --}}
         </div>
+
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"></script>
+
+        <script>
+            var firebaseConfig = {
+                apiKey: "AIzaSyBkGxTIkwa48TQHXDqFSIWbuMvDFbI_5ZU",
+                authDomain: "siginifynotification.firebaseapp.com",
+                projectId: "siginifynotification",
+                storageBucket: "siginifynotification.firebasestorage.app",
+                messagingSenderId: "10288476650",
+                appId: "1:10288476650:web:1d26d433dfd18e804cc293"
+            };
+            firebase.initializeApp(firebaseConfig);
+
+            const messaging = firebase.messaging();
+
+            // Step 1: Register service worker first
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then(function(registration) {
+                    console.log('Service worker registered');
+
+                    messaging.useServiceWorker(registration); // very important
+
+                    // Step 2: Ask permission and get token
+                    return messaging.getToken({
+                        vapidKey: 'BLIJgM24zNv_S5EExKbUxIAxW_snJ_jYUREhGXUDlFBcRg9qV8Mknwd6gS11PH9LsdKCHKQmRbd19ZozRLK1zfY'
+                    });
+                })
+                .then(function(token) {
+                    console.log("Device Token:", token);
+
+                    // Step 3: Send token to backend
+                    return fetch("{{ route('save.device.token') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            token
+                        })
+                    });
+                })
+                .catch(function(err) {
+                    console.error("Service Worker / Permission Error:", err);
+                });
+
+            // Foreground notifications
+            messaging.onMessage(function(payload) {
+                console.log("Foreground Notification Received: ", payload);
+
+                const {
+                    title,
+                    body
+                } = payload.notification;
+                new Notification(title, {
+                    body: body
+                });
+            });
+        </script>
     @endsection

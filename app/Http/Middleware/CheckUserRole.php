@@ -16,6 +16,10 @@ class CheckUserRole
      */
     public function handle($request, Closure $next, ...$roles)
     {
+
+        // if (!Auth::guard('admin')->check()) {
+        //     return redirect()->route('admin.login')->with('error', 'You must be logged in.');
+        // }
         $role = session('role_name');
     
         if (!$role || !in_array($role, $roles)) {

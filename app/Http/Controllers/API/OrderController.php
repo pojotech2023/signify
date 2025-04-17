@@ -15,6 +15,7 @@ use App\Models\LeadTaskAssign;
 use App\Models\OrderTask;
 use App\Models\OrderTaskAssign;
 use App\Models\Task;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -53,7 +54,7 @@ class OrderController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::guard('api')->user();
 
@@ -67,7 +68,24 @@ class OrderController extends Controller
         $userID = $user->id;
         $role   = $user->role->role_name;
 
-        $query = Order::with('lead.category', 'lead.material', 'lead.subcategory', 'lead.shade.shade', 'orderAssign');
+        $status = $request->input('status');
+        $date = $request->input('date', Carbon::now()->format('d-m-Y'));
+
+        try {
+            $parsedDate = Carbon::createFromFormat('d-m-Y', $date)->startOfDay();
+        } catch (\Exception $e) {
+            return response()->json([
+                'response_code' => 422,
+                'message' => 'Invalid date format. Use dd-mm-yyyy.'
+            ]);
+        }
+
+        $query = Order::with('lead.category', 'lead.material', 'lead.subcategory', 'lead.shade.shade', 'orderAssign')
+            ->whereDate('created_at', $parsedDate);
+
+        if (!empty($status) && $status !== 'All') {
+            $query->where('status', $status);
+        }
 
         if ($role === 'Superuser') {
             $query->whereHas('orderAssign', function ($q) use ($userID) {

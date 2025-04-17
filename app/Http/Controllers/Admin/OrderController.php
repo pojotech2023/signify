@@ -15,6 +15,7 @@ use App\Models\LeadTaskAssign;
 use App\Models\OrderTask;
 use App\Models\OrderTaskAssign;
 use App\Models\Task;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -49,26 +50,25 @@ class OrderController extends Controller
         // Update status in lead task table
         $taskIds = LeadTask::where('lead_id', $request->lead_id)->pluck('id');
 
-         LeadTask::whereIn('id', $taskIds)->update(['status' => 'Completed']);
- 
-         // Update status in lead task assign table
-         LeadTaskAssign::whereIn('task_id', $taskIds)->update(['status' => 'Completed']);
+        LeadTask::whereIn('id', $taskIds)->update(['status' => 'Completed']);
+
+        // Update status in lead task assign table
+        LeadTaskAssign::whereIn('task_id', $taskIds)->update(['status' => 'Completed']);
 
         return redirect()->back()->with('Success', 'Order Created Successfully');
     }
 
     //Orders List
-
-    public function index()
+    public function index(Request $request)
     {
-
         $role = session('role_name');
         $user = Auth::guard('admin')->user();
 
         if ($user) {
             $userID = $user->id;
 
-            $query = Order::with('lead.category', 'lead.material', 'lead.subcategory', 'lead.shade.shade', 'orderAssign');
+            $query = Order::with('lead.category', 'lead.material', 'lead.subcategory', 'lead.shade.shade', 'orderAssign')
+                ->whereDate('created_at', Carbon::today());
 
             if ($role === 'Superuser') {
                 $query->whereHas('orderAssign', function ($q) use ($userID) {
@@ -200,5 +200,44 @@ class OrderController extends Controller
         OrderTaskAssign::whereIn('order_task_id', $taskIds)->update(['status' => 'Completed']);
 
         return redirect()->back()->with('success', 'Order Completed Successfully');
+    }
+
+
+    //date and status filter wise order list
+    public function filterOrdersList(Request $request)
+    {
+        $status = $request->input('status');
+        $date = $request->input('date');
+
+        if (!$status || !$date) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['Both status and date are required.']);
+        }
+
+        $role = session('role_name');
+        $user = Auth::guard('admin')->user();
+
+        if ($user) {
+            $userID = $user->id;
+
+            $query = Order::with('lead.category', 'lead.material', 'lead.subcategory', 'lead.shade.shade', 'orderAssign')
+                ->whereDate('created_at', $date);
+                if (!empty($status) && $status !== 'All') {
+                    $query->where('status', $status);
+                }
+               
+
+            if ($role === 'Superuser') {
+                $query->whereHas('orderAssign', function ($q) use ($userID) {
+                    $q->where('internal_user_id', $userID);
+                });
+            }
+            $orders = $query->orderBy('id', 'desc')->get();
+
+            return view('admin.order.orders_list', compact('orders'));
+        } else {
+            return redirect()->route('admin.login')->withErrors(['message' => 'Please login first']);
+        }
     }
 }

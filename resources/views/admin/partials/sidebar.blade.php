@@ -88,6 +88,27 @@
                         </a>
                     </li>
 
+                    <li class="nav-item">
+                        <a href="{{ route('vendor-list') }}">
+                            <i class="bi bi-person-fill-add"></i>
+                            <p>Vendor Creation</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('attendance-list') }}">
+                            <i class="bi bi-person-fill-lock"></i>
+                            <p>Attendance Management</p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('profile-list') }}">
+                            <i class="bi bi-people-fill"></i>
+                            <p>Customer Profile List</p>
+                        </a>
+                    </li>
+
                     {{-- Reports --}}
                     <li class="nav-item">
                         <a data-bs-toggle="collapse" href="#reportmenu">

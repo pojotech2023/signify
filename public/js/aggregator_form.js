@@ -382,4 +382,15 @@ document.addEventListener("DOMContentLoaded", function () {
         document.body.appendChild(popupContainer);
     }
 
+    //How did you hear about us?
+    const hearDropdown = document.getElementById("how_heard");
+    const remarksRow = document.getElementById("remarksRow");
+    hearDropdown.addEventListener("change", function() {
+        if (this.value === "Others") {
+            remarksRow.classList.remove("d-none");
+        } else {
+            remarksRow.classList.add("d-none");
+        }
+    });
+
 });
