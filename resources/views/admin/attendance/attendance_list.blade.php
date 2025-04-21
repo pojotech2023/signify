@@ -32,10 +32,10 @@
                                                 <th>S.No</th>
                                                 <th>User Name</th>
                                                 <th>Date</th>
-                                                <th>Time</th>
-                                                <th>Location</th>
-                                                <th>Latitude</th>
-                                                <th>Longitude</th>
+                                                <th>Check In Time</th>
+                                                <th>Check In Location</th>
+                                                <th>Check Out Time</th>
+                                                <th>Check Out Location</th>
                                                 <th>Type</th>
                                             </tr>
                                         </thead>
@@ -45,10 +45,10 @@
                                                     <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $attendance->internalUser->name }}</td>
                                                     <td>{{ $attendance->date }}</td>
-                                                    <td>{{ $attendance->time }}</td>
-                                                    <td>{{ $attendance->location }}</td>
-                                                    <td>{{ $attendance->lat }}</td>
-                                                    <td>{{ $attendance->long }}</td>
+                                                    <td>{{ $attendance->check_in_time }}</td>
+                                                    <td>{{ $attendance->check_in_location }}</td>
+                                                    <td>{{ $attendance->check_out_time }}</td>
+                                                    <td>{{ $attendance->check_out_location }}</td>
                                                     <td>{{ $attendance->type }}</td>
                                                 </tr>
                                             @endforeach

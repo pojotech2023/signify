@@ -148,7 +148,7 @@ Route::prefix('admin')->group(function () {
         //Vendors
         Route::get('/vendor', [VendorController::class, 'index'])->name('vendor-list');
         Route::post('/vendor', [VendorController::class, 'store'])->name('vendor-store');
-        Route::patch('/vendor-update', [VendorController::class, 'update'])->name('vendor-update');
+        Route::post('/vendor-update', [VendorController::class, 'update'])->name('vendor-update');
         Route::delete('/vendor-delete/{id}', [VendorController::class, 'delete'])->name('vendor-delete');
         Route::get('/vendors/search', [VendorController::class, 'search'])->name('vendors.search');
 
